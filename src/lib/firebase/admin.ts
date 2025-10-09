@@ -2,59 +2,45 @@
  * Firebase Admin SDK Configuration for ShopMatch Pro
  *
  * This file configures Firebase Admin SDK services for server-side operations.
- * It handles sensitive operations that require elevated privileges and cannot
- * be performed from client-side code for security reasons.
+ * Uses Application Default Credentials (ADC) for local development with gcloud CLI.
  *
- * Security Note:
- * - This file is server-side only (API routes, middleware)
- * - Never import in client-side components or pages
- * - Handles sensitive operations like custom claims management
- * - Requires proper environment variable configuration
+ * Security Approach:
+ * - Uses gcloud Application Default Credentials for local development
+ * - No service account keys to manage or secure
+ * - Leverages developer's Google account permissions
+ * - Secure and simple credential management
+ *
+ * Local Development Setup:
+ * 1. Install gcloud CLI: brew install google-cloud-sdk
+ * 2. Authenticate: gcloud auth application-default login --project=shopmatch-pro
+ * 3. Run app - ADC will be used automatically
+ *
+ * Production Deployment:
+ * - Use service account attachment (Cloud Run, etc.)
+ * - No code changes needed for different environments
  */
 
-import { initializeApp, getApps, cert } from 'firebase-admin/app'
+import { initializeApp, getApps } from 'firebase-admin/app'
 import { getAuth } from 'firebase-admin/auth'
 import { getFirestore } from 'firebase-admin/firestore'
 
 /**
- * Firebase Admin SDK configuration with service account credentials
+ * Firebase Admin SDK configuration using Application Default Credentials
  *
- * Security Rationale:
- * - Uses server-side environment variables only (no NEXT_PUBLIC_ prefix)
- * - Service account provides elevated privileges for admin operations
- * - Private key is properly formatted for Node.js environment
- * - Enables server-side authentication and Firestore operations
+ * This approach uses the Google Cloud CLI's application default credentials,
+ * which are automatically available after running:
+ * `gcloud auth application-default login --project=shopmatch-pro`
  *
- * @see https://firebase.google.com/docs/admin/setup#initialize-sdk
+ * Benefits:
+ * - No service account keys to manage
+ * - Uses developer's own Google account permissions
+ * - Credentials stored securely by gcloud CLI
+ * - Automatic credential refresh
+ * - Works seamlessly with Firebase Admin SDK
  */
 const app = getApps().length === 0 ? initializeApp({
-  /**
-   * Service account credential configuration
-   *
-   * Required for:
-   * - Custom claims management (role, subActive)
-   * - Server-side user creation and management
-   * - Firestore operations with elevated privileges
-   * - Webhook verification and processing
-   */
-  credential: cert({
-    // Project identifier for the Firebase project
-    projectId: process.env.FIREBASE_PROJECT_ID,
-
-    // Service account email address
-    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-
-    /**
-     * Service account private key with proper formatting
-     *
-     * Important:
-     * - Environment variable contains escaped newlines (\n)
-     * - Must be converted back to actual newlines for Node.js
-     * - Never log or expose this key in any form
-     * - Used for signing JWT tokens and API authentication
-     */
-    privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-  }),
+  // Project ID only - ADC handles authentication automatically
+  projectId: process.env.FIREBASE_PROJECT_ID || 'shopmatch-pro',
 
   // Optional: Uncomment if you need a specific database URL
   // databaseURL: process.env.FIREBASE_DATABASE_URL,

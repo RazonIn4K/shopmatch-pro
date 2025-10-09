@@ -38,9 +38,8 @@ const requiredEnvVars = {
   'NEXT_PUBLIC_FIREBASE_APP_ID': 'Firebase Application ID (Public)',
 
   // Firebase Admin Configuration (Server-side only)
+  // Using Application Default Credentials (ADC) with gcloud CLI
   'FIREBASE_PROJECT_ID': 'Firebase Project ID (Admin)',
-  'FIREBASE_CLIENT_EMAIL': 'Firebase Service Account Email',
-  'FIREBASE_PRIVATE_KEY': 'Firebase Service Account Private Key',
 
   // Stripe Payment Configuration
   'STRIPE_SECRET_KEY': 'Stripe Secret API Key',
