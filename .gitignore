@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Development tools (not needed in repository)
+ngrok
+ngrok-*.zip
