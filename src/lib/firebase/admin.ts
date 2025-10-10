@@ -2,48 +2,45 @@
  * Firebase Admin SDK Configuration for ShopMatch Pro
  *
  * This file configures Firebase Admin SDK services for server-side operations.
- * Uses Application Default Credentials (ADC) for local development with gcloud CLI.
+ * Uses service account credentials for maximum compatibility and ease of use.
  *
  * Security Approach:
- * - Uses gcloud Application Default Credentials for local development
- * - No service account keys to manage or secure
- * - Leverages developer's Google account permissions
- * - Secure and simple credential management
+ * - Uses service account credentials via environment variables
+ * - Works in any environment without Google account login
+ * - Simple and reliable authentication for development
+ * - Secure credential management through environment variables
  *
- * Local Development Setup:
- * 1. Install gcloud CLI: brew install google-cloud-sdk
- * 2. Authenticate: gcloud auth application-default login --project=shopmatch-pro
- * 3. Run app - ADC will be used automatically
- *
- * Production Deployment:
- * - Use service account attachment (Cloud Run, etc.)
- * - No code changes needed for different environments
+ * Setup:
+ * 1. Go to Firebase Console → Project Settings → Service Accounts
+ * 2. Generate new private key for "firebase-adminsdk"
+ * 3. Add credentials to .env.local (see .env.local.template)
+ * 4. Run app - service account will be used automatically
  */
 
-import { initializeApp, getApps } from 'firebase-admin/app'
+import { initializeApp, getApps, cert } from 'firebase-admin/app'
 import { getAuth } from 'firebase-admin/auth'
 import { getFirestore } from 'firebase-admin/firestore'
 
 /**
- * Firebase Admin SDK configuration using Application Default Credentials
+ * Firebase Admin SDK configuration using service account credentials
  *
- * This approach uses the Google Cloud CLI's application default credentials,
- * which are automatically available after running:
- * `gcloud auth application-default login --project=shopmatch-pro`
+ * This approach uses service account credentials from environment variables,
+ * making it work in any environment without requiring Google account login.
  *
  * Benefits:
- * - No service account keys to manage
- * - Uses developer's own Google account permissions
- * - Credentials stored securely by gcloud CLI
- * - Automatic credential refresh
- * - Works seamlessly with Firebase Admin SDK
+ * - No Google account login required for development
+ * - Works in any deployment environment
+ * - Simple and reliable credential management
+ * - No dependency on gcloud CLI or user authentication
+ * - Perfect for development and testing workflows
  */
 const app = getApps().length === 0 ? initializeApp({
-  // Project ID only - ADC handles authentication automatically
-  projectId: process.env.FIREBASE_PROJECT_ID || 'shopmatch-pro',
-
-  // Optional: Uncomment if you need a specific database URL
-  // databaseURL: process.env.FIREBASE_DATABASE_URL,
+  credential: cert({
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+  }),
+  projectId: process.env.FIREBASE_PROJECT_ID,
 }) : getApps()[0]
 
 /**
