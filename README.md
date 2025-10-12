@@ -1,5 +1,7 @@
 # ShopMatch Pro
 
+[![CI](https://github.com/RazonIn4K/shopmatch-pro/actions/workflows/ci.yml/badge.svg)](https://github.com/RazonIn4K/shopmatch-pro/actions/workflows/ci.yml)
+
 A modern job board platform built with Next.js 15, Firebase, and Stripe. Connect job seekers with opportunities through a subscription-based model.
 
 ## 🎯 Project Status

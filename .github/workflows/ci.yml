@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run linter
+      run: npm run lint
+
+    - name: Type check
+      run: npx tsc --noEmit
+
+    - name: Build production
+      run: npm run build
+      env:
+        # Mock env vars for build (CI doesn't need real keys)
+        NEXT_PUBLIC_FIREBASE_API_KEY: ci-mock-key
+        NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ci-mock.firebaseapp.com
+        NEXT_PUBLIC_FIREBASE_PROJECT_ID: ci-mock-project
+        NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ci-mock.appspot.com
+        NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: "123456789"
+        NEXT_PUBLIC_FIREBASE_APP_ID: ci-mock-app-id
+        NEXT_PUBLIC_APP_URL: http://localhost:3000
+        FIREBASE_PROJECT_ID: ci-mock-project
+        FIREBASE_CLIENT_EMAIL: ci-mock@ci-mock.iam.gserviceaccount.com
+        FIREBASE_PRIVATE_KEY: "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7VJTUt9Us8cKj\nMzEfYyjiWA4R4/M2bS1+fWIcPm15j9tXBWjdULHsUnDpJVBz0hLRqz4sLiJv7Jqx\n-----END PRIVATE KEY-----\n"
+        STRIPE_SECRET_KEY: sk_test_ci_mock_key
+        STRIPE_WEBHOOK_SECRET: whsec_ci_mock_secret
+        STRIPE_PRICE_ID_PRO: price_ci_mock_id
+
+    - name: Upload build artifacts
+      if: matrix.node-version == '20.x'
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-output
+        path: .next/
+        retention-days: 7
