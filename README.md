@@ -162,6 +162,42 @@ See [.env.local.template](./.env.local.template) for complete list.
 
 **Detailed test flows:** [PROJECT_STATUS.md](./PROJECT_STATUS.md#-testing-checklist)
 
+### Testing Stripe Webhooks Locally
+
+To test the complete subscription flow with real Stripe webhook events:
+
+**Prerequisites:**
+- [Stripe CLI](https://stripe.com/docs/stripe-cli) installed
+- `.env.local` configured with Stripe keys
+- Dev server running on `localhost:3000`
+
+**Steps:**
+
+1. **Start Stripe webhook forwarding** (in a new terminal):
+   ```bash
+   stripe listen --forward-to localhost:3000/api/stripe/webhook
+   ```
+   Copy the webhook signing secret (`whsec_...`) and update `STRIPE_WEBHOOK_SECRET` in `.env.local`
+
+2. **Trigger a test checkout session completed event**:
+   ```bash
+   stripe trigger checkout.session.completed
+   ```
+
+3. **Watch the logs** to see:
+   - Stripe CLI forwarding the webhook
+   - Your app at `/api/stripe/webhook` processing the event
+   - Firebase custom claims being updated
+   - Console logs showing subscription activation
+
+**What happens:**
+- Stripe sends a webhook event to your local endpoint
+- The webhook handler verifies the signature
+- User subscription status is updated in Firebase (custom claims + Firestore)
+- User gains access to Pro features instantly
+
+**For production:** Configure webhook endpoints in [Stripe Dashboard](https://dashboard.stripe.com/webhooks) pointing to your deployed URL.
+
 ## 🔒 Security Features
 
 - ✅ Firebase security rules for Firestore
