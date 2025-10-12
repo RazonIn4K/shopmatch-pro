@@ -2,10 +2,12 @@
 
 /**
  * Test script to verify seeker dashboard functionality
- * 
+ *
  * This script tests the seeker applications API endpoint to ensure
  * the Firestore index issue has been resolved.
  */
+
+/* eslint-disable @typescript-eslint/no-require-imports */
 
 const { initializeApp, cert } = require('firebase-admin/app')
 const { getAuth } = require('firebase-admin/auth')

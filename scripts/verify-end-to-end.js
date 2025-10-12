@@ -2,7 +2,7 @@
 
 /**
  * End-to-End Verification Script for ShopMatch Pro MVP
- * 
+ *
  * This script verifies the complete workflow:
  * 1. Create seeker and owner users
  * 2. Create a job posting
@@ -11,6 +11,8 @@
  * 5. Update application status
  * 6. Verify data consistency
  */
+
+/* eslint-disable @typescript-eslint/no-require-imports */
 
 const { initializeApp, cert } = require('firebase-admin/app')
 const { getAuth } = require('firebase-admin/auth')

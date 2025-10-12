@@ -18,9 +18,12 @@
  * - Secure redirect URL configuration
  */
 
+// CRITICAL: Use Node.js runtime for Stripe SDK compatibility
+export const runtime = 'nodejs'
+
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuth } from 'firebase/auth'
 import { stripe, STRIPE_CONFIG, SUBSCRIPTION_TIERS } from '@/lib/stripe/config'
+import { verifyAuth } from '@/lib/api/auth'
 import { adminAuth } from '@/lib/firebase/admin'
 
 /**
@@ -35,20 +38,8 @@ import { adminAuth } from '@/lib/firebase/admin'
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    // Get authorization token from request headers
-    const authHeader = request.headers.get('authorization')
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      )
-    }
-
-    const token = authHeader.substring(7) // Remove 'Bearer ' prefix
-
-    // Verify the token and get user information
-    const decodedToken = await adminAuth.verifyIdToken(token)
-    const userId = decodedToken.uid
+    // Verify authentication and get user information
+    const { uid: userId } = await verifyAuth(request)
 
     // Get user email for checkout session
     const userRecord = await adminAuth.getUser(userId)
@@ -91,7 +82,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       sessionId: session.id,
     })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Checkout session creation failed:', error)
 
     return NextResponse.json(

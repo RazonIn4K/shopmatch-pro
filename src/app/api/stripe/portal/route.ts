@@ -18,9 +18,13 @@
  * - Proper error handling without information leakage
  */
 
+// CRITICAL: Use Node.js runtime for Stripe SDK compatibility
+export const runtime = 'nodejs'
+
 import { NextRequest, NextResponse } from 'next/server'
-import { stripe, STRIPE_CONFIG } from '@/lib/stripe/config'
-import { adminAuth, adminDb } from '@/lib/firebase/admin'
+import { stripe } from '@/lib/stripe/config'
+import { verifyAuth } from '@/lib/api/auth'
+import { adminDb } from '@/lib/firebase/admin'
 
 /**
  * POST handler for creating Stripe Customer Portal Sessions
@@ -33,20 +37,8 @@ import { adminAuth, adminDb } from '@/lib/firebase/admin'
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
-    // Get authorization token from request headers
-    const authHeader = request.headers.get('authorization')
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
-      )
-    }
-
-    const token = authHeader.substring(7) // Remove 'Bearer ' prefix
-
-    // Verify the token and get user information
-    const decodedToken = await adminAuth.verifyIdToken(token)
-    const userId = decodedToken.uid
+    // Verify authentication and get user information
+    const { uid: userId } = await verifyAuth(request)
 
     // Get user document to retrieve Stripe customer ID
     const userDoc = await adminDb.collection('users').doc(userId).get()
@@ -82,7 +74,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       url: session.url,
     })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Customer portal session creation failed:', error)
 
     return NextResponse.json(
