@@ -15,7 +15,7 @@
 
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { toast } from 'sonner'
 
@@ -26,12 +26,12 @@ import { useAuth } from '@/lib/contexts/AuthContext'
 import { SUBSCRIPTION_TIERS } from '@/lib/stripe/config'
 
 /**
- * Subscription Page Component
+ * Subscription Page Component (Inner)
  *
  * Main interface for subscription management and checkout flow.
  * Handles authentication, checkout initiation, and success/cancel states.
  */
-export default function SubscribePage() {
+function SubscribePageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user, loading: authLoading } = useAuth()
@@ -93,9 +93,9 @@ export default function SubscribePage() {
       // Redirect to Stripe Checkout
       window.location.href = url
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Subscription error:', error)
-      toast.error(error.message || 'Failed to start subscription process')
+      toast.error(error instanceof Error ? error.message : 'Failed to start subscription process')
     } finally {
       setLoading(false)
     }
@@ -126,7 +126,7 @@ export default function SubscribePage() {
           <CardHeader className="text-center">
             <CardTitle className="text-2xl">Already Signed In</CardTitle>
             <CardDescription>
-              You're already signed in. Visit your dashboard to manage your subscription.
+              You&apos;re already signed in. Visit your dashboard to manage your subscription.
             </CardDescription>
           </CardHeader>
           <CardFooter>
@@ -266,5 +266,25 @@ export default function SubscribePage() {
         </div>
       </div>
     </div>
+  )
+}
+
+/**
+ * Subscription Page Component (Wrapper)
+ *
+ * Wraps SubscribePageContent in Suspense boundary for useSearchParams()
+ */
+export default function SubscribePage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    }>
+      <SubscribePageContent />
+    </Suspense>
   )
 }

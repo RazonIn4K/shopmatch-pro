@@ -129,7 +129,7 @@ export async function GET(): Promise<NextResponse<HealthCheckResponse>> {
 
     // Try to initialize Firebase (basic smoke test)
     try {
-      const { initializeApp, getApps } = await import('firebase/app')
+      const { getApps } = await import('firebase/app')
       const apps = getApps()
 
       if (apps.length > 0 || process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
@@ -143,7 +143,6 @@ export async function GET(): Promise<NextResponse<HealthCheckResponse>> {
 
     // Try to initialize Stripe (basic smoke test)
     try {
-      const Stripe = (await import('stripe')).default
       if (process.env.STRIPE_SECRET_KEY && process.env.STRIPE_SECRET_KEY.startsWith('sk_')) {
         healthCheck.checks.stripe = true
       }

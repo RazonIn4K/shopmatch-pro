@@ -14,6 +14,7 @@
  * - Environment variables must be configured
  */
 
+/* eslint-disable @typescript-eslint/no-require-imports */
 require('dotenv').config({ path: '.env.local' })
 
 const { initializeApp, getApps, cert } = require('firebase-admin/app')
@@ -44,7 +45,7 @@ function initializeFirebaseAdmin() {
     })
     console.log('✅ Using Application Default Credentials (gcloud CLI)')
     return app
-  } catch (error) {
+  } catch {
     console.log('⚠️ ADC failed, trying service account credentials...')
 
     // Fallback to service account if ADC fails
@@ -188,7 +189,7 @@ async function main() {
     console.log(`   Email: ${user.email}`)
     console.log(`   Password: OwnerPass123!`)
 
-  } catch (error) {
+  } catch {
     console.error('\n💥 User creation failed!')
     process.exit(1)
   }

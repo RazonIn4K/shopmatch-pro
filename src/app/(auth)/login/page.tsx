@@ -140,7 +140,7 @@ export default function LoginPage() {
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold text-center">Reset Password</CardTitle>
             <CardDescription className="text-center">
-              Enter your email address and we'll send you a reset link
+              Enter your email address and we&apos;ll send you a reset link
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -298,7 +298,7 @@ export default function LoginPage() {
             Forgot your password?
           </Button>
           <div className="text-sm text-center text-muted-foreground">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/signup" className="text-primary hover:underline">
               Sign up
             </Link>

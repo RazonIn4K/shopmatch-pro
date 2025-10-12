@@ -175,9 +175,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Create user document in Firestore
       await createUserDocument(userCredential.user, role, displayName)
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Signup error:', error)
-      setError(getAuthErrorMessage(error.code))
+      setError(getAuthErrorMessage(error instanceof Error && 'code' in error ? (error as { code: string }).code : ''))
       throw error
     } finally {
       setLoading(false)
@@ -197,9 +197,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       await signInWithEmailAndPassword(auth, email, password)
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Signin error:', error)
-      setError(getAuthErrorMessage(error.code))
+      setError(getAuthErrorMessage(error instanceof Error && 'code' in error ? (error as { code: string }).code : ''))
       throw error
     } finally {
       setLoading(false)
@@ -226,9 +226,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         await createUserDocument(user, 'seeker', user.displayName) // Default to seeker for Google auth
       }
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Google signin error:', error)
-      setError(getAuthErrorMessage(error.code))
+      setError(getAuthErrorMessage(error instanceof Error && 'code' in error ? (error as { code: string }).code : ''))
       throw error
     } finally {
       setLoading(false)
@@ -245,9 +245,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       await signOut(auth)
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Logout error:', error)
-      setError(getAuthErrorMessage(error.code))
+      setError(getAuthErrorMessage(error instanceof Error && 'code' in error ? (error as { code: string }).code : ''))
       throw error
     } finally {
       setLoading(false)
@@ -265,9 +265,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       await sendPasswordResetEmail(auth, email)
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Password reset error:', error)
-      setError(getAuthErrorMessage(error.code))
+      setError(getAuthErrorMessage(error instanceof Error && 'code' in error ? (error as { code: string }).code : ''))
       throw error
     }
   }
@@ -289,9 +289,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Update local user state
       setUser(prev => prev ? { ...prev, ...updates } : null)
 
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Profile update error:', error)
-      setError(getAuthErrorMessage(error.code))
+      setError(getAuthErrorMessage(error instanceof Error && 'code' in error ? (error as { code: string }).code : ''))
       throw error
     }
   }

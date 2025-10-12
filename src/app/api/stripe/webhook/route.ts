@@ -71,15 +71,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Verify webhook signature using raw body
     // This prevents spoofing attacks and ensures event authenticity
-    let event: any
+    let event
     try {
       event = stripe.webhooks.constructEvent(
         body,
         signature,
         STRIPE_CONFIG.WEBHOOK_SECRET
       )
-    } catch (error: any) {
-      console.error('Webhook signature verification failed:', error.message)
+    } catch (error: unknown) {
+      console.error('Webhook signature verification failed:', error instanceof Error ? error.message : 'Unknown error')
       return NextResponse.json(
         { error: 'Invalid signature' },
         { status: 400 }
@@ -92,7 +92,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Return success response to Stripe
     return NextResponse.json({ received: true })
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Webhook processing error:', error)
 
     // Return 200 to prevent Stripe from retrying
@@ -112,28 +112,28 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
  *
  * @param event - Verified Stripe webhook event
  */
-async function processWebhookEvent(event: any): Promise<void> {
+async function processWebhookEvent(event: { type: string; data: { object: unknown } }): Promise<void> {
   console.log(`Processing webhook event: ${event.type}`)
 
   try {
     switch (event.type as StripeWebhookEvent) {
       case 'customer.subscription.created':
       case 'customer.subscription.updated':
-        await handleSubscriptionUpdate(event.data.object)
+        await handleSubscriptionUpdate(event.data.object as { customer: string; id: string; status: string })
         break
 
       case 'customer.subscription.deleted':
-        await handleSubscriptionCancellation(event.data.object)
+        await handleSubscriptionCancellation(event.data.object as { customer: string })
         break
 
       case 'checkout.session.completed':
-        await handleCheckoutCompletion(event.data.object)
+        await handleCheckoutCompletion(event.data.object as { customer: string; client_reference_id: string })
         break
 
       default:
         console.log(`Unhandled event type: ${event.type}`)
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error(`Error processing ${event.type}:`, error)
     // Don't throw - allow webhook to return success to prevent retries
   }
@@ -147,7 +147,7 @@ async function processWebhookEvent(event: any): Promise<void> {
  *
  * @param subscription - Stripe subscription object
  */
-async function handleSubscriptionUpdate(subscription: any): Promise<void> {
+async function handleSubscriptionUpdate(subscription: { customer: string; id: string; status: string }): Promise<void> {
   const customerId = subscription.customer
   const status = subscription.status // 'active', 'canceled', 'incomplete', etc.
 
@@ -188,7 +188,7 @@ async function handleSubscriptionUpdate(subscription: any): Promise<void> {
 
     console.log(`✅ Activated subscription access for user ${userId}`)
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error updating subscription:', error)
     throw error
   }
@@ -201,7 +201,7 @@ async function handleSubscriptionUpdate(subscription: any): Promise<void> {
  *
  * @param subscription - Stripe subscription object
  */
-async function handleSubscriptionCancellation(subscription: any): Promise<void> {
+async function handleSubscriptionCancellation(subscription: { customer: string }): Promise<void> {
   const customerId = subscription.customer
 
   try {
@@ -234,7 +234,7 @@ async function handleSubscriptionCancellation(subscription: any): Promise<void> 
 
     console.log(`❌ Removed subscription access for user ${userId}`)
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error cancelling subscription:', error)
     throw error
   }
@@ -247,7 +247,7 @@ async function handleSubscriptionCancellation(subscription: any): Promise<void> 
  *
  * @param session - Stripe checkout session object
  */
-async function handleCheckoutCompletion(session: any): Promise<void> {
+async function handleCheckoutCompletion(session: { customer: string; client_reference_id: string }): Promise<void> {
   const customerId = session.customer
   const clientReferenceId = session.client_reference_id // User ID from checkout
 
@@ -266,7 +266,7 @@ async function handleCheckoutCompletion(session: any): Promise<void> {
 
     console.log(`✅ Linked Stripe customer ${customerId} to user ${clientReferenceId}`)
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error linking customer ID:', error)
     throw error
   }
