@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+/* eslint-disable @typescript-eslint/no-require-imports */
+
 /**
  * Environment Variables Validation Script for ShopMatch Pro
  *
@@ -26,7 +28,13 @@
  * - Checks for common configuration mistakes
  * - Provides actionable error messages with setup instructions
  * - Warns about potentially incorrect placeholder values
+ *
+ * Note: This is a Node.js script that uses CommonJS require() syntax.
+ * ESLint rule disabled as this is appropriate for utility scripts.
  */
+
+// Load environment variables from .env.local
+require('dotenv').config({ path: '.env.local' })
 
 const requiredEnvVars = {
   // Firebase Client Configuration (Browser-safe variables)

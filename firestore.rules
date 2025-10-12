@@ -1,0 +1,65 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function hasActiveSubscription() {
+      return isAuthenticated() &&
+             request.auth.token.subActive == true;
+    }
+
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuthenticated();
+      allow write: if isOwner(userId);
+    }
+
+    // Jobs collection
+    match /jobs/{jobId} {
+      // Anyone can read published jobs
+      allow read: if resource.data.status == 'published' ||
+                     isOwner(resource.data.ownerId);
+
+      // Only subscription holders can create jobs
+      allow create: if isAuthenticated() &&
+                       hasActiveSubscription() &&
+                       request.resource.data.ownerId == request.auth.uid;
+
+      // Only job owner can update/delete
+      allow update, delete: if isOwner(resource.data.ownerId);
+    }
+
+    // Applications collection
+    match /applications/{applicationId} {
+      // Job owner can read all applications for their jobs
+      // Seeker can read their own applications
+      allow read: if isAuthenticated() && (
+                       isOwner(resource.data.seekerId) ||
+                       isOwner(resource.data.ownerId)
+                     );
+
+      // Seekers can create applications
+      allow create: if isAuthenticated() &&
+                       request.resource.data.seekerId == request.auth.uid &&
+                       getUserRole() == 'seeker';
+
+      // Only job owner can update application status
+      allow update: if isOwner(resource.data.ownerId);
+
+      // Only seeker can delete their own application
+      allow delete: if isOwner(resource.data.seekerId);
+    }
+  }
+}
