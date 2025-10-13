@@ -240,6 +240,57 @@ npm ls <package-name>
 
 ---
 
+## Transitive Dependency Management
+
+### Understanding "Outdated" Warnings
+
+FOSSA and other scanning tools may flag certain transitive dependencies as "outdated." Here's what you need to know:
+
+**What are transitive dependencies?**
+- Dependencies that your direct dependencies rely on
+- Example: `firebase-admin` → `node-forge` → other packages
+- You don't directly control their versions
+
+**Why do "outdated" warnings persist?**
+- Parent packages (firebase-admin, Next.js, etc.) lock specific versions
+- Updates are constrained by parent package's `package.json`
+- Updating within semver ranges (`npm update`) won't change locked versions
+- Only the maintainers of parent packages can update these dependencies
+
+**Are "outdated" warnings a problem?**
+- **License-wise**: ❌ No - outdated doesn't mean non-compliant
+- **Security-wise**: Depends - check npm audit for actual vulnerabilities
+- **Functionality-wise**: ❌ No - these versions are battle-tested and stable
+- **Commercial use**: ✅ Still safe - license terms don't change with age
+
+**Common "outdated" packages in this project**:
+- `brace-expansion@1.1.12` - locked by `minimatch` (Next.js dependency)
+- `minimatch@3.1.2` - locked by Next.js build tools
+- `uuid@8.3.2` / `uuid@9.0.1` - locked by firebase-admin
+- `find-up@5.0.0`, `p-limit@3.1.0` - locked by various tools
+- `react-is@16.13.1` - locked by React ecosystem packages
+
+**What can solo developers do?**
+1. ✅ **Keep direct dependencies updated** (we do this regularly)
+2. ✅ **Monitor security advisories** (`npm audit` shows zero vulnerabilities)
+3. ✅ **Wait for parent packages to update** (firebase-admin, Next.js will eventually update)
+4. ❌ **Don't force-update transitive dependencies** - breaks compatibility and introduces bugs
+
+**FOSSA Badge Status**:
+- License compliance: ✅ All licenses permissive and documented
+- Security scan: ✅ Zero known vulnerabilities
+- "Outdated" warnings: ⚠️ May persist (transitive dependencies locked by parents)
+
+**TL;DR**: "Outdated" warnings are informational, not critical. As long as:
+- ✅ No security vulnerabilities (npm audit shows zero)
+- ✅ All licenses are compatible (they are - all permissive)
+- ✅ Direct dependencies are updated (we keep them current)
+- ✅ Application builds and runs correctly (it does)
+
+...then "outdated" warnings for transitive dependencies are **acceptable** and **safe to ignore**.
+
+---
+
 ## Questions or Concerns?
 
 If you have questions about licensing or compliance:

@@ -1,6 +1,8 @@
 # ShopMatch Pro
 
 [![CI](https://github.com/RazonIn4K/shopmatch-pro/actions/workflows/ci.yml/badge.svg)](https://github.com/RazonIn4K/shopmatch-pro/actions/workflows/ci.yml)
+[![FOSSA License Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FRazonIn4K%2Fshopmatch-pro.svg?type=shield&issueType=license)](https://app.fossa.com/projects/git%2Bgithub.com%2FRazonIn4K%2Fshopmatch-pro?ref=badge_shield&issueType=license)
+[![FOSSA Security Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FRazonIn4K%2Fshopmatch-pro.svg?type=shield&issueType=security)](https://app.fossa.com/projects/git%2Bgithub.com%2FRazonIn4K%2Fshopmatch-pro?ref=badge_shield&issueType=security)
 
 A modern job board platform built with Next.js 15, Firebase, and Stripe. Connect job seekers with opportunities through a subscription-based model.
 
