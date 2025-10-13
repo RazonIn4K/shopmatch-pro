@@ -1,0 +1,134 @@
+# FOSSA Configuration
+# Configure license scanning and policy for ShopMatch Pro
+# Documentation: https://docs.fossa.com/docs/configuration-file
+
+version: 3
+
+project:
+  name: shopmatch-pro
+  team: development
+  policy: default
+  link: https://github.com/RazonIn4K/shopmatch-pro
+
+# Targets to analyze
+targets:
+  only:
+    - type: npm
+      path: .
+
+# Custom license policy
+policies:
+  - id: default
+    title: ShopMatch Pro License Policy
+    description: Accepts permissive open-source licenses compatible with commercial use
+
+    # Allowed license categories
+    allow:
+      - MIT
+      - Apache-2.0
+      - BSD-2-Clause
+      - BSD-3-Clause
+      - ISC
+      - CC0-1.0
+      - Unlicense
+
+    # Licenses that require review (dual-licensed packages)
+    # We document our license choice in THIRD_PARTY_LICENSES.md
+    flag:
+      - GPL-2.0  # node-forge is (BSD-3-Clause OR GPL-2.0) - we choose BSD
+      - GPL-3.0
+      - AGPL-3.0
+      - CC-BY-SA-4.0  # glob logo only, code is ISC
+
+    # Explicitly denied licenses (strong copyleft)
+    deny:
+      - GPL-1.0-only  # Old GPL version, prefer BSD for dual-licensed
+      - AGPL-1.0
+      - SSPL-1.0  # Not OSI approved
+      - Commons-Clause  # Not open source
+
+# Package-specific overrides
+overrides:
+  # node-forge: Dual-licensed (BSD-3-Clause OR GPL-2.0)
+  # We elect to use BSD-3-Clause license
+  - locator: npm+node-forge$
+    license: BSD-3-Clause
+    reason: |
+      node-forge is dual-licensed (BSD-3-Clause OR GPL-2.0).
+      We elect to use the BSD-3-Clause license option, which is fully
+      compatible with commercial software.
+      Documentation: See THIRD_PARTY_LICENSES.md
+
+  # glob: ISC code license, CC-BY-SA-4.0 logo only
+  # We don't use or distribute the logo
+  - locator: npm+glob$
+    license: ISC
+    reason: |
+      The glob package code is ISC licensed. Only the glob logo artwork
+      (not used or distributed in this application) is CC-BY-SA-4.0.
+      We use only the code, which is permissively licensed under ISC.
+      Documentation: See THIRD_PARTY_LICENSES.md
+
+  # Next.js: MIT licensed, includes compiled glob with ISC code
+  - locator: npm+next$
+    license: MIT
+    reason: |
+      Next.js is MIT licensed. It includes compiled glob code (ISC licensed).
+      The CC-BY-SA-4.0 license applies only to glob logo artwork, which is
+      not used or distributed.
+
+# Exclude development and test dependencies from production scans
+analyze:
+  exclude:
+    - type: npm
+      scope: dev  # devDependencies don't affect production licensing
+
+# Comments and notes
+comments:
+  licensing_strategy: |
+    ShopMatch Pro uses only permissively-licensed dependencies that allow
+    commercial use, modification, and redistribution. All dependencies
+    have been reviewed for license compatibility.
+
+  dual_license_policy: |
+    When a dependency offers dual-license options (e.g., "BSD-3-Clause OR GPL-2.0"),
+    we explicitly document our license choice. Our policy is to select the most
+    permissive license option that is compatible with commercial use.
+
+  false_positives: |
+    Some dependencies may flag licenses for non-code assets (artwork, logos, etc.)
+    that are not used or distributed in the application. These are documented
+    in THIRD_PARTY_LICENSES.md with explanations.
+
+# Experimental features
+experimental:
+  # Enable license inference for packages without explicit license field
+  enable-license-scanning: true
+
+  # Enable SPDX identifier support
+  enable-spdx: true
+
+---
+
+# Additional Notes for FOSSA Users
+
+## How to Use This Configuration
+
+1. **Automatic Scanning**: FOSSA will use this configuration automatically when scanning the repository.
+
+2. **Policy Overrides**: Package-specific overrides document our license choices for dual-licensed dependencies.
+
+3. **Documentation**: All licensing decisions are documented in [THIRD_PARTY_LICENSES.md](./THIRD_PARTY_LICENSES.md).
+
+## Resolving License Conflicts
+
+If FOSSA flags a license conflict:
+
+1. Check if the package is dual-licensed (look for "OR" in license field)
+2. If dual-licensed, document your license choice in `overrides` section
+3. Update [THIRD_PARTY_LICENSES.md](./THIRD_PARTY_LICENSES.md) with rationale
+4. Re-run FOSSA scan to verify resolution
+
+## Contact
+
+For questions about licensing decisions, see [THIRD_PARTY_LICENSES.md](./THIRD_PARTY_LICENSES.md).

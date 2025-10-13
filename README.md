@@ -293,7 +293,19 @@ This is a private MVP project. For questions or issues, refer to the documentati
 
 ## 📄 License
 
-Private project - all rights reserved.
+ShopMatch Pro is licensed under the **MIT License**. See [LICENSE](./LICENSE) for the full license text.
+
+### Third-Party Licenses
+
+This project uses various open-source packages. All dependencies have been reviewed for license compatibility with commercial use. See [THIRD_PARTY_LICENSES.md](./THIRD_PARTY_LICENSES.md) for complete licensing information.
+
+**Key Points**:
+- ✅ All dependencies are permissively licensed (MIT, Apache-2.0, BSD, ISC)
+- ✅ Compatible with commercial and proprietary software
+- ✅ Dual-licensed packages use BSD option (node-forge)
+- ✅ No strong copyleft licenses (GPL, AGPL) in distribution
+
+**FOSSA Configuration**: License scanning policy is configured in [.fossa.yml](./.fossa.yml).
 
 ---
 
