@@ -18,14 +18,15 @@ ShopMatch Pro is licensed under the **MIT License** (see [LICENSE](./LICENSE)). 
 
 ## Direct Dependencies
 
+**Note**: Versions listed are as of 2025-10-13. See `package.json` for current versions.
+
 ### Core Framework & Runtime
 
 | Package | Version | License | Purpose |
 |---------|---------|---------|---------|
-| `next` | 15.5.4 | MIT | React framework for production |
-| `react` | 19.1.0 | MIT | UI library |
-| `react-dom` | 19.1.0 | MIT | React DOM renderer |
-| `typescript` | ^5 | Apache-2.0 | Type safety |
+| `next` | 15.5.5 | MIT | React framework for production |
+| `react` | 19.2.0 | MIT | UI library |
+| `react-dom` | 19.2.0 | MIT | React DOM renderer |
 
 ### Authentication & Database
 
@@ -52,8 +53,6 @@ ShopMatch Pro is licensed under the **MIT License** (see [LICENSE](./LICENSE)). 
 | `@radix-ui/react-label` | 2.1.7 | MIT | Accessible label primitives |
 | `@radix-ui/react-slot` | 1.2.3 | MIT | Composition utility |
 | `@headlessui/react` | 2.2.9 | MIT | Unstyled accessible UI |
-| `tailwindcss` | ^4 | MIT | Utility-first CSS framework |
-| `@tailwindcss/postcss` | ^4 | MIT | Tailwind PostCSS integration |
 | `lucide-react` | 0.545.0 | ISC | Icon library |
 | `next-themes` | 0.4.6 | MIT | Theme management |
 
@@ -61,7 +60,7 @@ ShopMatch Pro is licensed under the **MIT License** (see [LICENSE](./LICENSE)). 
 
 | Package | Version | License | Purpose |
 |---------|---------|---------|---------|
-| `react-hook-form` | 7.64.0 | MIT | Form state management |
+| `react-hook-form` | 7.65.0 | MIT | Form state management |
 | `@hookform/resolvers` | 5.2.2 | MIT | Form validation resolvers |
 | `zod` | 4.1.12 | MIT | Schema validation |
 
@@ -132,15 +131,21 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ## Development Dependencies
 
-All development dependencies (ESLint, TypeScript types, etc.) are used only during development and are not distributed with the production application.
+All development dependencies are used only during development and build processes. **These are not included in the production bundle** and do not affect runtime licensing.
 
-| Package | License | Purpose |
-|---------|---------|---------|
-| `@types/node` | MIT | TypeScript type definitions |
-| `@types/react` | MIT | TypeScript type definitions |
-| `@types/react-dom` | MIT | TypeScript type definitions |
-| `eslint` | MIT | Code linting |
-| `eslint-config-next` | MIT | Next.js ESLint config |
+| Package | Version | License | Purpose |
+|---------|---------|---------|---------|
+| `typescript` | ^5 | Apache-2.0 | Type checking (build-time only) |
+| `@types/node` | 24.7.2 | MIT | Node.js type definitions |
+| `@types/react` | ^19 | MIT | React type definitions |
+| `@types/react-dom` | 19.2.2 | MIT | React DOM type definitions |
+| `eslint` | ^9 | MIT | Code linting (development only) |
+| `eslint-config-next` | 15.5.5 | MIT | Next.js ESLint rules |
+| `tailwindcss` | ^4 | MIT | CSS framework (build-time processing) |
+| `@tailwindcss/postcss` | ^4 | MIT | PostCSS integration (build-time) |
+| `@eslint/eslintrc` | ^3 | MIT | ESLint configuration utilities |
+
+**Note**: CSS from Tailwind is compiled at build-time and included in the production bundle as regular CSS, not as a runtime dependency.
 
 ---
 
@@ -237,6 +242,28 @@ npm ls <package-name>
 |------|---------|------|--------|
 | 2025-10-13 | Claude Code | npm ls, manual review | ✅ All licenses compatible |
 | 2025-10-13 | FOSSA | Automated scan | ⚠️ False positives resolved |
+| 2025-10-13 | npm audit | Security scan | ✅ 0 vulnerabilities (648 total packages: 248 prod, 315 dev) |
+
+**Latest Security Audit** (2025-10-13):
+```json
+{
+  "vulnerabilities": {
+    "info": 0,
+    "low": 0,
+    "moderate": 0,
+    "high": 0,
+    "critical": 0,
+    "total": 0
+  },
+  "dependencies": {
+    "prod": 248,
+    "dev": 315,
+    "total": 648
+  }
+}
+```
+
+**Verification**: Run `npm audit` in the project directory to verify current security status.
 
 ---
 
@@ -282,12 +309,14 @@ FOSSA and other scanning tools may flag certain transitive dependencies as "outd
 - "Outdated" warnings: ⚠️ May persist (transitive dependencies locked by parents)
 
 **TL;DR**: "Outdated" warnings are informational, not critical. As long as:
-- ✅ No security vulnerabilities (npm audit shows zero)
-- ✅ All licenses are compatible (they are - all permissive)
-- ✅ Direct dependencies are updated (we keep them current)
-- ✅ Application builds and runs correctly (it does)
+- ✅ No security vulnerabilities (`npm audit` on 2025-10-13 shows 0 vulnerabilities across 648 packages)
+- ✅ All licenses are compatible (documented: all permissive - MIT, Apache-2.0, BSD, ISC)
+- ✅ Direct dependencies are updated (verified 2025-10-13: Next.js 15.5.5, React 19.2.0, etc.)
+- ✅ Application builds and runs correctly (production build passing)
 
 ...then "outdated" warnings for transitive dependencies are **acceptable** and **safe to ignore**.
+
+**Last Verified**: 2025-10-13 | **Verification Command**: `npm audit` | **Result**: 0 vulnerabilities
 
 ---
 
