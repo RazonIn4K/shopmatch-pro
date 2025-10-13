@@ -200,6 +200,31 @@ To test the complete subscription flow with real Stripe webhook events:
 
 **For production:** Configure webhook endpoints in [Stripe Dashboard](https://dashboard.stripe.com/webhooks) pointing to your deployed URL.
 
+### Quick Smoke Test (30 seconds)
+
+Verify all systems are operational:
+
+```bash
+# 1. Check health endpoint (all services should return true)
+curl http://localhost:3000/api/health
+
+# Expected: {"status":"ok","checks":{"firebase":true,"stripe":true,"environment":true}}
+
+# 2. Verify Stripe webhook endpoint
+curl http://localhost:3000/api/stripe/webhook
+
+# Expected: {"message":"Stripe webhook endpoint ready","timestamp":"...","note":"Use POST method for webhook events"}
+
+# 3. Verify Stripe checkout endpoint
+curl http://localhost:3000/api/stripe/checkout
+
+# Expected: {"message":"Stripe checkout endpoint ready","note":"Use POST method to create checkout sessions","config":{"mode":"subscription","tier":"ShopMatch Pro"}}
+```
+
+**All endpoints returning JSON?** ✅ Your Stripe integration is working!
+
+> **⚠️ Webhook Security:** The webhook endpoint uses raw body signature verification per [Stripe's security best practices](https://stripe.com/docs/webhooks/signatures). This prevents spoofed events and ensures only genuine Stripe webhooks are processed.
+
 ## 🔒 Security Features
 
 - ✅ Firebase security rules for Firestore
