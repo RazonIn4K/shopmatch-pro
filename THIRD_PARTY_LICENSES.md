@@ -77,6 +77,88 @@ ShopMatch Pro is licensed under the **MIT License** (see [LICENSE](./LICENSE)). 
 
 ---
 
+## Copyleft Licenses (Acceptable for Library Usage)
+
+### LGPL-3.0-or-later (Sharp/libvips)
+
+**Status**: ✅ **Acceptable under LGPL library exception**
+
+The following packages contain LGPL-3.0-or-later licensed code (libvips image processing library):
+
+| Package | Version | Platform | License |
+|---------|---------|----------|---------|
+| `@img/sharp-libvips-darwin-arm64` | 1.2.3 | macOS ARM64 | LGPL-3.0-or-later |
+| `@img/sharp-libvips-darwin-x64` | 1.2.3 | macOS x64 | LGPL-3.0-or-later |
+| `@img/sharp-libvips-linux-arm` | 1.2.3 | Linux ARM | LGPL-3.0-or-later |
+| `@img/sharp-libvips-linux-arm64` | 1.2.3 | Linux ARM64 | LGPL-3.0-or-later |
+| `@img/sharp-libvips-linuxmusl-arm64` | 1.2.3 | Linux musl ARM64 | LGPL-3.0-or-later |
+| `@img/sharp-libvips-linuxmusl-x64` | 1.2.3 | Linux musl x64 | LGPL-3.0-or-later |
+| `@img/sharp-libvips-linux-ppc64` | 1.2.3 | Linux PowerPC64 | LGPL-3.0-or-later |
+| `@img/sharp-libvips-linux-s390x` | 1.2.3 | Linux s390x | LGPL-3.0-or-later |
+| `@img/sharp-libvips-linux-x64` | 1.2.3 | Linux x64 | LGPL-3.0-or-later |
+| `@img/sharp-wasm32` | 0.34.4 | WebAssembly | LGPL-3.0-or-later |
+| `@img/sharp-win32-arm64` | 0.34.4 | Windows ARM64 | LGPL-3.0-or-later |
+| `@img/sharp-win32-ia32` | 0.34.4 | Windows 32-bit | LGPL-3.0-or-later |
+| `@img/sharp-win32-x64` | 0.34.4 | Windows 64-bit | LGPL-3.0-or-later |
+
+**Used By**: Next.js (for automatic image optimization)
+**Transitive Dependency**: Yes (via Next.js → Sharp)
+
+**Why This Is Safe for Commercial Use**:
+
+1. **Library Exception**: LGPL allows linking as a library without copyleft obligations
+2. **Pre-compiled Binaries**: These are platform-specific pre-compiled binaries of libvips
+3. **No Modifications**: We use these binaries as-is without modification
+4. **Separate Library**: Sharp/libvips runs as a separate library, not integrated into our source code
+5. **Standard Practice**: Widely used in commercial Next.js applications (Vercel, Netlify, etc.)
+
+**LGPL-3.0-or-later Compliance Requirements**:
+- ✅ **Retain copyright notices**: Included in `node_modules/@img/*/LICENSE` files
+- ✅ **Retain license text**: Included in `node_modules/@img/*/LICENSE` files
+- ✅ **No modifications**: We do not modify the libvips source code or binaries
+- ✅ **Library usage**: Used as separate library via Next.js image optimization
+- ✅ **Source availability**: Original source available at https://github.com/libvips/libvips
+
+**LGPL Key Points**:
+- LGPL does NOT require your entire application to be open source
+- LGPL only requires that modifications to the LGPL library itself be shared
+- Using an LGPL library without modifying it is explicitly allowed for commercial/proprietary software
+- Dynamic linking or separate binary usage (as we do) complies with LGPL
+
+**Legal Precedent**: The LGPL library exception is well-established and used by countless commercial applications (including proprietary software from Microsoft, Google, Apple, etc.)
+
+### MPL-2.0 (Next.js)
+
+**Status**: ✅ **Acceptable for commercial use**
+
+**Package**: `next` (15.5.5)
+**License**: Contains some MPL-2.0 licensed code
+**Depth**: Direct dependency
+
+**Why This Is Safe for Commercial Use**:
+
+1. **Weak Copyleft**: MPL-2.0 is "weak copyleft" (file-level, not application-level)
+2. **File-Level Requirement**: Only modifications to MPL-licensed files must be shared
+3. **Compatible with Proprietary Software**: Explicitly designed to allow mixing with proprietary code
+4. **No Modifications**: We do not modify Next.js source code
+5. **Industry Standard**: Next.js is used by thousands of commercial companies
+
+**MPL-2.0 Compliance Requirements**:
+- ✅ **Retain copyright notices**: Included in `node_modules/next/` directory
+- ✅ **Retain license text**: Included in `node_modules/next/LICENSE` file
+- ✅ **No modifications**: We use Next.js as-is via npm, without modifying source files
+- ✅ **Source availability**: Original source at https://github.com/vercel/next.js
+
+**MPL-2.0 Key Points**:
+- MPL-2.0 does NOT require your application to be open source
+- Only requires sharing modifications to MPL-licensed files (which we don't make)
+- Explicitly allows combining MPL code with proprietary code in the same project
+- Used by major commercial software: Firefox, Thunderbird, LibreOffice
+
+**Commercial Use**: Companies using Next.js (with MPL components) include Airbnb, Netflix, Uber, Nike, Starbucks, and thousands more.
+
+---
+
 ## Notable Transitive Dependencies
 
 ### node-forge (via firebase-admin)
@@ -151,15 +233,21 @@ All development dependencies are used only during development and build processe
 
 ## License Categories Summary
 
-| License Type | Count | Examples | Commercial Use |
-|--------------|-------|----------|----------------|
-| MIT | 25+ | React, Next.js, Stripe, Radix UI | ✅ Yes |
-| Apache-2.0 | 3 | Firebase, TypeScript, class-variance-authority | ✅ Yes |
-| ISC | 2 | glob code, lucide-react | ✅ Yes |
-| BSD-3-Clause | 1 | node-forge (chosen from dual-license) | ✅ Yes |
-| BSD-2-Clause | 1 | dotenv | ✅ Yes |
+| License Type | Count | Examples | Commercial Use | Notes |
+|--------------|-------|----------|----------------|-------|
+| MIT | 25+ | React, Next.js core, Stripe, Radix UI | ✅ Yes | Most permissive |
+| Apache-2.0 | 3 | Firebase, TypeScript, class-variance-authority | ✅ Yes | Patent grant included |
+| ISC | 2 | glob code, lucide-react | ✅ Yes | Functionally equivalent to MIT |
+| BSD-3-Clause | 1 | node-forge (chosen from dual-license) | ✅ Yes | Permissive with attribution |
+| BSD-2-Clause | 1 | dotenv | ✅ Yes | Permissive |
+| LGPL-3.0-or-later | 13 | Sharp/libvips (image processing) | ✅ Yes | Library exception applies |
+| MPL-2.0 | 1 | Next.js (some components) | ✅ Yes | Weak copyleft (file-level) |
 
-**Total**: All dependencies are permissively licensed and compatible with commercial use.
+**Total**: All dependencies are compatible with commercial and proprietary software use.
+
+**Copyleft Clarification**:
+- **LGPL-3.0-or-later**: Acceptable for library usage (we don't modify the library)
+- **MPL-2.0**: Acceptable for unmodified usage (weak copyleft, file-level only)
 
 ---
 
@@ -172,6 +260,8 @@ All development dependencies are used only during development and build processe
 2. **Apache-2.0 licensed** (permissive with patent grant)
 3. **ISC licensed** (functionally identical to MIT)
 4. **BSD licensed** (permissive with attribution requirement)
+5. **LGPL-3.0-or-later licensed** (acceptable for unmodified library usage)
+6. **MPL-2.0 licensed** (weak copyleft, compatible with proprietary software)
 
 ### Dual-License Selection (node-forge)
 
@@ -193,8 +283,10 @@ This is a **legitimate and legally recognized practice** in open-source licensin
 - [x] False positives (glob logo) documented and explained
 - [x] All licenses are compatible with MIT (our chosen license)
 - [x] All licenses allow commercial use
-- [x] No strong copyleft licenses (GPL, AGPL) in distribution
-- [x] Attribution requirements documented (BSD, Apache-2.0)
+- [x] LGPL packages used as libraries without modification (compliant)
+- [x] MPL packages used without modification (compliant)
+- [x] No strong copyleft licenses (GPL, AGPL) applied to our code
+- [x] Attribution requirements documented (BSD, Apache-2.0, LGPL, MPL)
 
 ---
 
@@ -218,6 +310,39 @@ When distributing software that includes Apache-2.0 licensed code, we must:
 4. Document modifications (if any - we don't modify these packages)
 
 **Compliance**: ✅ Satisfied by including `node_modules` in distributions
+
+### LGPL-3.0-or-later (Sharp/libvips)
+
+When distributing software that uses LGPL-licensed libraries, we must:
+1. Retain copyright notices (included in `node_modules/@img/*/LICENSE` files)
+2. Retain license text (included in respective packages)
+3. Make LGPL source code available (already public at https://github.com/libvips/libvips)
+4. Allow users to modify the LGPL library (library is replaceable, not locked in)
+5. Document that LGPL components are used (documented in this file)
+
+**Compliance**: ✅ Satisfied by:
+- Including `node_modules` with LICENSE files in distributions
+- Using libraries as-is without modification
+- Not preventing users from replacing the library
+- Documenting usage in THIRD_PARTY_LICENSES.md
+
+**Note**: LGPL does NOT require distributing our application's source code, only the LGPL library's source (which is already public).
+
+### MPL-2.0 (Next.js)
+
+When distributing software that includes MPL-2.0 licensed code, we must:
+1. Retain copyright notices (included in `node_modules/next/` directory)
+2. Retain license text (included in `node_modules/next/LICENSE`)
+3. Document which files are MPL-licensed (Next.js maintains this internally)
+4. Make MPL source code available (already public at https://github.com/vercel/next.js)
+5. Share modifications to MPL files (we don't modify Next.js source)
+
+**Compliance**: ✅ Satisfied by:
+- Including `node_modules` with LICENSE files in distributions
+- Using Next.js as-is via npm without modifying source files
+- Next.js source code is publicly available
+
+**Note**: MPL-2.0 does NOT require distributing our application's source code, only modifications to MPL-licensed files (which we don't make).
 
 ---
 
