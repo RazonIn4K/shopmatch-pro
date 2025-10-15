@@ -34,6 +34,7 @@
 # - Misconfiguration can expose sensitive data
 
 /firestore.rules                      @RazonIn4K
+/firestore.indexes.json               @RazonIn4K
 /src/lib/firebase/**                  @RazonIn4K
 /src/lib/contexts/AuthContext.tsx     @RazonIn4K
 /src/app/(auth)/**                    @RazonIn4K
