@@ -57,3 +57,9 @@ ngrok-*.zip
 !QUICK_START.md
 !DEPLOYMENT.md
 !MVP_IMPLEMENTATION_PLAN.md
+!CLAUDE.md
+!CONTRIBUTING.md
+
+# Include all documentation in docs/ directory
+!docs/**/*.md
+!docs/**/*.yml

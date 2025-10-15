@@ -1,0 +1,107 @@
+openapi: 3.0.3
+info:
+  title: ShopMatch Pro API
+  version: 0.1.0
+servers:
+  - url: https://localhost:3000
+paths:
+  /api/health:
+    get:
+      tags: [System]
+      summary: Health check
+      responses:
+        '200':
+          description: OK
+  /api/stripe/checkout:
+    post:
+      tags: [Stripe]
+      summary: Create checkout session
+      responses:
+        '200':
+          description: Created
+  /api/stripe/portal:
+    post:
+      tags: [Stripe]
+      summary: Create customer portal session
+      responses:
+        '200':
+          description: Created
+  /api/stripe/webhook:
+    post:
+      tags: [Stripe]
+      summary: Webhook endpoint (raw body signature verify)
+      responses:
+        '200':
+          description: OK
+  /api/jobs:
+    get:
+      tags: [Jobs]
+      summary: List jobs (owner filtered by claims)
+      responses:
+        '200':
+          description: OK
+    post:
+      tags: [Jobs]
+      summary: Create job (owner + active subscription)
+      responses:
+        '201':
+          description: Created
+  /api/jobs/{id}:
+    get:
+      tags: [Jobs]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: OK }
+    patch:
+      tags: [Jobs]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Updated }
+    delete:
+      tags: [Jobs]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '204': { description: Deleted }
+  /api/applications:
+    get:
+      tags: [Applications]
+      summary: List applications for owner
+      responses:
+        '200':
+          description: OK
+  /api/applications/{id}:
+    patch:
+      tags: [Applications]
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Updated }
+  /api/users/initialize-claims:
+    post:
+      tags: [Users]
+      summary: Initialize custom claims post-signup
+      responses:
+        '200': { description: OK }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+security:
+  - bearerAuth: []

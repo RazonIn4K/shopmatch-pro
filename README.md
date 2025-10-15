@@ -96,13 +96,39 @@ npm run create-user
 
 ## 📚 Documentation
 
+### Getting Started
+
 | Document | Description |
 |----------|-------------|
 | [QUICK_START.md](./QUICK_START.md) | 5-minute setup guide to get testing |
 | [PROJECT_STATUS.md](./PROJECT_STATUS.md) | Complete status report with metrics |
 | [MVP_IMPLEMENTATION_PLAN.md](./MVP_IMPLEMENTATION_PLAN.md) | Detailed feature breakdown |
 | [DEPLOYMENT.md](./DEPLOYMENT.md) | Production deployment guide |
-| [CLAUDE.md](./CLAUDE.md) | Development patterns and architecture |
+
+### AI-Powered Development
+
+| Document | Description |
+|----------|-------------|
+| [CLAUDE.md](./CLAUDE.md) | AI-powered development guide with persona prompts (PM, Tech Lead, QA, Security, Pair Programmer, Researcher) |
+| [CONTRIBUTING.md](./CONTRIBUTING.md) | How to contribute using AI personas and SHOOT→SKIN workflow |
+| [docs/](./docs/) | Complete technical documentation (Architecture, Security, Testing, APIs, Runbooks, ADRs) |
+
+**AI Workflow Quick Links**:
+- [Persona Prompts](./docs/PROMPT_PACK.md) - Copy-paste ready prompts for 6 AI personas
+- [Workflow Order](./docs/WORKFLOW_ORDER.md) - AIM → Plan → Build → Wrench → Gate → SKIN
+- [Playbook](./docs/PLAYBOOK_SHOPMATCH.md) - Standard Operating Procedures for each task
+- [Architecture Decisions](./docs/adr/) - ADRs explaining why we chose each technology
+- [Runbooks](./docs/runbooks/) - Operational procedures for common issues
+
+**Use Persona Prompts to Simulate a Full Team**:
+- 🎯 **Product Manager** - "Why this way?" business rationale and acceptance criteria
+- 🏗️ **Tech Lead** - "Build on existing" minimal architectural changes
+- 🧪 **QA Engineer** - Complete test plans across the test pyramid
+- 🔒 **Security Engineer** - Threat modeling and vulnerability analysis
+- 👥 **Pair Programmer** - Step-by-step implementation with code snippets
+- 🔬 **Researcher** - Technology landscape monitoring for Decision Matrix updates
+
+See [CLAUDE.md](./CLAUDE.md) for complete workflow documentation and copy-paste ready prompts.
 
 ## 🏗️ Project Structure
 
