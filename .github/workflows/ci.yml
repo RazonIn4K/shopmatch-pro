@@ -11,12 +11,20 @@ jobs:
     name: Validate Branch Name
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    
+
     steps:
     - name: Check branch naming convention
       run: |
         BRANCH_NAME="${{ github.head_ref }}"
+        AUTHOR="${{ github.actor }}"
         echo "Validating branch name: $BRANCH_NAME"
+        echo "PR author: $AUTHOR"
+
+        # Skip validation for Dependabot branches
+        if [[ "$BRANCH_NAME" =~ ^dependabot/ ]]; then
+          echo "✅ SKIPPED: Dependabot branch (auto-generated)"
+          exit 0
+        fi
 
         # Regex: type/ID-slug format (Conventional Commits aligned)
         # ID must have 3+ digits to avoid conflicts with simple numbers
