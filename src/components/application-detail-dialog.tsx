@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { toast } from 'sonner'
 
-import { auth } from '@/lib/firebase/client'
+import { useAuth } from '@/lib/contexts/AuthContext'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import {
@@ -60,6 +60,7 @@ export function ApplicationDetailDialog({
   onOpenChange,
   onStatusUpdated,
 }: ApplicationDetailDialogProps) {
+  const { user } = useAuth()
   const [notes, setNotes] = React.useState('')
   const [updating, setUpdating] = React.useState(false)
 
@@ -73,14 +74,13 @@ export function ApplicationDetailDialog({
 
     setUpdating(true)
     try {
-      // Get ID token from Firebase auth current user
-      const currentUser = auth.currentUser
-      if (!currentUser) {
+      // Get ID token from AuthContext user
+      if (!user) {
         toast.error('Authentication required')
         return
       }
 
-      const token = await currentUser.getIdToken()
+      const token = await user.getIdToken()
 
       const response = await fetch(`/api/applications/${application.id}`, {
         method: 'PATCH',
@@ -119,13 +119,12 @@ export function ApplicationDetailDialog({
     // Save notes with current status (no status change)
     setUpdating(true)
     try {
-      const currentUser = auth.currentUser
-      if (!currentUser) {
+      if (!user) {
         toast.error('Authentication required')
         return
       }
 
-      const token = await currentUser.getIdToken()
+      const token = await user.getIdToken()
 
       const response = await fetch(`/api/applications/${application.id}`, {
         method: 'PATCH',

@@ -45,5 +45,15 @@ ngrok
 ngrok-*.zip
 
 # Claude Code development files (not needed in repository)
-CLAUDE.md
 .playwright-mcp/
+
+# Markdown files - exclude development notes, keep essential docs
+# Ignore all .md files by default
+*.md
+
+# Essential documentation that should be committed
+!README.md
+!THIRD_PARTY_LICENSES.md
+!QUICK_START.md
+!DEPLOYMENT.md
+!MVP_IMPLEMENTATION_PLAN.md

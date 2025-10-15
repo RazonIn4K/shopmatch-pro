@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
 import { useAuth } from '@/lib/contexts/AuthContext'
-import { auth } from '@/lib/firebase/client'
 import { JobCard } from '@/components/job-card'
 import { ApplicationCard } from '@/components/application-card'
 import { ApplicationDetailDialog } from '@/components/application-detail-dialog'
@@ -45,14 +44,13 @@ export default function OwnerDashboardPage() {
     if (!user) return
 
     try {
-      // Get ID token from Firebase auth current user
-      const currentUser = auth.currentUser
-      if (!currentUser) {
+      // Get ID token from AuthContext user
+      if (!user) {
         toast.error('Authentication required')
         return
       }
 
-      const token = await currentUser.getIdToken()
+      const token = await user.getIdToken()
 
       // Fetch owner's jobs
       const jobsResponse = await fetch(`/api/jobs?ownerId=${user.uid}`, {
@@ -79,13 +77,12 @@ export default function OwnerDashboardPage() {
     if (!confirm('Are you sure you want to delete this job?')) return
 
     try {
-      const currentUser = auth.currentUser
-      if (!currentUser) {
+      if (!user) {
         toast.error('Authentication required')
         return
       }
 
-      const token = await currentUser.getIdToken()
+      const token = await user.getIdToken()
       const response = await fetch(`/api/jobs/${jobId}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },

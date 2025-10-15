@@ -22,6 +22,40 @@ import { getAuth } from 'firebase-admin/auth'
 import { getFirestore } from 'firebase-admin/firestore'
 
 /**
+ * Validate Firebase Admin environment variables
+ *
+ * Ensures all required Firebase Admin configuration is present.
+ * Provides clear error messages for missing configuration.
+ */
+function validateFirebaseAdminConfig(): void {
+  const missing: string[] = []
+
+  if (!process.env.FIREBASE_PROJECT_ID) {
+    missing.push('FIREBASE_PROJECT_ID')
+  }
+  if (!process.env.FIREBASE_CLIENT_EMAIL) {
+    missing.push('FIREBASE_CLIENT_EMAIL')
+  }
+  if (!process.env.FIREBASE_PRIVATE_KEY) {
+    missing.push('FIREBASE_PRIVATE_KEY')
+  }
+
+  if (missing.length > 0) {
+    throw new Error(
+      `Missing required Firebase Admin environment variables: ${missing.join(', ')}.\n` +
+      'Please check your .env.local file and ensure all Firebase Admin credentials are set.\n' +
+      'Run "npm run validate-env" for detailed validation.\n' +
+      'See CLAUDE.md for Firebase Admin setup instructions.'
+    )
+  }
+}
+
+// Validate configuration on module import (server-side only)
+if (typeof window === 'undefined') {
+  validateFirebaseAdminConfig()
+}
+
+/**
  * Firebase Admin SDK configuration using service account credentials
  *
  * This approach uses service account credentials from environment variables,
@@ -34,26 +68,15 @@ import { getFirestore } from 'firebase-admin/firestore'
  * - No dependency on gcloud CLI or user authentication
  * - Perfect for development and testing workflows
  */
-let app: App
-try {
-  app = getApps().length === 0 ? initializeApp({
-    credential: cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      // Handle both escaped newlines (\n as string) and actual newlines
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    }),
-    projectId: process.env.FIREBASE_PROJECT_ID,
-  }) : getApps()[0]!
-} catch (error) {
-  // During build time or if credentials are invalid, create a placeholder
-  // This allows the build to succeed while still failing at runtime if credentials are truly missing
-  console.warn('Firebase Admin initialization warning:', error instanceof Error ? error.message : 'Unknown error')
-  console.warn('Firebase Admin will attempt to initialize on first use')
-  app = getApps().length > 0 ? getApps()[0]! : initializeApp({
-    projectId: process.env.FIREBASE_PROJECT_ID || 'placeholder-project',
-  })
-}
+const app: App = getApps().length === 0 ? initializeApp({
+  credential: cert({
+    projectId: process.env.FIREBASE_PROJECT_ID!,
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL!,
+    // Handle both escaped newlines (\n as string) and actual newlines
+    privateKey: process.env.FIREBASE_PRIVATE_KEY!.replace(/\\n/g, '\n'),
+  }),
+  projectId: process.env.FIREBASE_PROJECT_ID!,
+}) : getApps()[0]!
 
 /**
  * Firebase Admin Authentication service instance

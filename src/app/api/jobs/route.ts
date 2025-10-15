@@ -50,6 +50,14 @@ export async function GET(request: Request) {
 
     // For public listing, only show published jobs unless ownerId filter is present
     if (filters.ownerId) {
+      // Require authentication for owner-specific filtering
+      const auth = await verifyAuth(request)
+
+      // Verify authenticated user matches requested ownerId
+      if (auth.uid !== filters.ownerId) {
+        throw new ApiError('Unauthorized: cannot filter by another user\'s jobs', 403)
+      }
+
       query = query.where('ownerId', '==', filters.ownerId)
     } else {
       query = query.where('status', '==', 'published')
@@ -80,16 +88,30 @@ export async function GET(request: Request) {
 
     const snapshot = await query.get()
 
-    // Get total count for pagination (expensive, consider caching)
+    // Get total count for pagination (must mirror all filters applied to main query)
     let totalQuery: FirebaseFirestore.Query = jobsRef
+    
+    // Apply the same filters as the main query
     if (filters.ownerId) {
       totalQuery = totalQuery.where('ownerId', '==', filters.ownerId)
     } else {
       totalQuery = totalQuery.where('status', '==', 'published')
     }
-    const countSnapshot = await totalQuery.count().get()
-    const total = countSnapshot.data().count
-
+    
+    // Apply additional filters to count query (must match main query)
+    if (filters.status && filters.ownerId) {
+      totalQuery = totalQuery.where('status', '==', filters.status)
+    }
+    if (filters.type) {
+      totalQuery = totalQuery.where('type', '==', filters.type)
+    }
+    if (filters.remote !== undefined) {
+      totalQuery = totalQuery.where('remote', '==', filters.remote)
+    }
+    if (filters.experience) {
+      totalQuery = totalQuery.where('experience', '==', filters.experience)
+    }
+    
     const jobs: Job[] = snapshot.docs.map((doc) => ({
       id: doc.id,
       ...doc.data(),
@@ -100,13 +122,37 @@ export async function GET(request: Request) {
       expiresAt: doc.data().expiresAt?.toDate?.() ?? doc.data().expiresAt,
     })) as Job[]
 
-    // Client-side location filter if needed
+    // Handle location filter and count
     let filteredJobs = jobs
+    let filteredTotal: number
+
     if (filters.location) {
+      // For location filtering, we need to fetch all matching jobs to get accurate count
+      // since Firestore doesn't support text search on location field
       const locationLower = filters.location.toLowerCase()
+
+      // Fetch all jobs matching base filters (select only location field for efficiency)
+      const allJobsSnapshot = await totalQuery
+        .orderBy('createdAt', 'desc')
+        .select('location')
+        .get()
+
+      // Count jobs matching location filter
+      const locationMatchCount = allJobsSnapshot.docs.filter((doc) => {
+        const location = doc.data().location
+        return location && location.toLowerCase().includes(locationLower)
+      }).length
+
+      // Filter current page results by location
       filteredJobs = jobs.filter((job) =>
         job.location.toLowerCase().includes(locationLower)
       )
+
+      filteredTotal = locationMatchCount
+    } else {
+      // No location filter - use standard count query
+      const countSnapshot = await totalQuery.count().get()
+      filteredTotal = countSnapshot.data().count
     }
 
     return NextResponse.json({
@@ -114,8 +160,8 @@ export async function GET(request: Request) {
       pagination: {
         page: filters.page,
         limit: filters.limit,
-        total,
-        pages: Math.ceil(total / filters.limit),
+        total: filteredTotal,
+        pages: Math.ceil(filteredTotal / filters.limit),
       },
     })
   } catch (error) {

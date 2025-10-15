@@ -15,6 +15,39 @@
 import { Stripe } from 'stripe'
 
 /**
+ * Validate Stripe environment variables
+ *
+ * Ensures all required Stripe configuration is present before initializing.
+ * Provides clear error messages for missing configuration.
+ */
+function validateStripeConfig(): void {
+  const missing: string[] = []
+
+  if (!process.env.STRIPE_SECRET_KEY) {
+    missing.push('STRIPE_SECRET_KEY')
+  }
+  if (!process.env.STRIPE_PRICE_ID_PRO) {
+    missing.push('STRIPE_PRICE_ID_PRO')
+  }
+  if (!process.env.STRIPE_WEBHOOK_SECRET) {
+    missing.push('STRIPE_WEBHOOK_SECRET')
+  }
+
+  if (missing.length > 0) {
+    throw new Error(
+      `Missing required Stripe environment variables: ${missing.join(', ')}.\n` +
+      'Please check your .env.local file and ensure all Stripe configuration is set.\n' +
+      'Run "npm run validate-env" for detailed validation.'
+    )
+  }
+}
+
+// Validate configuration on module import (server-side only)
+if (typeof window === 'undefined') {
+  validateStripeConfig()
+}
+
+/**
  * Stripe client instance for server-side operations
  *
  * Initialized with:

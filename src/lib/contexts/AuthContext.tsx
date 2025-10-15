@@ -175,6 +175,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Create user document in Firestore
       await createUserDocument(userCredential.user, role, displayName)
 
+      // Initialize custom claims on the server
+      const token = await userCredential.user.getIdToken()
+      await fetch('/api/users/initialize-claims', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          role: role,
+        }),
+      })
+
     } catch (error: unknown) {
       console.error('Signup error:', error)
       setError(getAuthErrorMessage(error instanceof Error && 'code' in error ? (error as { code: string }).code : ''))
@@ -224,6 +237,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Create user document if this is a new user
       if (user.displayName && user.email) {
         await createUserDocument(user, 'seeker', user.displayName) // Default to seeker for Google auth
+
+        // Initialize custom claims on the server
+        const token = await user.getIdToken()
+        await fetch('/api/users/initialize-claims', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            role: 'seeker',
+          }),
+        })
       }
 
     } catch (error: unknown) {
@@ -312,13 +338,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
           if (userDocSnap.exists()) {
             const userData = userDocSnap.data()
-            // Merge Firebase Auth user with Firestore data
-            const appUser: AppUser = {
-              ...firebaseUser,
+            // Preserve Firebase User prototype (maintains methods like getIdToken)
+            // while merging with Firestore data
+            const appUser = Object.assign(
+              Object.create(Object.getPrototypeOf(firebaseUser)),
+              firebaseUser
+            ) as AppUser
+            // Add Firestore properties
+            Object.assign(appUser, {
               role: userData.role,
               displayName: userData.displayName || firebaseUser.displayName,
               email: userData.email || firebaseUser.email,
-            }
+            })
             setUser(appUser)
           } else {
             // Fallback to Firebase Auth data if no Firestore document

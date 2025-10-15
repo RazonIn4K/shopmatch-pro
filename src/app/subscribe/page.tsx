@@ -116,31 +116,13 @@ function SubscribePageContent() {
   }
 
   /**
-   * Redirect authenticated users to dashboard
-   * (they should manage subscription through customer portal)
+   * Note: We intentionally allow authenticated users to access this page
+   * so they can subscribe after signing up. Users with active subscriptions
+   * can still access the customer portal through their dashboard.
    */
-  if (user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-        <Card className="w-full max-w-md">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Already Signed In</CardTitle>
-            <CardDescription>
-              You&apos;re already signed in. Visit your dashboard to manage your subscription.
-            </CardDescription>
-          </CardHeader>
-          <CardFooter>
-            <Button onClick={() => router.push('/dashboard')} className="w-full">
-              Go to Dashboard
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
-    )
-  }
 
   /**
-   * Main subscription interface for non-authenticated users
+   * Main subscription interface
    */
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
@@ -153,6 +135,11 @@ function SubscribePageContent() {
           <p className="text-xl text-gray-600 dark:text-gray-300">
             Get started with ShopMatch Pro and unlock powerful job posting features
           </p>
+          {user && (
+            <p className="mt-2 text-sm text-muted-foreground">
+              Signed in as {user.email}
+            </p>
+          )}
         </div>
 
         {/* Pricing Cards */}
@@ -256,14 +243,16 @@ function SubscribePageContent() {
         </div>
 
         {/* Call to Action */}
-        <div className="text-center mt-12">
-          <p className="text-gray-600 dark:text-gray-300 mb-4">
-            Already have an account?
-          </p>
-          <Button variant="outline" onClick={() => router.push('/login')}>
-            Sign In
-          </Button>
-        </div>
+        {!user && (
+          <div className="text-center mt-12">
+            <p className="text-gray-600 dark:text-gray-300 mb-4">
+              Already have an account?
+            </p>
+            <Button variant="outline" onClick={() => router.push('/login')}>
+              Sign In
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   )

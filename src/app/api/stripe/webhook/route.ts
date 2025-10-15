@@ -169,8 +169,13 @@ async function handleSubscriptionUpdate(subscription: { customer: string; id: st
     const userDoc = query.docs[0]
     const userId = userDoc.id
 
-    // Update custom claims to enable job posting access
+    // Get existing user record to preserve existing custom claims (e.g., role)
+    const userRecord = await adminAuth.getUser(userId)
+    const existingClaims = userRecord.customClaims || {}
+
+    // Merge new subscription claims with existing claims
     await adminAuth.setCustomUserClaims(userId, {
+      ...existingClaims,
       subActive: true,
       stripeCustomerId: customerId,
       subscriptionId: subscription.id,
@@ -217,8 +222,13 @@ async function handleSubscriptionCancellation(subscription: { customer: string }
     const userDoc = query.docs[0]
     const userId = userDoc.id
 
-    // Remove subscription access from custom claims
+    // Get existing user record to preserve existing custom claims (e.g., role)
+    const userRecord = await adminAuth.getUser(userId)
+    const existingClaims = userRecord.customClaims || {}
+
+    // Merge updated subscription claims with existing claims
     await adminAuth.setCustomUserClaims(userId, {
+      ...existingClaims,
       subActive: false,
       subscriptionId: null,
       updatedAt: new Date().toISOString(),
