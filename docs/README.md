@@ -14,6 +14,9 @@
 - [ANALYTICS_SCHEMA.md](ANALYTICS_SCHEMA.md) — PM event taxonomy + schema
 - [FIRESTORE_RULES_SPEC.md](FIRESTORE_RULES_SPEC.md) — rules spec + emulator tests
 - [AI_TOOLING_SETUP.md](AI_TOOLING_SETUP.md) — Complete AI configuration (Claude, Copilot, CI gates)
+- [GITHUB_SETUP_GUIDE.md](GITHUB_SETUP_GUIDE.md) — Complete repository setup (rulesets, security, code owners)
+- [ENVIRONMENT_VARIABLES.md](ENVIRONMENT_VARIABLES.md) — Complete environment variable reference
+- [VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md) — Smoke and full test procedures
 
 ## Governance
 - [adr/0001-payments-stripe.md](adr/0001-payments-stripe.md)
@@ -30,6 +33,12 @@
 - [PLAYBOOK_SHOPMATCH.md](PLAYBOOK_SHOPMATCH.md) — SOP for each task (SHOOT → SKIN)
 - [../CONTRIBUTING.md](../CONTRIBUTING.md) — How to contribute using AI personas
 - [../.github/pull_request_template.md](../.github/pull_request_template.md) — PR template with evidence requirements
+
+## GitHub Configuration
+- [../.github/SETTINGS_QUICK_START.md](../.github/SETTINGS_QUICK_START.md) — 10-minute GitHub settings setup
+- [../.github/CODEOWNERS](../.github/CODEOWNERS) — Code ownership matrix for auto-review requests
+- [../.github/copilot-instructions.md](../.github/copilot-instructions.md) — GitHub Copilot review standards
+- [../.github/dependabot.yml](../.github/dependabot.yml) — Automated dependency updates
 
 ## GitHub Templates
 - [../.github/ISSUE_TEMPLATE/bug_report.md](../.github/ISSUE_TEMPLATE/bug_report.md) — Bug report template
