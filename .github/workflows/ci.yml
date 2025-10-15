@@ -180,49 +180,6 @@ jobs:
         STRIPE_WEBHOOK_SECRET: whsec_ci_mock_secret
         STRIPE_PRICE_ID_PRO: price_ci_mock_id
 
-    - name: Create accessibility test file
-      run: |
-        mkdir -p e2e
-        cat > e2e/accessibility.spec.ts << 'EOL'
-        import { test, expect } from '@playwright/test'
-        import AxeBuilder from '@axe-core/playwright'
-
-        test.describe('Accessibility Tests', () => {
-          test('homepage accessibility', async ({ page }) => {
-            await page.goto('http://localhost:3000')
-            const results = await new AxeBuilder({ page }).analyze()
-
-            expect(results.violations).toEqual([])
-
-            if (results.violations.length > 0) {
-              console.error('Accessibility violations found:')
-              results.violations.forEach(violation => {
-                console.error(`- ${violation.id}: ${violation.description}`)
-                console.error(`  Impact: ${violation.impact}`)
-                console.error(`  Affected elements: ${violation.nodes.length}`)
-              })
-            }
-          })
-
-          test('dashboard accessibility (unauthenticated)', async ({ page }) => {
-            await page.goto('http://localhost:3000/dashboard')
-            const results = await new AxeBuilder({ page }).analyze()
-
-            expect(results.violations).toEqual([])
-          })
-
-          test('subscribe page accessibility', async ({ page }) => {
-            await page.goto('http://localhost:3000/subscribe')
-            const results = await new AxeBuilder({ page }).analyze()
-
-            expect(results.violations).toEqual([])
-          })
-        })
-        EOL
-
-    - name: Install axe-core
-      run: npm install --save-dev @axe-core/playwright
-
     - name: Start Next.js server
       run: npm start &
       env:
@@ -244,7 +201,7 @@ jobs:
       run: npx wait-on http://localhost:3000 --timeout 60000
 
     - name: Run accessibility tests
-      run: npx playwright test e2e/accessibility.spec.ts
+      run: npm run test:a11y
 
     - name: Upload accessibility results
       if: always()
