@@ -63,3 +63,6 @@ ngrok-*.zip
 # Include all documentation in docs/ directory
 !docs/**/*.md
 !docs/**/*.yml
+
+# Include all GitHub templates
+!.github/**/*.md
