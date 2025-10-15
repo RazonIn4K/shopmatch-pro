@@ -66,3 +66,4 @@ ngrok-*.zip
 
 # Include all GitHub templates
 !.github/**/*.md
+.idea/
