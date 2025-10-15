@@ -1,0 +1,125 @@
+# CODEOWNERS
+#
+# This file defines code ownership for critical paths in ShopMatch Pro.
+# When a PR touches these paths, the listed owners are automatically requested for review.
+#
+# Docs: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+#
+# Format: <path-pattern> <@github-username> [<@github-username> ...]
+#
+# IMPORTANT: After adding this file, enable "Require review from Code Owners"
+# in repository Settings → Branches → Branch protection rules or Rulesets.
+
+# ============================================================================
+# PAYMENT & SUBSCRIPTION INFRASTRUCTURE
+# ============================================================================
+# All Stripe integration code requires review due to:
+# - PCI compliance requirements
+# - Webhook signature verification criticality
+# - Subscription state management complexity
+# - Risk of payment processing errors
+
+/src/app/api/stripe/**                @RazonIn4K
+/src/lib/stripe/**                    @RazonIn4K
+/docs/runbooks/STRIPE_WEBHOOK_RUNBOOK.md  @RazonIn4K
+/docs/adr/0001-payments-stripe.md     @RazonIn4K
+
+# ============================================================================
+# AUTHENTICATION & AUTHORIZATION
+# ============================================================================
+# Firebase Auth and Firestore security rules are critical paths:
+# - Custom claims control subscription access
+# - Security rules enforce role-based access control
+# - Admin SDK operations bypass client-side rules
+# - Misconfiguration can expose sensitive data
+
+/firestore.rules                      @RazonIn4K
+/src/lib/firebase/**                  @RazonIn4K
+/src/lib/contexts/AuthContext.tsx     @RazonIn4K
+/src/app/(auth)/**                    @RazonIn4K
+/docs/adr/0002-auth-firestore.md      @RazonIn4K
+/docs/FIRESTORE_RULES_SPEC.md         @RazonIn4K
+
+# ============================================================================
+# API ROUTES & SERVER-SIDE LOGIC
+# ============================================================================
+# Server routes handle authentication, authorization, and business logic.
+# Require review for:
+# - Input validation and sanitization
+# - Rate limiting implementation
+# - Error handling without information leakage
+# - Proper use of Firebase Admin SDK
+
+/src/app/api/**                       @RazonIn4K
+
+# ============================================================================
+# CI/CD & BUILD CONFIGURATION
+# ============================================================================
+# Changes to CI/CD can bypass quality gates or introduce security issues.
+# Require review for:
+# - GitHub Actions workflow modifications
+# - Quality gate threshold changes
+# - Security scanning configuration
+# - Deployment process changes
+
+/.github/workflows/**                 @RazonIn4K
+/.github/copilot-instructions.md      @RazonIn4K
+/.github/CODEOWNERS                   @RazonIn4K
+/scripts/ci/**                        @RazonIn4K
+/lighthouse-budgets.json              @RazonIn4K
+/lighthouserc.json                    @RazonIn4K
+
+# ============================================================================
+# OBSERVABILITY & ANALYTICS
+# ============================================================================
+# Analytics events and observability configuration affect:
+# - Product analytics accuracy
+# - Error tracking and debugging
+# - Performance monitoring
+# - User behavior insights
+
+/src/app/api/analytics/**             @RazonIn4K
+/docs/OBSERVABILITY.md                @RazonIn4K
+/docs/ANALYTICS_SCHEMA.md             @RazonIn4K
+
+# ============================================================================
+# SECURITY & COMPLIANCE DOCUMENTATION
+# ============================================================================
+# Security documentation requires review to ensure:
+# - Threat models remain current
+# - Security controls are documented accurately
+# - Incident response procedures are up-to-date
+# - Compliance requirements are maintained
+
+/docs/SECURITY.md                     @RazonIn4K
+/docs/INCIDENT_RESPONSE.md            @RazonIn4K
+/THIRD_PARTY_LICENSES.md              @RazonIn4K
+/.fossa.yml                           @RazonIn4K
+
+# ============================================================================
+# CORE CONFIGURATION FILES
+# ============================================================================
+# Configuration files can affect security, performance, and functionality.
+
+/package.json                         @RazonIn4K
+/package-lock.json                    @RazonIn4K
+/tsconfig.json                        @RazonIn4K
+/next.config.ts                       @RazonIn4K
+/.env.local.template                  @RazonIn4K
+/.gitignore                           @RazonIn4K
+
+# ============================================================================
+# ARCHITECTURE DECISION RECORDS
+# ============================================================================
+# ADRs document key technical decisions and their rationale.
+# Changes require review to maintain decision history integrity.
+
+/docs/adr/**                          @RazonIn4K
+
+# ============================================================================
+# DEFAULT OWNER (FALLBACK)
+# ============================================================================
+# This line should be last. It defines the default owner for any files
+# not explicitly covered by rules above.
+
+*                                     @RazonIn4K

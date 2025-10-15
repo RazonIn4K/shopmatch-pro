@@ -1,0 +1,150 @@
+# Dependabot Configuration for ShopMatch Pro
+#
+# Automates dependency updates across three dimensions:
+# 1. Security updates - Critical vulnerabilities patched immediately
+# 2. Version updates - Keep dependencies current with controlled cadence
+# 3. GitHub Actions - Keep CI/CD workflows secure and up-to-date
+#
+# Docs: https://docs.github.com/en/code-security/supply-chain-security/keeping-your-dependencies-updated-automatically/configuration-options-for-dependency-updates
+
+version: 2
+updates:
+  # ============================================================================
+  # NPM DEPENDENCIES (package.json)
+  # ============================================================================
+  # Check for security and version updates daily
+  # Groups updates by type to reduce PR noise
+
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "03:00"  # 3 AM UTC (off-peak hours)
+    open-pull-requests-limit: 10
+
+    # Commit message configuration (follows Conventional Commits)
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps(dev)"
+      include: "scope"
+
+    # Label PRs for easy filtering
+    labels:
+      - "dependencies"
+      - "automated"
+
+    # Group patch and minor updates to reduce PR volume
+    groups:
+      # Group all production dependencies together
+      production-dependencies:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "@types/*"
+          - "eslint*"
+          - "prettier"
+          - "playwright"
+        update-types:
+          - "patch"
+          - "minor"
+
+      # Group TypeScript type definitions
+      types:
+        patterns:
+          - "@types/*"
+        update-types:
+          - "patch"
+          - "minor"
+
+      # Group development tooling
+      development-tools:
+        patterns:
+          - "eslint*"
+          - "prettier"
+          - "@typescript-eslint/*"
+        update-types:
+          - "patch"
+          - "minor"
+
+    # Always create individual PRs for major version updates
+    # (require manual review due to potential breaking changes)
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
+
+    # Security updates configuration
+    # CRITICAL: Security updates bypass version update grouping
+    # and always create individual PRs for immediate attention
+    versioning-strategy: increase
+
+  # ============================================================================
+  # GITHUB ACTIONS WORKFLOWS (.github/workflows/*.yml)
+  # ============================================================================
+  # Keep CI/CD secure by updating action versions weekly
+  # Actions use SHA pinning for security (e.g., actions/checkout@v4 → actions/checkout@sha)
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "03:00"  # 3 AM UTC Monday
+    open-pull-requests-limit: 5
+
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+
+    labels:
+      - "ci"
+      - "automated"
+      - "security"
+
+    # Group all GitHub Actions updates together
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+        update-types:
+          - "patch"
+          - "minor"
+
+# ============================================================================
+# DEPENDABOT CONFIGURATION NOTES
+# ============================================================================
+#
+# **Security Updates (Automatic)**:
+# - Dependabot Security Updates run automatically when vulnerabilities are detected
+# - These bypass the schedule and create PRs immediately
+# - Enable in: Settings → Security → Dependabot alerts → Enable security updates
+#
+# **Version Updates (Scheduled)**:
+# - This file controls version update frequency and grouping
+# - NPM: Daily checks for patch/minor updates (grouped)
+# - NPM: Major updates ignored (require manual decision)
+# - GitHub Actions: Weekly checks (grouped)
+#
+# **Pull Request Volume Management**:
+# - open-pull-requests-limit prevents Dependabot from overwhelming the PR queue
+# - Grouped updates reduce noise (multiple deps in one PR)
+# - Major version updates excluded from automation (breaking changes)
+#
+# **Commit Message Format**:
+# - Follows Conventional Commits standard
+# - Examples:
+#   - deps: update next from 15.0.0 to 15.0.1
+#   - deps(dev): update @types/node from 20.0.0 to 20.1.0
+#   - ci: update actions/checkout from v3 to v4
+#
+# **Next Steps**:
+# 1. Enable Dependabot Alerts: Settings → Security → Dependabot alerts
+# 2. Enable Security Updates: Settings → Security → Dependabot security updates
+# 3. Review and merge initial batch of PRs
+# 4. Set up branch protection to require CI checks on Dependabot PRs
+#
+# **Maintenance**:
+# - Review ignored dependencies quarterly (check for major version adoption)
+# - Adjust grouping if too many/too few PRs are created
+# - Monitor Dependabot dashboard for stuck PRs or conflicts
+#
+# ============================================================================

@@ -13,6 +13,7 @@
 - [OBSERVABILITY.md](OBSERVABILITY.md) — events, logs, metrics, dashboards
 - [ANALYTICS_SCHEMA.md](ANALYTICS_SCHEMA.md) — PM event taxonomy + schema
 - [FIRESTORE_RULES_SPEC.md](FIRESTORE_RULES_SPEC.md) — rules spec + emulator tests
+- [AI_TOOLING_SETUP.md](AI_TOOLING_SETUP.md) — Complete AI configuration (Claude, Copilot, CI gates)
 
 ## Governance
 - [adr/0001-payments-stripe.md](adr/0001-payments-stripe.md)

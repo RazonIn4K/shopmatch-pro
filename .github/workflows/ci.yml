@@ -7,6 +7,46 @@ on:
     branches: [ main ]
 
 jobs:
+  validate-branch:
+    name: Validate Branch Name
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - name: Check branch naming convention
+      run: |
+        BRANCH_NAME="${{ github.head_ref }}"
+        echo "Validating branch name: $BRANCH_NAME"
+
+        # Regex: type/ID-slug format (Conventional Commits aligned)
+        # ID must have 3+ digits to avoid conflicts with simple numbers
+        # Examples: feat/UI-001-dashboard, fix/MP-127-auth-bug, sec/SEC-015-webhook-validation
+        PATTERN="^(feat|fix|perf|sec|docs|test|refactor|ci|build)\/[A-Z]+-[0-9]{3,}-[a-z0-9-]+$"
+
+        if [[ ! "$BRANCH_NAME" =~ $PATTERN ]]; then
+          echo "❌ FAILED: Branch name does not match required format"
+          echo ""
+          echo "Expected format: type/ID-slug"
+          echo "  - type: feat|fix|perf|sec|docs|test|refactor|ci|build"
+          echo "  - ID: Uppercase letters + hyphen + 3+ digits (e.g., UI-001, MP-127)"
+          echo "  - slug: Lowercase with hyphens (e.g., dashboard-layout)"
+          echo ""
+          echo "Valid examples:"
+          echo "  ✓ feat/UI-001-dashboard-layout"
+          echo "  ✓ fix/MP-127-auth-redirect-bug"
+          echo "  ✓ perf/PERF-042-bundle-optimization"
+          echo "  ✓ sec/SEC-015-stripe-webhook-validation"
+          echo ""
+          echo "Your branch: $BRANCH_NAME"
+          echo ""
+          echo "See: docs/CONTRIBUTING.md for branch naming guidelines"
+          echo "To fix: git branch -m NEW_BRANCH_NAME && git push origin -u NEW_BRANCH_NAME"
+          exit 1
+        fi
+
+        echo "✅ PASSED: Branch name follows convention"
+        echo "Branch: $BRANCH_NAME"
+
   build:
     name: Build and Test
     runs-on: ubuntu-latest
