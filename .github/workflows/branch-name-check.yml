@@ -1,0 +1,31 @@
+name: Branch name check
+
+on:
+  pull_request:
+      types: [opened, reopened, synchronize]
+
+      jobs:
+        check-branch-name:
+            runs-on: ubuntu-latest
+                steps:
+                      - name: Validate branch name format
+                              run: |
+                                        BRANCH="${{ github.head_ref }}"
+                                                  PATTERN="^(feat|fix|perf|sec|docs|test|refactor|ci|build)/[A-Z]+-[0-9]{2,4}-[a-z0-9-]+$"
+
+                                                                      if [[ ! "$BRANCH" =~ $PATTERN ]]; then
+                                                                                  echo "❌ Branch '$BRANCH' does not match required pattern."
+                                                                                              echo ""
+                                                                                                          echo "Required format: type/<ID>-<slug>"
+                                                                                                                      echo "  type: feat | fix | perf | sec | docs | test | refactor | ci | build"
+                                                                                                                                  echo "  <ID>: UPPERCASE work item (e.g., UI-001, ARCH-001, SEC-001)"
+                                                                                                                                              echo "  <slug>: short-kebab-case summary"
+                                                                                                                                                          echo ""
+                                                                                                                                                                      echo "Examples:"
+                                                                                                                                                                                  echo "  ✓ feat/UI-001-perf-dashboard-entry"
+                                                                                                                                                                                              echo "  ✓ sec/SEC-001-rate-limit-analytics"
+                                                                                                                                                                                                          echo "  ✓ perf/PERF-001-first-load-split"
+                                                                                                                                                                                                                      exit 1
+                                                                                                                                                                                                                                fi
+                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                    echo "✅ Branch '$BRANCH' matches required pattern."
