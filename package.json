@@ -9,7 +9,12 @@
     "start": "next start",
     "lint": "eslint",
     "validate-env": "node scripts/validate-env.js",
-    "create-user": "node scripts/create-user.js"
+    "create-user": "node scripts/create-user.js",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:a11y": "playwright test e2e/accessibility.spec.ts",
+    "test:e2e:debug": "playwright test --debug"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",
@@ -36,7 +41,9 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.48.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^24.7.2",
     "@types/react": "^19",
@@ -44,6 +51,7 @@
     "eslint": "^9",
     "eslint-config-next": "^15.5.5",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wait-on": "^8.0.1"
   }
 }
