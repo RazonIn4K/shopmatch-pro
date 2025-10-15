@@ -210,6 +210,109 @@ docs/
 
 ---
 
+## ⚙️ GitHub Repository Configuration (Manual Required)
+
+**Status**: ⚠️ **Manual Configuration Required**
+
+While all configuration files are in place, GitHub repository settings must be configured via the web UI. These settings cannot be automated through code or configuration files.
+
+### Required Manual Steps
+
+The following GitHub features require manual enablement through the repository Settings page:
+
+#### 1. Branch Protection Ruleset
+
+**Purpose**: Enforce branch naming conventions, commit message format, and PR title standards.
+
+**Configuration Required**:
+- Navigate to: `Settings → Rules → Rulesets → New ruleset`
+- Apply regex patterns for branch naming, commit messages, PR titles
+- Add required status checks from CI workflow
+
+**Documentation**: See [GITHUB_GUI_SETUP_CHECKLIST.md](./GITHUB_GUI_SETUP_CHECKLIST.md) for complete step-by-step instructions.
+
+**Quick Reference**: See [RULESET_QUICK_REFERENCE.md](./RULESET_QUICK_REFERENCE.md) for copy-paste ready values.
+
+**Time Estimate**: ~15 minutes
+
+#### 2. GitHub Security Features
+
+**Purpose**: Automated vulnerability scanning and dependency updates.
+
+**Features to Enable**:
+- **CodeQL Analysis**: `Settings → Security → Code security and analysis → CodeQL analysis → Enable`
+- **Dependabot Alerts**: `Settings → Security → Dependabot alerts → Enable`
+- **Dependabot Security Updates**: `Settings → Security → Dependabot security updates → Enable`
+- **Secret Scanning**: `Settings → Security → Secret scanning → Enable`
+- **Push Protection**: `Settings → Security → Push protection → Enable`
+
+**Note**: `.github/dependabot.yml` is already configured, but Dependabot must be enabled via Settings.
+
+**Time Estimate**: ~5 minutes
+
+#### 3. GitHub Copilot Code Review
+
+**Purpose**: Automatic PR reviews using custom instructions from `.github/copilot-instructions.md`.
+
+**Configuration Required**:
+- Navigate to: `Settings → Code security and analysis → GitHub Copilot`
+- Enable "Code review"
+- Select "Automatic" review mode
+
+**Note**: Requires GitHub Copilot Enterprise subscription. If unavailable, Copilot instructions still serve as manual review guidelines.
+
+**Time Estimate**: ~2 minutes
+
+#### 4. Code Owners Protection
+
+**Purpose**: Require review from designated code owners for critical paths.
+
+**Configuration Required**:
+- Navigate to: `Settings → Rules → Rulesets` (or Branch protection rules)
+- Enable "Require review from Code Owners"
+- Set minimum number of required approvals (recommend: 1)
+
+**Note**: `.github/CODEOWNERS` file is already configured with path assignments.
+
+**Time Estimate**: ~3 minutes
+
+### Verification Procedures
+
+After completing manual configuration, verify setup is working:
+
+```bash
+# 1. Test branch naming validation
+git checkout -b invalid-branch-name
+git push origin invalid-branch-name
+# Expected: Blocked by ruleset OR CI job fails
+
+# 2. Test Dependabot
+# Check: Settings → Security → Dependabot
+# Expected: See scan results or scheduled run time
+
+# 3. Test Copilot review
+# Create a PR and check for automatic Copilot review comment
+# Expected: Review appears within 2-3 minutes
+
+# 4. Test CODEOWNERS
+# Create PR modifying .github/workflows/ci.yml
+# Expected: @RazonIn4K auto-requested as reviewer
+```
+
+**Complete Verification**: See [VERIFICATION_CHECKLIST.md](./VERIFICATION_CHECKLIST.md) for comprehensive testing procedures.
+
+### Why Manual Configuration Is Required
+
+GitHub repository settings are stored in GitHub's internal database and cannot be version-controlled or automated via code. This is by design for security reasons:
+
+- **Branch protection**: Prevents malicious commits from removing protections
+- **Security settings**: Ensures critical security features can't be disabled by code
+- **Access control**: Maintains separation between code and repository administration
+
+**Best Practice**: Document all manual settings in [REPOSITORY_GUARDRAILS.md](./REPOSITORY_GUARDRAILS.md) and [GITHUB_GUI_SETUP_CHECKLIST.md](./GITHUB_GUI_SETUP_CHECKLIST.md) to ensure reproducibility when setting up new repositories or onboarding team members.
+
+---
+
 ## 🔄 Optional/Future AI Tool Configurations
 
 ### **Jules** (AI Coding Assistant)
