@@ -36,6 +36,8 @@
 // Load environment variables from .env.local
 require('dotenv').config({ path: '.env.local' })
 
+const { URL } = require('url')
+
 const requiredEnvVars = {
   // Firebase Client Configuration (Browser-safe variables)
   'NEXT_PUBLIC_FIREBASE_API_KEY': 'Firebase API Key (Public)',
@@ -73,8 +75,16 @@ Object.entries(requiredEnvVars).forEach(([key, description]) => {
 })
 
 // Validate Firebase configuration format
-if (process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN && !process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN.includes('.firebaseapp.com')) {
-  warnings.push('⚠️  Firebase Auth Domain should end with .firebaseapp.com')
+if (process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN) {
+  try {
+    // Parse as URL to properly validate hostname (security: prevent substring bypass)
+    const authDomainUrl = new URL(`https://${process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN}`)
+    if (!authDomainUrl.hostname.endsWith('.firebaseapp.com')) {
+      warnings.push('⚠️  Firebase Auth Domain should end with .firebaseapp.com')
+    }
+  } catch (e) {
+    warnings.push('⚠️  Firebase Auth Domain is not a valid domain/hostname')
+  }
 }
 
 if (process.env.NEXT_PUBLIC_APP_URL && process.env.NEXT_PUBLIC_APP_URL === 'http://localhost:3000' && process.env.NODE_ENV === 'production') {
