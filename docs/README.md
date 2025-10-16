@@ -5,6 +5,7 @@
 **Project:** shopmatch-pro · **S-Tier:** S2 (Standardized) · **Updated:** 2025-10-15
 
 ## Core
+- [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) — **Phased project plan with progress tracking** 🆕
 - [ARCHITECTURE.md](ARCHITECTURE.md) — diagrams, data flows, dependencies
 - [API_REFERENCE.yml](API_REFERENCE.yml) — OpenAPI surface (server routes + webhook)
 - [SECURITY.md](SECURITY.md) — auth, roles, Firestore rules model, secrets, threat model
