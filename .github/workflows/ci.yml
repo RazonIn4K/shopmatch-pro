@@ -161,6 +161,9 @@ jobs:
     - name: Type check
       run: npx tsc --noEmit
 
+    - name: Run unit tests
+      run: npm run test:unit
+
     - name: Build production
       run: npm run build 2>&1 | tee build-output.txt
       env:
