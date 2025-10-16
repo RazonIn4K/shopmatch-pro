@@ -57,17 +57,21 @@ function validateFirebaseAdminConfig(params: { hasServiceAccount: boolean; allow
 
 const isServerEnvironment = typeof window === 'undefined'
 const rawPrivateKey = process.env.FIREBASE_PRIVATE_KEY ?? ''
-const hasServiceAccount =
-  Boolean(rawPrivateKey) &&
-  rawPrivateKey.includes('BEGIN PRIVATE KEY') &&
-  rawPrivateKey.includes('END PRIVATE KEY') &&
-  Boolean(process.env.FIREBASE_CLIENT_EMAIL)
 
+// Check for fallback mode FIRST (before validating service account)
 const allowFallback =
   process.env.CI === 'true' ||
   process.env.NODE_ENV === 'test' ||
   process.env.ALLOW_FIREBASE_ADMIN_FALLBACK === 'true' ||
   rawPrivateKey.startsWith('ci-mock')
+
+// Only consider service account valid if NOT in fallback mode
+const hasServiceAccount =
+  !allowFallback &&
+  Boolean(rawPrivateKey) &&
+  rawPrivateKey.includes('BEGIN PRIVATE KEY') &&
+  rawPrivateKey.includes('END PRIVATE KEY') &&
+  Boolean(process.env.FIREBASE_CLIENT_EMAIL)
 
 // Validate configuration on module import (server-side only)
 if (isServerEnvironment) {
