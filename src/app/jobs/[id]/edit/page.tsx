@@ -87,16 +87,17 @@ export default function EditJobPage() {
 
   if (loading || authLoading || !job) {
     return (
-      <div className="container mx-auto py-12">
+      <main className="container mx-auto py-12">
         <div className="mx-auto max-w-4xl">
           <div className="h-96 animate-pulse rounded-lg bg-muted" />
         </div>
-      </div>
+      </main>
     )
   }
 
   return (
-    <div className="container mx-auto py-12">
+    <main className="container mx-auto py-12">
+      <h1 className="sr-only">Edit Job Posting - ShopMatch Pro</h1>
       <div className="mx-auto max-w-4xl">
         <Card>
           <CardHeader>
@@ -127,6 +128,6 @@ export default function EditJobPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </main>
   )
 }

@@ -127,7 +127,6 @@ jobs:
     name: Accessibility Testing
     runs-on: ubuntu-latest
     needs: build
-    continue-on-error: true  # Temporarily non-blocking until landmark/heading issues are fixed
 
     steps:
     - name: Checkout code

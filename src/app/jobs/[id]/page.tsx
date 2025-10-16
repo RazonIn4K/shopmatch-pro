@@ -95,30 +95,32 @@ export default function JobDetailPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto py-12">
+      <main className="container mx-auto py-12">
         <div className="mx-auto max-w-4xl space-y-6">
           <div className="h-12 w-2/3 animate-pulse rounded-md bg-muted" />
           <div className="h-96 animate-pulse rounded-lg bg-muted" />
         </div>
-      </div>
+      </main>
     )
   }
 
   if (!job) {
     return (
-      <div className="container mx-auto py-12">
+      <main className="container mx-auto py-12">
+        <h1 className="sr-only">Job Not Found - ShopMatch Pro</h1>
         <div className="text-center">
           <h2 className="text-2xl font-bold">Job not found</h2>
           <Button onClick={() => router.push('/jobs')} className="mt-4">
             Browse Jobs
           </Button>
         </div>
-      </div>
+      </main>
     )
   }
 
   return (
-    <div className="container mx-auto py-12">
+    <main className="container mx-auto py-12">
+      <h1 className="sr-only">{job.title} - Job Details</h1>
       <div className="mx-auto max-w-4xl space-y-6">
         <Button variant="ghost" onClick={() => router.push('/jobs')}>
           ← Back to jobs
@@ -246,6 +248,6 @@ export default function JobDetailPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </main>
   )
 }
