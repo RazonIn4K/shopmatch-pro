@@ -90,6 +90,17 @@ function SubscribePageContent() {
 
       const { url } = await response.json()
 
+      // Validate URL is from Stripe before redirecting (security: prevent open redirect)
+      if (!url || typeof url !== 'string') {
+        throw new Error('Invalid checkout URL received')
+      }
+
+      // Ensure URL is from Stripe's domain
+      const checkoutUrl = new URL(url)
+      if (!checkoutUrl.hostname.endsWith('stripe.com')) {
+        throw new Error('Invalid checkout URL domain')
+      }
+
       // Redirect to Stripe Checkout
       window.location.href = url
 
