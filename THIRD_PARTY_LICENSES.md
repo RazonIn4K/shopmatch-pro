@@ -8,6 +8,8 @@ This document lists all third-party software dependencies used in ShopMatch Pro 
 
 ShopMatch Pro is licensed under the **MIT License** (see [LICENSE](./LICENSE)). All third-party dependencies have been reviewed for license compatibility with MIT and commercial use.
 
+> **2025-10-17 Update**: Active FOSSA license alerts were reviewed and cleared. Detailed findings are documented in [`docs/FOSSA_LICENSE_REVIEW_2025-10-17.md`](./docs/FOSSA_LICENSE_REVIEW_2025-10-17.md).
+
 ### Key Licensing Decisions
 
 1. **node-forge**: This library is dual-licensed `(BSD-3-Clause OR GPL-2.0)`. **We elect to use it under the BSD-3-Clause license**, which is fully compatible with commercial and proprietary software.

@@ -122,8 +122,8 @@ comments:
     in THIRD_PARTY_LICENSES.md with explanations.
 
   investigation_date: |
-    Last comprehensive license audit: 2025-10-13
-    See FOSSA_INVESTIGATION_REPORT.md for detailed findings.
+    Last comprehensive license audit: 2025-10-17
+    See docs/FOSSA_LICENSE_REVIEW_2025-10-17.md for detailed findings.
 
 # Experimental features
 experimental:
@@ -133,27 +133,13 @@ experimental:
   # Enable SPDX identifier support
   enable-spdx: true
 
----
-
-# Additional Notes for FOSSA Users
-
-## How to Use This Configuration
-
-1. **Automatic Scanning**: FOSSA will use this configuration automatically when scanning the repository.
-
-2. **Policy Overrides**: Package-specific overrides document our license choices for dual-licensed dependencies.
-
-3. **Documentation**: All licensing decisions are documented in [THIRD_PARTY_LICENSES.md](./THIRD_PARTY_LICENSES.md).
-
-## Resolving License Conflicts
-
-If FOSSA flags a license conflict:
-
-1. Check if the package is dual-licensed (look for "OR" in license field)
-2. If dual-licensed, document your license choice in `overrides` section
-3. Update [THIRD_PARTY_LICENSES.md](./THIRD_PARTY_LICENSES.md) with rationale
-4. Re-run FOSSA scan to verify resolution
-
-## Contact
-
-For questions about licensing decisions, see [THIRD_PARTY_LICENSES.md](./THIRD_PARTY_LICENSES.md).
+# Additional notes for FOSSA users
+# --------------------------------
+# - Automatic scanning: FOSSA uses this configuration by default when scanning the repository.
+# - Policy overrides: Document any dual-license choices in the `overrides` section.
+# - Documentation: Keep rationales in THIRD_PARTY_LICENSES.md.
+# - Resolving conflicts:
+#     * Check whether the package is dual-licensed.
+#     * Record the chosen license in `.fossa.yml`.
+#     * Update THIRD_PARTY_LICENSES.md with the reasoning.
+#     * Re-run the scan and clear the alert in the FOSSA UI.
