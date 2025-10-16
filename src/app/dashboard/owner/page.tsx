@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/contexts/AuthContext'
 import { JobCard } from '@/components/job-card'
 import { ApplicationCard } from '@/components/application-card'
 import { ApplicationDetailDialog } from '@/components/application-detail-dialog'
+import { ApplicationsExportButton } from '@/components/applications-export-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import type { Job, Application } from '@/types'
@@ -189,7 +190,10 @@ export default function OwnerDashboardPage() {
 
         {/* Recent Applications */}
         <div>
-          <h2 className="mb-4 text-2xl font-semibold">Recent Applications</h2>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-2xl font-semibold">Recent Applications</h2>
+            {applications.length > 0 && <ApplicationsExportButton />}
+          </div>
           {applications.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center">
