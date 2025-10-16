@@ -78,7 +78,7 @@ if (isServerEnvironment) {
   validateFirebaseAdminConfig({ hasServiceAccount, allowFallback })
 
   if (!hasServiceAccount && allowFallback) {
-    // eslint-disable-next-line no-console
+     
     console.warn(
       '[firebase-admin] Running without service account credentials. Admin features are disabled. ' +
       'Set FIREBASE_PRIVATE_KEY (with BEGIN/END PRIVATE KEY) to enable full functionality.'

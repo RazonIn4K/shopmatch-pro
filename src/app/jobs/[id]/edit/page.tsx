@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 
 import { useAuth } from '@/lib/contexts/AuthContext'
 import { JobForm } from '@/components/job-form'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 import type { Job, JobFormValues } from '@/types'
 
 export default function EditJobPage() {
@@ -100,7 +100,7 @@ export default function EditJobPage() {
       <div className="mx-auto max-w-4xl">
         <Card>
           <CardHeader>
-            <CardTitle>Edit Job Posting</CardTitle>
+            <h1 className="text-2xl font-semibold leading-none tracking-tight">Edit Job Posting</h1>
             <CardDescription>
               Update the job details below
             </CardDescription>

@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { useAuth } from '@/lib/contexts/AuthContext'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
@@ -128,7 +128,7 @@ export default function JobDetailPage() {
           <CardHeader>
             <div className="flex items-start justify-between">
               <div className="space-y-2">
-                <CardTitle className="text-3xl">{job.title}</CardTitle>
+                <h1 className="text-3xl font-semibold leading-none tracking-tight">{job.title}</h1>
                 <CardDescription className="text-lg">{job.company}</CardDescription>
               </div>
               <div className="flex flex-col gap-2">
