@@ -226,8 +226,43 @@ All development dependencies are used only during development and build processe
 | `tailwindcss` | ^4 | MIT | CSS framework (build-time processing) |
 | `@tailwindcss/postcss` | ^4 | MIT | PostCSS integration (build-time) |
 | `@eslint/eslintrc` | ^3 | MIT | ESLint configuration utilities |
+| `@playwright/test` | ^1.48.0 | Apache-2.0 | E2E testing framework (test-time only) |
+| `@axe-core/playwright` | 4.10.2 | MPL-2.0 | Accessibility testing (test-time only) |
+| `wait-on` | ^8.0.1 | MIT | Test server wait utility (test-time only) |
 
 **Note**: CSS from Tailwind is compiled at build-time and included in the production bundle as regular CSS, not as a runtime dependency.
+
+### MPL-2.0 in Development Dependencies (@axe-core/playwright)
+
+**Status**: ✅ **Acceptable for test-only usage**
+
+**Package**: `@axe-core/playwright` (4.10.2)
+**License**: MPL-2.0
+**Depth**: Direct dev dependency
+**Usage**: Accessibility testing in CI/CD pipeline (test-time only)
+
+**Why This Is Safe for Commercial Use**:
+
+1. **Test-Only Dependency**: Used exclusively for automated accessibility testing, never in production
+2. **No Modifications**: We use the library as-is via npm without modifying source files
+3. **No Distribution**: Not packaged with the application or distributed to end users
+4. **Weak Copyleft**: MPL-2.0 is file-level copyleft, doesn't affect application source code
+5. **Industry Standard**: Used by major companies for accessibility compliance testing
+
+**MPL-2.0 Compliance for Dev Dependencies**:
+- ✅ **Retain copyright notices**: Included in `node_modules/@axe-core/playwright/` directory
+- ✅ **Retain license text**: Included in `node_modules/@axe-core/playwright/LICENSE` file
+- ✅ **No modifications**: We use @axe-core/playwright as-is via npm
+- ✅ **Source availability**: Original source at https://github.com/dequelabs/axe-core-npm
+- ✅ **Not distributed**: Development dependency, not included in production bundle
+
+**Dev Dependency Clarification**:
+- Dev dependencies are used during development and CI/CD testing **only**
+- They are explicitly excluded from production builds (`devDependencies` in package.json)
+- MPL-2.0 licensing requirements apply to the library itself, not to applications that use it for testing
+- No source code disclosure requirements for applications that use MPL-2.0 licensed dev tools
+
+**Similar Industry Practice**: Companies use MPL-2.0 licensed development tools without source code disclosure, including Mozilla's own tooling, HashiCorp Terraform (previously MPL-2.0), and various CI/CD tools.
 
 ---
 
