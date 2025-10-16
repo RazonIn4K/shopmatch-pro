@@ -66,7 +66,7 @@ export default function SeekerDashboardPage() {
 
   if (loading || authLoading) {
     return (
-      <div className="container mx-auto py-12">
+      <main className="container mx-auto py-12">
         <div className="space-y-6">
           <div className="h-12 w-48 animate-pulse rounded-md bg-muted" />
           <div className="grid gap-4 md:grid-cols-3">
@@ -75,7 +75,7 @@ export default function SeekerDashboardPage() {
             ))}
           </div>
         </div>
-      </div>
+      </main>
     )
   }
 
@@ -84,7 +84,7 @@ export default function SeekerDashboardPage() {
   const acceptedApplications = applications.filter((a) => a.status === 'accepted').length
 
   return (
-    <div className="container mx-auto py-12">
+    <main className="container mx-auto py-12">
       <div className="space-y-8">
         <div className="flex items-center justify-between">
           <div>
@@ -168,6 +168,6 @@ export default function SeekerDashboardPage() {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
       />
-    </div>
+    </main>
   )
 }

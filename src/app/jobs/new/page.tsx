@@ -70,16 +70,16 @@ export default function NewJobPage() {
 
   if (loading || !user) {
     return (
-      <div className="container mx-auto py-12">
+      <main className="container mx-auto py-12">
         <div className="mx-auto max-w-4xl">
           <div className="h-96 animate-pulse rounded-lg bg-muted" />
         </div>
-      </div>
+      </main>
     )
   }
 
   return (
-    <div className="container mx-auto py-12">
+    <main className="container mx-auto py-12">
       <div className="mx-auto max-w-4xl">
         <Card>
           <CardHeader>
@@ -97,6 +97,6 @@ export default function NewJobPage() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </main>
   )
 }

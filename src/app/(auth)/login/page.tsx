@@ -135,7 +135,7 @@ export default function LoginPage() {
    */
   if (isResettingPassword) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+      <main className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
         <Card className="w-full max-w-md">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl font-bold text-center">Reset Password</CardTitle>
@@ -182,7 +182,7 @@ export default function LoginPage() {
             </Button>
           </CardFooter>
         </Card>
-      </div>
+      </main>
     )
   }
 
@@ -190,7 +190,7 @@ export default function LoginPage() {
    * Main login form interface
    */
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">Welcome to ShopMatch Pro</CardTitle>
@@ -305,6 +305,6 @@ export default function LoginPage() {
           </div>
         </CardFooter>
       </Card>
-    </div>
+    </main>
   )
 }
