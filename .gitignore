@@ -50,6 +50,12 @@ ngrok-*.zip
 # Claude Code development files (not needed in repository)
 .playwright-mcp/
 
+# Local evidence artifacts from testing
+*-output.txt
+first-load-report.json
+playwright-report/
+test-results/
+
 # Markdown files - exclude development notes, keep essential docs
 # Ignore all .md files by default
 *.md

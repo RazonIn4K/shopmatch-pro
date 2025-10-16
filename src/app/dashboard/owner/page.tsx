@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import dynamic from 'next/dynamic'
 
 import { useAuth } from '@/lib/contexts/AuthContext'
 import { JobCard } from '@/components/job-card'
@@ -11,6 +12,12 @@ import { ApplicationDetailDialog } from '@/components/application-detail-dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import type { Job, Application } from '@/types'
+
+// Lazy-load export button to keep it out of main bundle (zero bundle impact)
+const ApplicationsExportButton = dynamic(
+  () => import('@/components/applications-export-button').then((mod) => ({ default: mod.ApplicationsExportButton })),
+  { ssr: false, loading: () => <div className="h-9 w-32 animate-pulse rounded-md bg-muted" /> }
+)
 
 export default function OwnerDashboardPage() {
   const router = useRouter()
@@ -189,7 +196,10 @@ export default function OwnerDashboardPage() {
 
         {/* Recent Applications */}
         <div>
-          <h2 className="mb-4 text-2xl font-semibold">Recent Applications</h2>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-2xl font-semibold">Recent Applications</h2>
+            {applications.length > 0 && <ApplicationsExportButton />}
+          </div>
           {applications.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center">
