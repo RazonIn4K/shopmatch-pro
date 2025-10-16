@@ -91,9 +91,12 @@ export const STRIPE_CONFIG = {
    * This ID corresponds to the Stripe Price object for the ShopMatch Pro tier.
    * Created in Stripe Dashboard → Products → Pricing.
    *
-   * Security: Managed via environment variable to allow easy updates without code changes.
+   * Security: Price IDs are not sensitive and can be safely exposed to the client.
+   * Uses NEXT_PUBLIC_ prefix for client-side access, falls back to server-only var.
    */
-  PRO_PRICE_ID: process.env.STRIPE_PRICE_ID_PRO!,
+  PRO_PRICE_ID: (typeof window === 'undefined'
+    ? process.env.STRIPE_PRICE_ID_PRO
+    : process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO) || process.env.STRIPE_PRICE_ID_PRO!,
 
   /**
    * Webhook endpoint secret for signature verification

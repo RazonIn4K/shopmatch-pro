@@ -23,7 +23,17 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { useAuth } from '@/lib/contexts/AuthContext'
-import { SUBSCRIPTION_TIERS } from '@/lib/stripe/config'
+
+/**
+ * Subscription tier display information
+ *
+ * Inlined to avoid client-side dependency on Stripe config.
+ * The actual price ID is handled server-side in the checkout API route.
+ */
+const SUBSCRIPTION_TIER_INFO = {
+  name: 'ShopMatch Pro',
+  description: 'Post unlimited jobs and manage applications',
+} as const
 
 /**
  * Decorative check icon used in the feature list. Marked as aria-hidden to
@@ -192,9 +202,9 @@ function SubscribePageContent() {
                   Most Popular
                 </Badge>
               </div>
-              <CardTitle className="text-2xl">{SUBSCRIPTION_TIERS.PRO.name}</CardTitle>
+              <CardTitle className="text-2xl">{SUBSCRIPTION_TIER_INFO.name}</CardTitle>
               <CardDescription className="text-base">
-                {SUBSCRIPTION_TIERS.PRO.description}
+                {SUBSCRIPTION_TIER_INFO.description}
               </CardDescription>
             </CardHeader>
 
