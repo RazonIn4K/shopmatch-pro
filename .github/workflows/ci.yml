@@ -60,6 +60,80 @@ jobs:
         echo "✅ PASSED: Branch name follows convention"
         echo "Branch: $BRANCH_NAME"
 
+  validate-commits:
+    name: Validate Commit Messages
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v5
+      with:
+        fetch-depth: 0  # Fetch all history for commit message validation
+
+    - name: Validate commit message format
+      run: |
+        echo "Validating commit messages for PR #${{ github.event.pull_request.number }}"
+        echo ""
+
+        # Get all commits in the PR
+        BASE_SHA="${{ github.event.pull_request.base.sha }}"
+        HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+
+        # Conventional Commits regex
+        # Format: type(scope): subject
+        # Types: feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert
+        PATTERN="^(feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert)(\(.+\))?!?: .+"
+
+        FAILED=0
+        COMMIT_COUNT=0
+
+        # Loop through each commit in the PR
+        for commit in $(git rev-list $BASE_SHA..$HEAD_SHA); do
+          COMMIT_MSG=$(git log --format=%B -n 1 $commit | head -n 1)
+          SHORT_SHA=$(git rev-parse --short $commit)
+          COMMIT_COUNT=$((COMMIT_COUNT + 1))
+
+          echo "[$COMMIT_COUNT] $SHORT_SHA: $COMMIT_MSG"
+
+          # Check format
+          if [[ ! "$COMMIT_MSG" =~ $PATTERN ]]; then
+            echo "  ❌ INVALID: Does not follow Conventional Commits format"
+            FAILED=$((FAILED + 1))
+          else
+            echo "  ✅ VALID"
+          fi
+          echo ""
+        done
+
+        echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+        echo "Validation Summary:"
+        echo "  Total commits: $COMMIT_COUNT"
+        echo "  Invalid: $FAILED"
+        echo "  Valid: $((COMMIT_COUNT - FAILED))"
+
+        if [ $FAILED -gt 0 ]; then
+          echo ""
+          echo "❌ FAILED: $FAILED commit(s) do not follow Conventional Commits format"
+          echo ""
+          echo "Expected format: type(scope): subject"
+          echo "  - type: feat|fix|docs|style|refactor|perf|test|chore|ci|build|revert"
+          echo "  - scope: optional, e.g., (auth), (api), (ui)"
+          echo "  - subject: Short description (lowercase, no period at end)"
+          echo ""
+          echo "Valid examples:"
+          echo "  ✓ feat(auth): add Google OAuth login"
+          echo "  ✓ fix(api): resolve webhook signature validation"
+          echo "  ✓ docs: update README with setup instructions"
+          echo "  ✓ refactor(ui): extract reusable button component"
+          echo ""
+          echo "See: https://www.conventionalcommits.org/"
+          exit 1
+        fi
+
+        echo ""
+        echo "✅ PASSED: All commit messages follow Conventional Commits format"
+
   build:
     name: Build and Test
     runs-on: ubuntu-latest
@@ -86,6 +160,9 @@ jobs:
 
     - name: Type check
       run: npx tsc --noEmit
+
+    - name: Run unit tests
+      run: npm run test:unit
 
     - name: Build production
       run: npm run build 2>&1 | tee build-output.txt
