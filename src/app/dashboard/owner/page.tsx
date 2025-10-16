@@ -3,15 +3,21 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import dynamic from 'next/dynamic'
 
 import { useAuth } from '@/lib/contexts/AuthContext'
 import { JobCard } from '@/components/job-card'
 import { ApplicationCard } from '@/components/application-card'
 import { ApplicationDetailDialog } from '@/components/application-detail-dialog'
-import { ApplicationsExportButton } from '@/components/applications-export-button'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import type { Job, Application } from '@/types'
+
+// Lazy-load export button to keep it out of main bundle (zero bundle impact)
+const ApplicationsExportButton = dynamic(
+  () => import('@/components/applications-export-button').then((mod) => ({ default: mod.ApplicationsExportButton })),
+  { ssr: false, loading: () => <div className="h-9 w-32 animate-pulse rounded-md bg-muted" /> }
+)
 
 export default function OwnerDashboardPage() {
   const router = useRouter()

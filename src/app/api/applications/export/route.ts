@@ -33,17 +33,6 @@ import { toCSV, commonTransforms } from '@/lib/csv/to-csv'
 
 export const runtime = 'nodejs' // Required for Firebase Admin SDK
 
-interface ApplicationRecord {
-  jobId: string
-  jobTitle: string
-  seekerId: string
-  seekerEmail: string
-  status: 'pending' | 'reviewed' | 'accepted' | 'rejected'
-  coverLetter: string
-  createdAt: FirebaseFirestore.Timestamp
-  updatedAt: FirebaseFirestore.Timestamp
-}
-
 /**
  * GET /api/applications/export
  *

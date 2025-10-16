@@ -49,7 +49,7 @@ try {
 
   // Test Auth
   console.log('\n4️⃣ Testing Firebase Auth...')
-  const auth = getAuth(app)
+  getAuth(app)
   console.log('   ✅ Firebase Auth initialized')
 
   // Test Firestore
