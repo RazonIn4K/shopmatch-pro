@@ -450,18 +450,90 @@ npm run validate-env
 2. Restart TypeScript server in IDE
 3. Run `npm run build` to verify
 
+## Secret Rotation Schedule
+
+**Naming Convention**: All GitHub secrets use `UPPER_SNAKE_CASE` for consistency with industry standards.
+
+**Least-Privilege Service Accounts**: CI uses a dedicated Firebase service account with ONLY:
+- `Firebase Authentication Admin`
+- `Cloud Datastore User`
+
+Do NOT grant Owner, Editor, or excessive permissions to CI service accounts.
+
+### Rotation Cadence
+
+| Secret | Rotation Period | Trigger Event | Process |
+|--------|----------------|---------------|---------|
+| `FIREBASE_SERVICE_ACCOUNT_JSON` | **90 days** | Key compromise, team change | Generate new key → Update GitHub/Vercel secrets → Revoke old key (7-day grace period) |
+| `STRIPE_SECRET_KEY` | **On compromise** | Key exposed, unauthorized access | Rotate in Stripe Dashboard → Update all environments → Monitor webhook failures |
+| `VERCEL_TOKEN` | **180 days** | API changes, security audit | Regenerate in Vercel Account Settings → Update GitHub secret |
+| `STRIPE_WEBHOOK_SECRET` | **On endpoint change** | New webhook URL, ngrok rotation | Create new endpoint → Update secret → Delete old endpoint |
+
+### Rotation Procedure
+
+**For Firebase Service Account**:
+```bash
+# 1. Create new service account (or generate new key for existing)
+# Firebase Console → Settings → Service Accounts → Generate new private key
+
+# 2. Update GitHub secrets
+# Settings → Secrets → FIREBASE_SERVICE_ACCOUNT_JSON → Update
+
+# 3. Update production environment (Vercel/Netlify)
+# Project Settings → Environment Variables → Edit
+
+# 4. Trigger redeploy to use new credentials
+vercel --prod
+
+# 5. Monitor logs for 24 hours
+# Check Vercel logs or Sentry for auth errors
+
+# 6. Revoke old key after grace period (7 days)
+# Google Cloud Console → IAM & Admin → Service accounts → Keys → Delete
+```
+
+**For Stripe Keys**:
+```bash
+# 1. Roll key in Stripe Dashboard
+# Developers → API keys → Roll secret key → Confirm
+
+# 2. Update all environments immediately (Stripe provides 24hr grace period)
+# GitHub: Settings → Secrets → STRIPE_SECRET_KEY
+# Vercel: Project Settings → Environment Variables
+
+# 3. Verify webhooks still work
+stripe listen --forward-to https://your-domain.com/api/stripe/webhook
+
+# 4. Old key auto-expires after 24 hours (Stripe handles this)
+```
+
+### Post-Rotation Verification
+
+After rotating any secret, run this checklist:
+
+- [ ] `npm run validate-env` passes locally
+- [ ] CI build succeeds on main branch
+- [ ] Production deployment completes without errors
+- [ ] Health check returns 200: `curl https://your-domain.com/api/health`
+- [ ] Test authentication flow (signup, login)
+- [ ] Test Stripe webhook (create test subscription)
+- [ ] Monitor error logs for 24 hours
+- [ ] Document rotation in `docs/INCIDENT_RESPONSE.md` (if triggered by incident)
+
 ## Security Best Practices
 
 ### DO ✅
 
 1. **Use `.env.local` for secrets** — Never commit to git
-2. **Rotate keys regularly** — Especially after team changes
+2. **Rotate keys on schedule** — See rotation cadence table above
 3. **Use test mode in development** — Stripe test keys start with `sk_test_`
 4. **Validate environment on startup** — Run `npm run validate-env`
 5. **Use different Firebase projects** — Separate dev/staging/production
 6. **Restrict Firebase API keys** — Use Application restrictions in Firebase Console
 7. **Enable Stripe webhook signature verification** — Always verify `stripe-signature` header
 8. **Use environment-specific webhook endpoints** — Different URLs for dev/staging/production
+9. **Use least-privilege service accounts** — Grant only required permissions (Auth + Firestore, NOT Owner)
+10. **Document rotation events** — Track when and why keys were rotated
 
 ### DON'T ❌
 
