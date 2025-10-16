@@ -13,6 +13,7 @@ const config = {
     '/node_modules/',
     '/.next/',
     '/e2e/',  // Exclude Playwright E2E tests
+    'src/lib/csv/__tests__/to-csv.test.ts',  // Custom test framework, not Jest
   ],
   collectCoverageFrom: [
     'src/**/*.{js,jsx,ts,tsx}',
