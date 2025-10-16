@@ -120,7 +120,7 @@ export default function JobDetailPage() {
 
   return (
     <main className="container mx-auto py-12">
-      <h1 className="sr-only">{job.title} - Job Details</h1>
+      <h1 className="sr-only">{job?.title ? `${job.title} - Job Details` : 'Job Details - ShopMatch Pro'}</h1>
       <div className="mx-auto max-w-4xl space-y-6">
         <Button variant="ghost" onClick={() => router.push('/jobs')}>
           ← Back to jobs
