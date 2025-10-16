@@ -95,6 +95,7 @@ jobs:
         NEXT_PUBLIC_APP_URL: http://localhost:3000
         FIREBASE_PROJECT_ID: ci-mock-project
         FIREBASE_CLIENT_EMAIL: ci-mock@ci-mock.iam.gserviceaccount.com
+        ALLOW_FIREBASE_ADMIN_FALLBACK: "true"
         FIREBASE_PRIVATE_KEY: "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7VJTUt9Us8cKj\nMzEfYyjiWA4R4/M2bS1+fWIcPm15j9tXBWjdULHsUnDpJVBz0hLRqz4sLiJv7Jqx\n-----END PRIVATE KEY-----\n"
         STRIPE_SECRET_KEY: sk_test_ci_mock_key
         STRIPE_WEBHOOK_SECRET: whsec_ci_mock_secret
@@ -200,6 +201,7 @@ jobs:
         NEXT_PUBLIC_APP_URL: http://localhost:3000
         FIREBASE_PROJECT_ID: ci-mock-project
         FIREBASE_CLIENT_EMAIL: ci-mock@ci-mock.iam.gserviceaccount.com
+        ALLOW_FIREBASE_ADMIN_FALLBACK: "true"
         FIREBASE_PRIVATE_KEY: "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7VJTUt9Us8cKj\nMzEfYyjiWA4R4/M2bS1+fWIcPm15j9tXBWjdULHsUnDpJVBz0hLRqz4sLiJv7Jqx\n-----END PRIVATE KEY-----\n"
         STRIPE_SECRET_KEY: sk_test_ci_mock_key
         STRIPE_WEBHOOK_SECRET: whsec_ci_mock_secret
