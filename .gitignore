@@ -76,3 +76,10 @@ test-results/
 # Include all GitHub templates
 !.github/**/*.md
 .idea/
+
+# Firestore emulator and index management
+.firestore-debug.log
+firestore-debug.log
+ui-debug.log
+firebase-debug.log
+database-debug.log
