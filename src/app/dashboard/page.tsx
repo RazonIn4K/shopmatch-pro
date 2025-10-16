@@ -24,10 +24,10 @@ export default function DashboardPage() {
   }, [user, loading, router])
 
   return (
-    <div className="container mx-auto py-12">
+    <main className="container mx-auto py-12">
       <div className="flex items-center justify-center">
         <div className="h-8 w-48 animate-pulse rounded-md bg-muted" />
       </div>
-    </div>
+    </main>
   )
 }
