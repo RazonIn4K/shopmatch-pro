@@ -82,7 +82,7 @@ if (process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN) {
     if (!authDomainUrl.hostname.endsWith('.firebaseapp.com')) {
       warnings.push('⚠️  Firebase Auth Domain should end with .firebaseapp.com')
     }
-  } catch (e) {
+  } catch {
     warnings.push('⚠️  Firebase Auth Domain is not a valid domain/hostname')
   }
 }

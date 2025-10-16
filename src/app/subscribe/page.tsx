@@ -26,6 +26,26 @@ import { useAuth } from '@/lib/contexts/AuthContext'
 import { SUBSCRIPTION_TIERS } from '@/lib/stripe/config'
 
 /**
+ * Decorative check icon used in the feature list. Marked as aria-hidden to
+ * prevent duplicate announcements for screen-reader users.
+ */
+const CheckIcon = () => (
+  <svg
+    className="w-5 h-5 text-green-500 mr-3"
+    fill="currentColor"
+    viewBox="0 0 20 20"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path
+      fillRule="evenodd"
+      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+      clipRule="evenodd"
+    />
+  </svg>
+)
+
+/**
  * Subscription Page Component (Inner)
  *
  * Main interface for subscription management and checkout flow.
@@ -95,10 +115,19 @@ function SubscribePageContent() {
         throw new Error('Invalid checkout URL received')
       }
 
-      // Ensure URL is from Stripe's domain
+      // Parse URL to validate hostname (defense-in-depth)
       const checkoutUrl = new URL(url)
-      if (!checkoutUrl.hostname.endsWith('stripe.com')) {
-        throw new Error('Invalid checkout URL domain')
+
+      // Whitelist: Only allow exact Stripe checkout domain
+      // Stripe Checkout Sessions always use checkout.stripe.com
+      const allowedHosts = ['checkout.stripe.com']
+      if (!allowedHosts.includes(checkoutUrl.hostname)) {
+        throw new Error(`Invalid checkout URL domain: ${checkoutUrl.hostname}`)
+      }
+
+      // Ensure HTTPS protocol
+      if (checkoutUrl.protocol !== 'https:') {
+        throw new Error('Checkout URL must use HTTPS')
       }
 
       // Redirect to Stripe Checkout
@@ -173,27 +202,19 @@ function SubscribePageContent() {
               {/* Features List */}
               <div className="space-y-3 text-left">
                 <div className="flex items-center">
-                  <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
+                  <CheckIcon />
                   <span>Unlimited job postings</span>
                 </div>
                 <div className="flex items-center">
-                  <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
+                  <CheckIcon />
                   <span>Application management dashboard</span>
                 </div>
                 <div className="flex items-center">
-                  <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
+                  <CheckIcon />
                   <span>Advanced filtering and search</span>
                 </div>
                 <div className="flex items-center">
-                  <svg className="w-5 h-5 text-green-500 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
+                  <CheckIcon />
                   <span>Priority support</span>
                 </div>
               </div>
