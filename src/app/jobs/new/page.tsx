@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import { useAuth } from '@/lib/contexts/AuthContext'
 import { auth } from '@/lib/firebase/client'
 import { JobForm } from '@/components/job-form'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardHeader } from '@/components/ui/card'
 import type { JobFormValues } from '@/types'
 import { useEffect } from 'react'
 
@@ -83,7 +83,7 @@ export default function NewJobPage() {
       <div className="mx-auto max-w-4xl">
         <Card>
           <CardHeader>
-            <CardTitle>Create Job Posting</CardTitle>
+            <h1 className="text-2xl font-semibold leading-none tracking-tight">Create Job Posting</h1>
             <CardDescription>
               Fill out the details below to create a new job listing
             </CardDescription>

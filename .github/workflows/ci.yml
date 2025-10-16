@@ -6,6 +6,11 @@ on:
   pull_request:
     branches: [ main ]
 
+# Security: Explicitly set minimal permissions (principle of least privilege)
+# Only grant write permissions to specific jobs that need them
+permissions:
+  contents: read  # Allow reading repository contents
+
 jobs:
   validate-branch:
     name: Validate Branch Name

@@ -84,6 +84,7 @@ export const metadata: Metadata = {
  * - Authentication context for user state management
  * - Toast notification system for user feedback
  * - Meta tags and SEO configuration
+ * - Semantic HTML structure with <main> landmark for accessibility
  *
  * @param children - Page components to be rendered within the layout
  */
@@ -96,7 +97,9 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <AuthProvider>
-          {children}
+          <main>
+            {children}
+          </main>
           <Toaster />
         </AuthProvider>
       </body>

@@ -23,6 +23,7 @@
  */
 
 import { readFileSync, writeFileSync } from 'fs'
+import { resolve } from 'path'
 
 const FIRST_LOAD_BUDGET_KB = parseInt(process.env.FIRST_LOAD_BUDGET_KB || '300', 10)
 const REPORT_PATH = process.env.REPORT_PATH || 'first-load-report.json'
@@ -32,6 +33,20 @@ const buildOutputPath = process.argv[2]
 let buildOutput
 
 if (buildOutputPath) {
+  // Security: Validate path to prevent directory traversal
+  if (buildOutputPath.includes('..') || buildOutputPath.startsWith('/')) {
+    console.error('❌ Error: Invalid file path (no absolute paths or parent directory references allowed)')
+    process.exit(1)
+  }
+
+  // Only allow reading from current directory or subdirectories
+  const resolvedPath = resolve(buildOutputPath)
+  const cwd = resolve('.')
+  if (!resolvedPath.startsWith(cwd)) {
+    console.error('❌ Error: File path must be within current working directory')
+    process.exit(1)
+  }
+
   buildOutput = readFileSync(buildOutputPath, 'utf-8')
 } else {
   // Read from stdin

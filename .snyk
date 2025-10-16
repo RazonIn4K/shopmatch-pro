@@ -1,0 +1,28 @@
+# Snyk (https://snyk.io) policy file
+
+# Ignore hardcoded passwords in development/test scripts
+# These scripts are not deployed to production and only used for local testing
+ignore:
+  # Hardcoded test passwords in helper scripts
+  SNYK-JS-HARDCODED-PASSWORD:
+    - scripts/create-user.js:
+        reason: Development script for creating test users locally
+        expires: never
+    - scripts/test-seeker-dashboard.js:
+        reason: Test script with ephemeral users (timestamp-based emails)
+        expires: never
+    - scripts/verify-end-to-end.js:
+        reason: CI test script with ephemeral test users
+        expires: never
+
+  # Hardcoded credentials in development scripts
+  SNYK-JS-HARDCODED-CREDENTIALS:
+    - scripts/create-user.js:
+        reason: Development script for local testing only
+        expires: never
+
+# Patch updates applied by Snyk
+patch: {}
+
+# Version: 2.0
+version: v1.25.0
