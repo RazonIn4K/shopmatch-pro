@@ -6,6 +6,9 @@ import { adminAuth, adminDb } from '@/lib/firebase/admin'
 import { applicationSubmissionSchema } from '@/types'
 import type { Application } from '@/types'
 
+// CRITICAL: Use Node.js runtime for Firebase Admin SDK compatibility
+export const runtime = 'nodejs'
+
 type RouteContext = {
   params: Promise<{
     id: string
@@ -61,6 +64,8 @@ export async function POST(request: Request, context: RouteContext) {
 
     // Get seeker details
     const userRecord = await adminAuth.getUser(auth.uid)
+
+    console.log(`[Application POST] Submitting application jobId=${jobId}, seekerId=${auth.uid}, ownerId=${job.ownerId}`)
 
     // Create application
     const now = new Date()

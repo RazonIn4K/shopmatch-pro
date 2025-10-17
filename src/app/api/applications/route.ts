@@ -6,6 +6,9 @@ import { adminDb } from '@/lib/firebase/admin'
 import { applicationStatuses } from '@/types'
 import type { Application } from '@/types'
 
+// CRITICAL: Use Node.js runtime for Firebase Admin SDK compatibility
+export const runtime = 'nodejs'
+
 type ApplicationListFilters = {
   jobId?: string
   seekerId?: string
@@ -48,6 +51,8 @@ export async function GET(request: Request) {
   try {
     const auth = await verifyAuth(request)
     const filters = parseFilters(request, auth.uid)
+
+    console.log(`[Applications GET] Fetching applications seekerId=${filters.seekerId ?? 'none'}, ownerId=${filters.ownerId ?? 'none'}, status=${filters.status ?? 'all'}, page=${filters.page}`)
 
     const applicationsRef = adminDb.collection('applications')
     let query: FirebaseFirestore.Query = applicationsRef

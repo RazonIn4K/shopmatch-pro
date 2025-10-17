@@ -48,7 +48,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Get application base URL for redirects
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
-    // Create Stripe Checkout Session
+    // Create idempotency key to prevent duplicate session creation on retries
+    // Format: userId:priceId ensures same user + plan = same session
+    const idempotencyKey = `${userId}:${STRIPE_CONFIG.PRO_PRICE_ID}`
+
+    // Create Stripe Checkout Session with idempotency protection
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       payment_method_types: ['card'],
@@ -74,6 +78,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       },
       allow_promotion_codes: true, // Enable promo codes if you have them
       billing_address_collection: 'required', // Collect billing address
+    }, {
+      idempotencyKey, // Prevent duplicate sessions on network retries
     })
 
     // Return the checkout session URL to redirect the user

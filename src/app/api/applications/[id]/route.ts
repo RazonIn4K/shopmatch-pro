@@ -35,6 +35,8 @@ export async function GET(request: Request, context: RouteContext) {
 
     const appData = doc.data()!
 
+    console.log(`[Application GET] Viewing application appId=${id}, seekerId=${appData.seekerId}, ownerId=${appData.ownerId}, requesterId=${auth.uid}`)
+
     // Ensure requester is either the seeker or the owner
     if (appData.seekerId !== auth.uid && appData.ownerId !== auth.uid) {
       throw new ApiError('You do not have permission to view this application', 403)
@@ -88,6 +90,8 @@ export async function PATCH(request: Request, context: RouteContext) {
     if (appData.ownerId !== auth.uid) {
       throw new ApiError('You do not have permission to update this application', 403)
     }
+
+    console.log(`[Application PATCH] Updating application appId=${id}, ownerId=${auth.uid}, statusTransition=${appData.status}->${parsed.data.status}`)
 
     const now = new Date()
     const updates: Partial<Application> = {

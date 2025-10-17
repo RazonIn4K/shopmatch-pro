@@ -6,6 +6,9 @@ import { adminDb } from '@/lib/firebase/admin'
 import { jobFormSchema, jobStatuses, jobTypes } from '@/types'
 import type { Job } from '@/types'
 
+// CRITICAL: Use Node.js runtime for Firebase Admin SDK compatibility
+export const runtime = 'nodejs'
+
 type JobListFilters = {
   ownerId?: string
   status?: (typeof jobStatuses)[number]
@@ -43,6 +46,7 @@ function parseFilters(request: Request): JobListFilters {
 export async function GET(request: Request) {
   try {
     const filters = parseFilters(request)
+    console.log(`[Jobs GET] Fetching jobs ownerId=${filters.ownerId ?? 'none'}, status=${filters.status ?? 'published'}, page=${filters.page}, limit=${filters.limit}`)
     const jobsRef = adminDb.collection('jobs')
 
     // Build query with filters
@@ -186,6 +190,43 @@ export async function POST(request: Request) {
       throw new ApiError('Validation failed', 422, parsed.error.format())
     }
 
+    // Idempotency check: prevent duplicate job creation within 5-minute window
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000)
+    const jobsRef = adminDb.collection('jobs')
+
+    const duplicateCheck = await jobsRef
+      .where('ownerId', '==', auth.uid)
+      .where('title', '==', parsed.data.title)
+      .where('createdAt', '>=', fiveMinutesAgo)
+      .limit(1)
+      .get()
+
+    if (!duplicateCheck.empty) {
+      const existingJob = duplicateCheck.docs[0]
+      const existingJobData = existingJob.data()
+
+      console.log(`[Jobs POST] Idempotency hit jobId=${existingJob.id}, ownerId=${auth.uid}, title="${parsed.data.title}"`)
+
+      // Return existing job with 200 status (idempotent response)
+      const job: Job = {
+        id: existingJob.id,
+        ...existingJobData,
+        createdAt: existingJobData.createdAt?.toDate?.() ?? existingJobData.createdAt,
+        updatedAt: existingJobData.updatedAt?.toDate?.() ?? existingJobData.updatedAt,
+        publishedAt: existingJobData.publishedAt?.toDate?.() ?? existingJobData.publishedAt,
+        expiresAt: existingJobData.expiresAt?.toDate?.() ?? existingJobData.expiresAt,
+      } as Job
+
+      return NextResponse.json(
+        {
+          message: 'Job already exists',
+          job,
+        },
+        { status: 200 }
+      )
+    }
+
+    // No duplicate found - proceed with creation
     const now = new Date()
     const jobData = {
       ...parsed.data,
@@ -197,8 +238,9 @@ export async function POST(request: Request) {
       publishedAt: parsed.data.status === 'published' ? now : null,
     }
 
+    console.log(`[Jobs POST] Creating job ownerId=${auth.uid}, status=${parsed.data.status}, title="${parsed.data.title}"`)
+
     // Create job document in Firestore
-    const jobsRef = adminDb.collection('jobs')
     const docRef = await jobsRef.add(jobData)
 
     // Retrieve the created document

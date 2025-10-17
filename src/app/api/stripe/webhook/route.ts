@@ -25,9 +25,19 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { headers } from 'next/headers'
 import { stripe, STRIPE_CONFIG } from '@/lib/stripe/config'
 import { adminAuth, adminDb } from '@/lib/firebase/admin'
+
+/**
+ * Force Node.js runtime for raw body access and Stripe SDK compatibility
+ * CRITICAL: Edge Runtime does not support raw request body needed for webhook signature verification
+ */
+export const runtime = 'nodejs'
+
+/**
+ * Disable caching to ensure every webhook event is processed fresh
+ */
+export const dynamic = 'force-dynamic'
 
 /**
  * Webhook event type definitions for type safety
@@ -37,6 +47,15 @@ type StripeWebhookEvent =
   | 'customer.subscription.updated'
   | 'customer.subscription.deleted'
   | 'checkout.session.completed'
+
+/**
+ * Subscription statuses that grant feature access
+ *
+ * Policy: Both 'active' and 'trialing' subscriptions are treated as active
+ * for feature gate purposes. This ensures users have immediate access during
+ * trial periods and don't experience feature flickering.
+ */
+const ACTIVE_SUBSCRIPTION_STATUSES = new Set(['active', 'trialing'])
 
 /**
  * POST handler for Stripe webhook endpoint
@@ -58,8 +77,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Get raw request body for signature verification
     // CRITICAL: Must use raw text, not parsed JSON
     const body = await request.text()
-    const headersList = await headers()
-    const signature = headersList.get('stripe-signature')
+    const signature = request.headers.get('stripe-signature')
 
     if (!signature) {
       console.error('Missing Stripe signature header')
@@ -71,15 +89,17 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Verify webhook signature using raw body
     // This prevents spoofing attacks and ensures event authenticity
+    // Use async form for better crypto timing safety
     let event
     try {
-      event = stripe.webhooks.constructEvent(
+      event = await stripe.webhooks.constructEventAsync(
         body,
         signature,
         STRIPE_CONFIG.WEBHOOK_SECRET
       )
     } catch (error: unknown) {
       console.error('Webhook signature verification failed:', error instanceof Error ? error.message : 'Unknown error')
+      // Return 400 to tell Stripe the signature is invalid and should not retry
       return NextResponse.json(
         { error: 'Invalid signature' },
         { status: 400 }
@@ -95,11 +115,12 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   } catch (error: unknown) {
     console.error('Webhook processing error:', error)
 
-    // Return 200 to prevent Stripe from retrying
-    // Log error for debugging but don't expose details
+    // Return 200 to prevent Stripe from retrying on processing errors
+    // The webhook was received and verified, but processing failed
+    // Log error for debugging but don't expose details to Stripe
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
+      { received: true, error: 'Processing error logged' },
+      { status: 200 }
     )
   }
 }
@@ -112,8 +133,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
  *
  * @param event - Verified Stripe webhook event
  */
-async function processWebhookEvent(event: { type: string; data: { object: unknown } }): Promise<void> {
-  console.log(`Processing webhook event: ${event.type}`)
+async function processWebhookEvent(event: { id: string; type: string; data: { object: unknown } }): Promise<void> {
+  console.log(`[Stripe Webhook] Processing event ${event.id} (${event.type})`)
 
   try {
     switch (event.type as StripeWebhookEvent) {
@@ -149,10 +170,17 @@ async function processWebhookEvent(event: { type: string; data: { object: unknow
  */
 async function handleSubscriptionUpdate(subscription: { customer: string; id: string; status: string }): Promise<void> {
   const customerId = subscription.customer
-  const status = subscription.status // 'active', 'canceled', 'incomplete', etc.
+  const status = subscription.status // 'active', 'trialing', 'canceled', 'incomplete', etc.
 
-  if (status !== 'active') {
-    console.log(`Subscription ${subscription.id} not active (status: ${status})`)
+  console.log(`[Subscription Update] sub_id=${subscription.id}, customer=${customerId}, status=${status}`)
+
+  // Check if subscription status grants feature access
+  const subActive = ACTIVE_SUBSCRIPTION_STATUSES.has(status)
+
+  if (!subActive) {
+    console.log(`[Subscription Update] Skipping non-active status: ${status}`)
+    // Note: We still return early for non-active statuses to avoid unnecessary updates
+    // The subscription.deleted event will handle deactivation
     return
   }
 
@@ -191,7 +219,7 @@ async function handleSubscriptionUpdate(subscription: { customer: string; id: st
       updatedAt: new Date(),
     })
 
-    console.log(`✅ Activated subscription access for user ${userId}`)
+    console.log(`[Subscription Update] ✅ Activated subscription for user=${userId}, sub_id=${subscription.id}`)
 
   } catch (error: unknown) {
     console.error('Error updating subscription:', error)
@@ -208,6 +236,8 @@ async function handleSubscriptionUpdate(subscription: { customer: string; id: st
  */
 async function handleSubscriptionCancellation(subscription: { customer: string }): Promise<void> {
   const customerId = subscription.customer
+
+  console.log(`[Subscription Cancellation] customer=${customerId}`)
 
   try {
     // Find user by Stripe customer ID in Firestore
@@ -242,7 +272,7 @@ async function handleSubscriptionCancellation(subscription: { customer: string }
       updatedAt: new Date(),
     })
 
-    console.log(`❌ Removed subscription access for user ${userId}`)
+    console.log(`[Subscription Cancellation] ❌ Removed subscription access for user=${userId}, customer=${customerId}`)
 
   } catch (error: unknown) {
     console.error('Error cancelling subscription:', error)
@@ -261,8 +291,10 @@ async function handleCheckoutCompletion(session: { customer: string; client_refe
   const customerId = session.customer
   const clientReferenceId = session.client_reference_id // User ID from checkout
 
+  console.log(`[Checkout Completed] customer=${customerId}, user=${clientReferenceId}`)
+
   if (!clientReferenceId || !customerId) {
-    console.log('Missing client_reference_id or customer_id in checkout session')
+    console.log('[Checkout Completed] Missing client_reference_id or customer_id in checkout session')
     return
   }
 
@@ -274,7 +306,7 @@ async function handleCheckoutCompletion(session: { customer: string; client_refe
       updatedAt: new Date(),
     })
 
-    console.log(`✅ Linked Stripe customer ${customerId} to user ${clientReferenceId}`)
+    console.log(`[Checkout Completed] ✅ Linked customer=${customerId} to user=${clientReferenceId}`)
 
   } catch (error: unknown) {
     console.error('Error linking customer ID:', error)

@@ -44,6 +44,7 @@ export async function GET(request: Request, context: RouteContext) {
     }
 
     const jobData = doc.data()!
+    console.log(`[Job GET] Viewing job jobId=${id}, status=${jobData.status}, authUid=${authUid ?? 'anonymous'}`)
 
     // Enforce draft visibility: only owner can view draft jobs
     if (jobData.status === 'draft' && jobData.ownerId !== authUid) {
@@ -109,6 +110,8 @@ export async function PUT(request: Request, context: RouteContext) {
     const wasPublished = existingJob.status === 'published'
     const isNowPublished = parsed.data.status === 'published'
 
+    console.log(`[Job PUT] Updating job jobId=${id}, ownerId=${auth.uid}, statusTransition=${existingJob.status}->${parsed.data.status}`)
+
     const updates = {
       ...parsed.data,
       updatedAt: now,
@@ -158,6 +161,8 @@ export async function DELETE(request: Request, context: RouteContext) {
     if (job.ownerId !== auth.uid) {
       throw new ApiError('You do not have permission to delete this job', 403)
     }
+
+    console.log(`[Job DELETE] Deleting job jobId=${id}, ownerId=${auth.uid}, applicationCount=${job.applicationCount ?? 0}`)
 
     // Delete the job document
     await jobRef.delete()
