@@ -95,6 +95,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
+        <h1 className="sr-only">ShopMatch Pro Application</h1>
         <AuthProvider>
           {children}
           <Toaster />

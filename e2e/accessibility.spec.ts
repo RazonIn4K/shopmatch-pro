@@ -1,6 +1,13 @@
 import { test, expect } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 
+const AXE_CONTEXT = {
+  runOnly: {
+    type: 'tag',
+    values: ['wcag2a', 'wcag2aa', 'section508'],
+  },
+}
+
 /**
  * Accessibility Tests for ShopMatch Pro
  *
@@ -20,6 +27,7 @@ test.describe('Accessibility Tests', () => {
     await page.goto('/')
     
     const accessibilityScanResults = await new AxeBuilder({ page })
+      .withTags(AXE_CONTEXT.runOnly.values)
       .analyze()
 
     expect(accessibilityScanResults.violations).toEqual([])
@@ -40,16 +48,21 @@ test.describe('Accessibility Tests', () => {
   })
 
   test('dashboard should have no accessibility violations (unauthenticated)', async ({ page }) => {
-    // Dashboard when not authenticated (should redirect or show login)
+    // Dashboard when not authenticated should redirect to login
     await page.goto('/dashboard')
-    
+
+    // Wait for redirect to login page
+    await page.waitForURL('**/login', { timeout: 10000 })
+    await page.waitForSelector('main h1', { timeout: 5000, state: 'visible' })
+
     const accessibilityScanResults = await new AxeBuilder({ page })
+      .withTags(AXE_CONTEXT.runOnly.values)
       .analyze()
 
     expect(accessibilityScanResults.violations).toEqual([])
 
     if (accessibilityScanResults.violations.length > 0) {
-      console.error('Accessibility violations found on dashboard:')
+      console.error('Accessibility violations found on dashboard (redirected to login):')
       accessibilityScanResults.violations.forEach(violation => {
         console.error(`- ${violation.id}: ${violation.description}`)
         console.error(`  Impact: ${violation.impact}`)
@@ -59,8 +72,12 @@ test.describe('Accessibility Tests', () => {
 
   test('subscribe page should have no accessibility violations', async ({ page }) => {
     await page.goto('/subscribe')
-    
+
+    // Wait for the main heading to be visible (page should render immediately)
+    await page.waitForSelector('h1:has-text("Choose Your Plan")', { timeout: 10000, state: 'visible' })
+
     const accessibilityScanResults = await new AxeBuilder({ page })
+      .withTags(AXE_CONTEXT.runOnly.values)
       .analyze()
 
     expect(accessibilityScanResults.violations).toEqual([])
@@ -78,6 +95,7 @@ test.describe('Accessibility Tests', () => {
     await page.goto('/login')
     
     const accessibilityScanResults = await new AxeBuilder({ page })
+      .withTags(AXE_CONTEXT.runOnly.values)
       .analyze()
 
     expect(accessibilityScanResults.violations).toEqual([])

@@ -17,11 +17,17 @@ describe('GET /api/health', () => {
     const data = await getResponseJson(response)
 
     expect(response.status).toBe(200)
-    expect(data).toEqual({
+    expect(response.status).toBe(200)
+    expect(data).toMatchObject({
       status: 'ok',
-      timestamp: expect.any(String),
-      uptime: expect.any(Number),
+      environment: 'test',
+      checks: {
+        firebase: true,
+        stripe: true,
+        environment: true,
+      },
     })
+    expect(typeof data.timestamp).toBe('string')
   })
 
   it('includes Firebase Admin fallback mode status', async () => {
@@ -32,9 +38,9 @@ describe('GET /api/health', () => {
     const response = await GET(request)
     const data = await getResponseJson(response)
 
-    expect(data).toHaveProperty('firebase')
-    expect(data.firebase).toHaveProperty('fallbackMode')
-    expect(typeof data.firebase.fallbackMode).toBe('boolean')
+    expect(data).toHaveProperty('checks')
+    expect(data.checks).toHaveProperty('firebase')
+    expect(typeof data.checks.firebase).toBe('boolean')
   })
 
   it('includes environment information', async () => {

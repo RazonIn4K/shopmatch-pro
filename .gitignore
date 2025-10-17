@@ -32,9 +32,10 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
-# But allow template files
+# But allow template files and test environment (safe mock values only)
 !.env.local.template
 !.env.test.example
+!.env.test.local
 
 # vercel
 .vercel

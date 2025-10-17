@@ -337,8 +337,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
    *
    * This effect runs once on component mount and subscribes to Firebase Auth
    * state changes. It automatically updates the user state when users sign in/out.
+   *
+   * In test mode (NEXT_PUBLIC_AUTH_TEST_MODE=mock), we skip the Firebase listener
+   * entirely and immediately provide an unauthenticated state. This prevents
+   * components from being stuck in loading state during E2E tests.
    */
   useEffect(() => {
+    // Test mode: Skip Firebase listener entirely and provide deterministic state
+    if (process.env.NEXT_PUBLIC_AUTH_TEST_MODE === 'mock') {
+      // Immediately resolve to unauthenticated state for tests
+      setUser(null)
+      setLoading(false)
+      // No cleanup needed - we never registered a listener
+      return
+    }
+
+    // Production mode: Register Firebase auth state listener
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       try {
         if (firebaseUser) {

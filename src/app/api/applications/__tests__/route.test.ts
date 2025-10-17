@@ -43,11 +43,17 @@ describe('GET /api/applications', () => {
       const data = await getResponseJson(response)
 
       expect(response.status).toBe(401)
-      expect(data.error).toContain('Invalid token')
+      expect(data.error).toContain('Unauthorized')
     })
 
     it('defaults to seeker perspective when no filters provided', async () => {
       const seekerId = 'test-seeker-id'
+
+      mockFirebaseAdmin.auth().verifyIdToken.mockResolvedValueOnce({
+        uid: seekerId,
+        subActive: true,
+        role: 'seeker',
+      })
 
       mockFirebaseAdmin.firestore().get.mockResolvedValueOnce({
         docs: [{
@@ -72,6 +78,12 @@ describe('GET /api/applications', () => {
 
     it('allows owner to filter by ownerId', async () => {
       const ownerId = 'test-owner-id'
+
+      mockFirebaseAdmin.auth().verifyIdToken.mockResolvedValueOnce({
+        uid: ownerId,
+        subActive: true,
+        role: 'owner',
+      })
 
       mockFirebaseAdmin.firestore().get.mockResolvedValueOnce({
         docs: [{

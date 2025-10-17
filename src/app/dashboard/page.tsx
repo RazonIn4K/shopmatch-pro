@@ -25,6 +25,7 @@ export default function DashboardPage() {
 
   return (
     <main className="container mx-auto py-12">
+      <h1 className="sr-only">Dashboard</h1>
       <div className="flex items-center justify-center">
         <div className="h-8 w-48 animate-pulse rounded-md bg-muted" />
       </div>

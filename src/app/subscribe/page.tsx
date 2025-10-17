@@ -156,12 +156,18 @@ function SubscribePageContent() {
    */
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading...</p>
+      <main
+        className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900"
+        role="main"
+        aria-busy="true"
+        aria-live="polite"
+      >
+        <h1 className="sr-only">Checking subscription status</h1>
+        <div className="text-center" role="status" aria-label="Loading subscription information">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading subscription details...</p>
         </div>
-      </div>
+      </main>
     )
   }
 
@@ -308,12 +314,18 @@ function SubscribePageContent() {
 export default function SubscribePage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Loading...</p>
+      <main
+        className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900"
+        role="main"
+        aria-busy="true"
+        aria-live="polite"
+      >
+        <h1 className="sr-only">Loading subscription page</h1>
+        <div className="text-center" role="status" aria-label="Loading subscription page">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">Preparing subscription experience...</p>
         </div>
-      </div>
+      </main>
     }>
       <SubscribePageContent />
     </Suspense>

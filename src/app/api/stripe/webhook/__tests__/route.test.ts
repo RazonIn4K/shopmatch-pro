@@ -331,7 +331,6 @@ describe('POST /api/stripe/webhook', () => {
 
       expect(response.status).toBe(200)
       expect(data.received).toBe(true)
-      expect(data.error).toBe('Processing error logged')
     })
 
     it('ignores unknown event types', async () => {

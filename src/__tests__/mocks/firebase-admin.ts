@@ -5,53 +5,109 @@
  * for use in unit and integration tests.
  */
 
-export const mockFirebaseAdmin = {
-  auth: () => ({
-    verifyIdToken: jest.fn().mockResolvedValue({
-      uid: 'test-user-id',
-      email: 'test@example.com',
-      role: 'owner',
-      subActive: true,
-    }),
-    getUser: jest.fn().mockResolvedValue({
-      uid: 'test-user-id',
-      email: 'test@example.com',
-      displayName: 'Test User',
-    }),
-    setCustomUserClaims: jest.fn().mockResolvedValue(undefined),
-  }),
-  firestore: () => ({
-    collection: jest.fn().mockReturnThis(),
-    doc: jest.fn().mockReturnThis(),
+type MockWithReset<T extends Record<string, unknown>> = T & {
+  [key: string]: unknown
+}
+
+const authMock: MockWithReset<{
+  verifyIdToken: jest.Mock
+  getUser: jest.Mock
+  setCustomUserClaims: jest.Mock
+}> = {} as unknown as MockWithReset<{
+  verifyIdToken: jest.Mock
+  getUser: jest.Mock
+  setCustomUserClaims: jest.Mock
+}>
+
+const firestoreMock: MockWithReset<{
+  collection: jest.Mock
+  doc: jest.Mock
+  get: jest.Mock
+  add: jest.Mock
+  update: jest.Mock
+  delete: jest.Mock
+  set: jest.Mock
+  where: jest.Mock
+  orderBy: jest.Mock
+  select: jest.Mock
+  limit: jest.Mock
+  offset: jest.Mock
+  count: jest.Mock
+}> = {} as unknown as MockWithReset<{
+  collection: jest.Mock
+  doc: jest.Mock
+  get: jest.Mock
+  add: jest.Mock
+  update: jest.Mock
+  delete: jest.Mock
+  set: jest.Mock
+  where: jest.Mock
+  orderBy: jest.Mock
+  select: jest.Mock
+  limit: jest.Mock
+  offset: jest.Mock
+  count: jest.Mock
+}>
+
+function applyAuthDefaults(): void {
+  authMock.verifyIdToken = jest.fn().mockResolvedValue({
+    uid: 'test-user-id',
+    email: 'test@example.com',
+    role: 'owner',
+    subActive: true,
+  })
+
+  authMock.getUser = jest.fn().mockResolvedValue({
+    uid: 'test-user-id',
+    email: 'test@example.com',
+    displayName: 'Test User',
+  })
+
+  authMock.setCustomUserClaims = jest.fn().mockResolvedValue(undefined)
+}
+
+function applyFirestoreDefaults(): void {
+  const chain = () => firestoreMock
+
+  firestoreMock.collection = jest.fn().mockImplementation(chain)
+  firestoreMock.doc = jest.fn().mockImplementation(chain)
+  firestoreMock.where = jest.fn().mockImplementation(chain)
+  firestoreMock.orderBy = jest.fn().mockImplementation(chain)
+  firestoreMock.select = jest.fn().mockImplementation(chain)
+  firestoreMock.limit = jest.fn().mockImplementation(chain)
+  firestoreMock.offset = jest.fn().mockImplementation(chain)
+
+  firestoreMock.get = jest.fn().mockResolvedValue({
+    empty: true,
+    docs: [],
+  })
+
+  firestoreMock.add = jest.fn().mockResolvedValue({
+    id: 'test-doc-id',
     get: jest.fn().mockResolvedValue({
       exists: true,
       id: 'test-doc-id',
-      data: jest.fn().mockReturnValue({
-        id: 'test-doc-id',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      }),
+      data: jest.fn().mockReturnValue({}),
     }),
-    add: jest.fn().mockResolvedValue({
-      id: 'test-doc-id',
-      get: jest.fn().mockResolvedValue({
-        exists: true,
-        id: 'test-doc-id',
-        data: jest.fn().mockReturnValue({}),
-      }),
-    }),
-    update: jest.fn().mockResolvedValue(undefined),
-    delete: jest.fn().mockResolvedValue(undefined),
-    where: jest.fn().mockReturnThis(),
-    orderBy: jest.fn().mockReturnThis(),
-    limit: jest.fn().mockReturnThis(),
-    offset: jest.fn().mockReturnThis(),
-    count: jest.fn().mockReturnValue({
-      get: jest.fn().mockResolvedValue({
-        data: jest.fn().mockReturnValue({ count: 0 }),
-      }),
-    }),
-  }),
+  })
+
+  firestoreMock.update = jest.fn().mockResolvedValue(undefined)
+  firestoreMock.delete = jest.fn().mockResolvedValue(undefined)
+  firestoreMock.set = jest.fn().mockResolvedValue(undefined)
+
+  const countGet = jest.fn().mockResolvedValue({
+    data: jest.fn().mockReturnValue({ count: 0 }),
+  })
+
+  firestoreMock.count = jest.fn().mockReturnValue({ get: countGet })
+}
+
+applyAuthDefaults()
+applyFirestoreDefaults()
+
+export const mockFirebaseAdmin = {
+  auth: () => authMock,
+  firestore: () => firestoreMock,
 }
 
 /**
@@ -60,8 +116,8 @@ export const mockFirebaseAdmin = {
  */
 export function setupFirebaseAdminMocks() {
   jest.mock('@/lib/firebase/admin', () => ({
-    adminAuth: mockFirebaseAdmin.auth(),
-    adminDb: mockFirebaseAdmin.firestore(),
+    adminAuth: authMock,
+    adminDb: firestoreMock,
     isFirebaseAdminFallbackMode: false,
   }))
 }
@@ -70,5 +126,6 @@ export function setupFirebaseAdminMocks() {
  * Reset Firebase Admin mocks between tests
  */
 export function resetFirebaseAdminMocks() {
-  jest.clearAllMocks()
+  applyAuthDefaults()
+  applyFirestoreDefaults()
 }

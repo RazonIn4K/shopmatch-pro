@@ -8,9 +8,25 @@
 import { setupFirebaseAdminMocks, resetFirebaseAdminMocks } from './mocks/firebase-admin'
 import { setupStripeMocks, resetStripeMocks } from './mocks/stripe'
 
+jest.mock('next/server', () => ({
+  NextResponse: {
+    json(data: unknown, init?: ResponseInit) {
+      return new Response(JSON.stringify(data), {
+        ...init,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(init?.headers ?? {}),
+        },
+      })
+    },
+  },
+  NextRequest: Request,
+}))
+
 // Set test environment variables
 process.env.NODE_ENV = 'test'
 process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:3000'
+process.env.NEXT_PUBLIC_FIREBASE_API_KEY = 'test-firebase-api-key'
 process.env.FIREBASE_PROJECT_ID = 'test-project'
 process.env.FIREBASE_CLIENT_EMAIL = 'test@test-project.iam.gserviceaccount.com'
 process.env.FIREBASE_PRIVATE_KEY = '-----BEGIN PRIVATE KEY-----\nMOCK_KEY\n-----END PRIVATE KEY-----'
@@ -157,11 +173,25 @@ export function createMockAuthRequest(
  * Extract JSON body from Next.js Response
  */
 export async function getResponseJson(response: Response): Promise<unknown> {
-  // Handle NextResponse which has a different structure
-  if (response.json && typeof response.json === 'function') {
-    return await response.json()
+  const clone = typeof response.clone === 'function' ? response.clone() : response
+  let text: string | null = null
+
+  if (typeof (clone as { arrayBuffer?: () => Promise<ArrayBuffer> }).arrayBuffer === 'function') {
+    const arrayBuffer = await (clone as { arrayBuffer: () => Promise<ArrayBuffer> }).arrayBuffer()
+    if (arrayBuffer && arrayBuffer.byteLength > 0) {
+      text = new TextDecoder().decode(arrayBuffer)
+    }
+  } else if (typeof (clone as { text?: () => Promise<string> }).text === 'function') {
+    text = await (clone as { text: () => Promise<string> }).text()
   }
-  // Fallback for plain Response
-  const text = await response.text()
-  return JSON.parse(text)
+
+  if (!text) {
+    return null
+  }
+
+  try {
+    return JSON.parse(text)
+  } catch {
+    return text
+  }
 }

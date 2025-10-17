@@ -1,5 +1,19 @@
 import { defineConfig, devices } from '@playwright/test'
 
+const ensureEnv = (key: string, fallback: string) => {
+  if (!process.env[key]) {
+    process.env[key] = fallback
+  }
+}
+
+ensureEnv('NEXT_PUBLIC_FIREBASE_API_KEY', 'test-firebase-api-key')
+ensureEnv('NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN', 'test-app.firebaseapp.com')
+ensureEnv('NEXT_PUBLIC_FIREBASE_PROJECT_ID', 'test-project')
+ensureEnv('NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET', 'test-project.appspot.com')
+ensureEnv('NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID', '1234567890')
+ensureEnv('NEXT_PUBLIC_FIREBASE_APP_ID', '1:1234567890:web:abcdef123456')
+ensureEnv('NEXT_PUBLIC_AUTH_TEST_MODE', 'mock')
+
 /**
  * Playwright Configuration for ShopMatch Pro
  *
@@ -8,6 +22,8 @@ import { defineConfig, devices } from '@playwright/test'
  *
  * @see https://playwright.dev/docs/test-configuration
  */
+const htmlReporter: ['html', { open: 'never'; host: string }] = ['html', { open: 'never', host: '127.0.0.1' }]
+
 export default defineConfig({
   // Test directory structure
   testDir: './e2e',
@@ -29,8 +45,8 @@ export default defineConfig({
   
   // Reporter to use
   reporter: process.env.CI
-    ? [['html'], ['github']]
-    : [['html'], ['list']],
+    ? [htmlReporter, ['github']]
+    : [htmlReporter, ['list']],
   
   // Shared settings for all the projects below
   use: {
@@ -78,11 +94,17 @@ export default defineConfig({
   ],
 
   // Run your local dev server before starting the tests
-  // Uncomment if you want Playwright to automatically start the dev server
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  //   timeout: 120 * 1000,
-  // },
+  // Note: For E2E tests to work correctly, you must:
+  // 1. Copy test environment: cp .env.test.local .env.local
+  // 2. Clear Next.js cache: rm -rf .next
+  // 3. Start dev server: npm run dev
+  // 4. Run tests: npm run test:e2e
+  webServer: {
+    command: 'npm run dev',
+    url: 'http://localhost:3000',
+    reuseExistingServer: true, // Use manually started server
+    timeout: 120 * 1000,
+    stdout: 'pipe',
+    stderr: 'pipe',
+  },
 })

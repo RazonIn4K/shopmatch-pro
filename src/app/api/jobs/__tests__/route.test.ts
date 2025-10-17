@@ -9,15 +9,23 @@ import { createMockAuthRequest, createMockRequest, getResponseJson } from '@/__t
 import { mockFirebaseAdmin } from '@/__tests__/mocks/firebase-admin'
 
 describe('/api/jobs', () => {
-  const mockJobData = {
-    id: 'job-test-123',
-    ownerId: 'test-user-id',
+  const validJobPayload = {
     title: 'Senior Developer',
-    description: 'Looking for a senior developer',
+    description: 'Seeking a senior developer with strong TypeScript and leadership experience to build scalable systems.',
     company: 'Test Company',
     location: 'Remote',
     type: 'full-time',
     status: 'published',
+    remote: true,
+    requirements: ['5+ years of professional experience'],
+    skills: ['TypeScript', 'React'],
+    experience: 'senior' as const,
+  }
+
+  const mockJobData = {
+    id: 'job-test-123',
+    ownerId: 'test-user-id',
+    ...validJobPayload,
     createdAt: new Date(),
     updatedAt: new Date(),
     publishedAt: new Date(),
@@ -175,15 +183,6 @@ describe('/api/jobs', () => {
   })
 
   describe('POST /api/jobs', () => {
-    const validJobPayload = {
-      title: 'Senior Developer',
-      description: 'Looking for a senior developer',
-      company: 'Test Company',
-      location: 'Remote',
-      type: 'full-time',
-      status: 'published',
-    }
-
     it('creates a job for authenticated user with active subscription', async () => {
       const userId = 'test-user-id'
 
