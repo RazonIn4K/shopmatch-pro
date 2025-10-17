@@ -4,6 +4,8 @@
  * Tests the /api/stripe/webhook endpoint for subscription lifecycle events
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { POST } from '../route'
 import { createMockRequest, getResponseJson } from '@/__tests__/setup'
 import { mockStripe } from '@/__tests__/mocks/stripe'
@@ -28,8 +30,8 @@ describe('POST /api/stripe/webhook', () => {
         body: { type: 'customer.subscription.created' },
       })
 
-      const response = await POST(request)
-      const data = await getResponseJson(response)
+      const response = await POST(request as any)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(400)
       expect(data.error).toBe('Missing signature')
@@ -47,8 +49,8 @@ describe('POST /api/stripe/webhook', () => {
         body: { type: 'customer.subscription.created' },
       })
 
-      const response = await POST(request)
-      const data = await getResponseJson(response)
+      const response = await POST(request as any)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(400)
       expect(data.error).toBe('Invalid signature')
@@ -74,8 +76,8 @@ describe('POST /api/stripe/webhook', () => {
         body: {},
       })
 
-      const response = await POST(request)
-      const data = await getResponseJson(response)
+      const response = await POST(request as any)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(200)
       expect(data.received).toBe(true)
@@ -113,8 +115,8 @@ describe('POST /api/stripe/webhook', () => {
         body: {},
       })
 
-      const response = await POST(request)
-      const data = await getResponseJson(response)
+      const response = await POST(request as any)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(200)
       expect(data.received).toBe(true)
@@ -157,7 +159,7 @@ describe('POST /api/stripe/webhook', () => {
         body: {},
       })
 
-      const response = await POST(request)
+      const response = await POST(request as any)
 
       expect(response.status).toBe(200)
       expect(mockFirebaseAdmin.auth().setCustomUserClaims).toHaveBeenCalledWith(
@@ -188,8 +190,8 @@ describe('POST /api/stripe/webhook', () => {
         body: {},
       })
 
-      const response = await POST(request)
-      const data = await getResponseJson(response)
+      const response = await POST(request as any)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(200)
       expect(data.received).toBe(true)
@@ -226,8 +228,8 @@ describe('POST /api/stripe/webhook', () => {
         body: {},
       })
 
-      const response = await POST(request)
-      const data = await getResponseJson(response)
+      const response = await POST(request as any)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(200)
       expect(data.received).toBe(true)
@@ -267,8 +269,8 @@ describe('POST /api/stripe/webhook', () => {
         body: {},
       })
 
-      const response = await POST(request)
-      const data = await getResponseJson(response)
+      const response = await POST(request as any)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(200)
       expect(data.received).toBe(true)
@@ -293,8 +295,8 @@ describe('POST /api/stripe/webhook', () => {
         body: {},
       })
 
-      const response = await POST(request)
-      const data = await getResponseJson(response)
+      const response = await POST(request as any)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(200)
       expect(data.received).toBe(true)
@@ -326,8 +328,8 @@ describe('POST /api/stripe/webhook', () => {
         body: {},
       })
 
-      const response = await POST(request)
-      const data = await getResponseJson(response)
+      const response = await POST(request as any)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(200)
       expect(data.received).toBe(true)
@@ -347,8 +349,8 @@ describe('POST /api/stripe/webhook', () => {
         body: {},
       })
 
-      const response = await POST(request)
-      const data = await getResponseJson(response)
+      const response = await POST(request as any)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(200)
       expect(data.received).toBe(true)

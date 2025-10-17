@@ -24,7 +24,8 @@ jest.mock('next/server', () => ({
 }))
 
 // Set test environment variables
-process.env.NODE_ENV = 'test'
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+;(process.env as any).NODE_ENV = 'test'
 process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:3000'
 process.env.NEXT_PUBLIC_FIREBASE_API_KEY = 'test-firebase-api-key'
 process.env.FIREBASE_PROJECT_ID = 'test-project'
@@ -76,12 +77,15 @@ if (typeof global.Request === 'undefined') {
 
 if (typeof global.Headers === 'undefined') {
   global.Headers = class Headers extends Map<string, string> {
-    get(key: string): string | null {
-      return super.get(key.toLowerCase()) || null
+    get(key: string): string | undefined {
+      return super.get(key.toLowerCase())
     }
     set(key: string, value: string): this {
       super.set(key.toLowerCase(), value)
       return this
+    }
+    has(key: string): boolean {
+      return super.has(key.toLowerCase())
     }
   } as unknown as typeof globalThis.Headers
 }

@@ -1,8 +1,11 @@
 /**
+
  * Applications API Route Tests
  *
  * Tests the /api/applications endpoint for application listing
  */
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { GET } from '../route'
 import { createMockAuthRequest, getResponseJson } from '@/__tests__/setup'
@@ -40,7 +43,7 @@ describe('GET /api/applications', () => {
       })
 
       const response = await GET(request)
-      const data = await getResponseJson(response)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(401)
       expect(data.error).toContain('Unauthorized')
@@ -112,7 +115,7 @@ describe('GET /api/applications', () => {
       })
 
       const response = await GET(request)
-      const data = await getResponseJson(response)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(403)
       expect(data.error).toContain('Cannot query applications for other seekers')
@@ -124,7 +127,7 @@ describe('GET /api/applications', () => {
       })
 
       const response = await GET(request)
-      const data = await getResponseJson(response)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(403)
       expect(data.error).toContain('Cannot query applications for other owners')
@@ -194,7 +197,7 @@ describe('GET /api/applications', () => {
       })
 
       const response = await GET(request)
-      const data = await getResponseJson(response)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(200)
       expect(data.pagination).toEqual({
@@ -219,7 +222,7 @@ describe('GET /api/applications', () => {
       })
 
       const response = await GET(request)
-      const data = await getResponseJson(response)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(200)
       expect(data.pagination.limit).toBe(100)
@@ -239,7 +242,7 @@ describe('GET /api/applications', () => {
       })
 
       const response = await GET(request)
-      const data = await getResponseJson(response)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(200)
       expect(data.pagination.page).toBe(1)
@@ -271,7 +274,7 @@ describe('GET /api/applications', () => {
       })
 
       const response = await GET(request)
-      const data = await getResponseJson(response)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(200)
       expect(data.applications).toHaveLength(1)
@@ -295,7 +298,7 @@ describe('GET /api/applications', () => {
       })
 
       const response = await GET(request)
-      const data = await getResponseJson(response)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(200)
       const app = data.applications[0]

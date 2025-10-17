@@ -1,8 +1,11 @@
 /**
+
  * Jobs API Route Tests
  *
  * Tests the /api/jobs endpoint for job listing and creation
  */
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { GET, POST } from '../route'
 import { createMockAuthRequest, createMockRequest, getResponseJson } from '@/__tests__/setup'
@@ -57,7 +60,7 @@ describe('/api/jobs', () => {
       })
 
       const response = await GET(request)
-      const data = await getResponseJson(response)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(200)
       expect(data.jobs).toHaveLength(1)
@@ -89,7 +92,7 @@ describe('/api/jobs', () => {
       })
 
       const response = await GET(request)
-      const data = await getResponseJson(response)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(200)
       expect(data.jobs).toHaveLength(1)
@@ -101,7 +104,7 @@ describe('/api/jobs', () => {
       })
 
       const response = await GET(request)
-      const data = await getResponseJson(response)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(403)
       expect(data.error).toContain('cannot filter by another user')
@@ -121,7 +124,7 @@ describe('/api/jobs', () => {
       })
 
       const response = await GET(request)
-      const data = await getResponseJson(response)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(200)
       expect(data.pagination).toEqual({
@@ -175,7 +178,7 @@ describe('/api/jobs', () => {
       })
 
       const response = await GET(request)
-      const data = await getResponseJson(response)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(200)
       expect(data.jobs[0].location).toContain('San Francisco')
@@ -210,7 +213,7 @@ describe('/api/jobs', () => {
       })
 
       const response = await POST(request)
-      const data = await getResponseJson(response)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(201)
       expect(data.message).toBe('Job created successfully')
@@ -231,7 +234,7 @@ describe('/api/jobs', () => {
       })
 
       const response = await POST(request)
-      const data = await getResponseJson(response)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(403)
       expect(data.error).toContain('subscription')
@@ -254,7 +257,7 @@ describe('/api/jobs', () => {
       })
 
       const response = await POST(request)
-      const data = await getResponseJson(response)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(422)
       expect(data.error).toBe('Validation failed')
@@ -285,7 +288,7 @@ describe('/api/jobs', () => {
       })
 
       const response = await POST(request)
-      const data = await getResponseJson(response)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(201)
       expect(data.job.publishedAt).toBeDefined()
@@ -316,7 +319,7 @@ describe('/api/jobs', () => {
       })
 
       const response = await POST(request)
-      const data = await getResponseJson(response)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(201)
       expect(data.job.publishedAt).toBeNull()
@@ -347,7 +350,7 @@ describe('/api/jobs', () => {
       })
 
       const response = await POST(request)
-      const data = await getResponseJson(response)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(201)
       expect(data.job.viewCount).toBe(0)
@@ -390,7 +393,7 @@ describe('/api/jobs', () => {
       })
 
       const response = await POST(request)
-      const data = await getResponseJson(response)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(200) // Idempotent response
       expect(data.message).toBe('Job already exists')
@@ -431,7 +434,7 @@ describe('/api/jobs', () => {
       })
 
       const response = await POST(request)
-      const data = await getResponseJson(response)
+      const data = await getResponseJson(response) as Record<string, any>
 
       expect(response.status).toBe(201)
       expect(data.message).toBe('Job created successfully')

@@ -4,17 +4,15 @@
  * Tests the /api/health endpoint to verify test infrastructure
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { GET } from '../route'
-import { createMockRequest, getResponseJson } from '@/__tests__/setup'
+import { getResponseJson } from '@/__tests__/setup'
 
 describe('GET /api/health', () => {
   it('returns 200 with health status', async () => {
-    const request = createMockRequest({
-      url: 'http://localhost:3000/api/health',
-    })
-
-    const response = await GET(request)
-    const data = await getResponseJson(response)
+    const response = await GET()
+    const data = await getResponseJson(response) as Record<string, unknown>
 
     expect(response.status).toBe(200)
     expect(response.status).toBe(200)
@@ -31,12 +29,8 @@ describe('GET /api/health', () => {
   })
 
   it('includes Firebase Admin fallback mode status', async () => {
-    const request = createMockRequest({
-      url: 'http://localhost:3000/api/health',
-    })
-
-    const response = await GET(request)
-    const data = await getResponseJson(response)
+    const response = await GET()
+    const data = await getResponseJson(response) as Record<string, any>
 
     expect(data).toHaveProperty('checks')
     expect(data.checks).toHaveProperty('firebase')
@@ -44,12 +38,8 @@ describe('GET /api/health', () => {
   })
 
   it('includes environment information', async () => {
-    const request = createMockRequest({
-      url: 'http://localhost:3000/api/health',
-    })
-
-    const response = await GET(request)
-    const data = await getResponseJson(response)
+    const response = await GET()
+    const data = await getResponseJson(response) as Record<string, any>
 
     expect(data).toHaveProperty('environment')
     expect(data.environment).toBe('test')
