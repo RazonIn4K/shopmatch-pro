@@ -265,6 +265,8 @@ stripe prices create \
 | **Staging** | `https://staging.example.com` | Webhook callbacks |
 | **Production** | `https://shopmatch.pro` | All external integrations |
 
+**Vercel Fallbacks**: If `NEXT_PUBLIC_APP_URL` is not set, the application now derives the base URL from Vercel-provided variables (like `VERCEL_URL`). Set the variable explicitly when you have a canonical domain so metadata and redirects remain stable across preview and production deployments.
+
 **OAuth Configuration**:
 1. Go to [Firebase Console](https://console.firebase.google.com/)
 2. Navigate to **Authentication** → **Settings** → **Authorized domains**
