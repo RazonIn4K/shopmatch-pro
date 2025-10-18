@@ -12,9 +12,9 @@ info:
 
     **Error Handling**: All endpoints return standardized error responses with:
     - `error`: Human-readable error message
-    - `details`: Optional additional error context
+    - `details`: Optional additional error context (422 validation errors include Zod error format)
 
-    **Rate Limiting**: Not currently implemented (planned for future release).
+    **Rate Limiting**: Currently implemented only for CSV export (5 exports per hour).
 
   version: 1.0.0
   contact:
@@ -99,6 +99,18 @@ paths:
       operationId: initializeClaims
       security:
         - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [role]
+              properties:
+                role:
+                  type: string
+                  enum: [owner, seeker]
+                  description: User role to initialize
       responses:
         '200':
           description: Claims initialized successfully
@@ -110,6 +122,12 @@ paths:
                   message:
                     type: string
                     example: "Custom claims initialized successfully"
+        '400':
+          description: Missing or invalid request body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '500':
@@ -205,10 +223,16 @@ paths:
                     format: uri
                     description: Stripe Customer Portal URL
                     example: "https://billing.stripe.com/p/session/..."
+        '400':
+          description: No Stripe customer ID found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          description: No Stripe customer ID found
+        '404':
+          description: User document not found
           content:
             application/json:
               schema:
@@ -262,31 +286,103 @@ paths:
   /api/jobs:
     get:
       tags: [Jobs]
-      summary: List jobs
+      summary: List jobs with filtering and pagination
       description: |
-        Returns jobs filtered by user role:
-        - **Owners**: Only their own posted jobs
-        - **Seekers**: All published jobs from all owners
+        Returns jobs with extensive filtering support and pagination.
 
-        **Authentication required**: User must be logged in.
+        **Query parameters** (all optional):
+        - `ownerId`: Filter by job owner Firebase UID
+        - `status`: Filter by status (draft, published, closed)
+        - `type`: Filter by employment type (full-time, part-time, contract, freelance)
+        - `location`: Filter by location string (partial match)
+        - `remote`: Filter for remote jobs (true/false)
+        - `experience`: Filter by experience level (entry, mid, senior, lead)
+        - `page`: Page number (default: 1, min: 1)
+        - `limit`: Results per page (default: 20, min: 1, max: 100)
+
+        **Response**: Returns paginated results with pagination metadata.
+
+        **Authentication**: Optional - unauthenticated users can browse published jobs.
       operationId: listJobs
-      security:
-        - bearerAuth: []
+      parameters:
+        - in: query
+          name: ownerId
+          schema:
+            type: string
+          description: Filter by job owner Firebase UID
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [draft, published, closed]
+          description: Filter by job status
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum: [full-time, part-time, contract, freelance]
+          description: Filter by employment type
+        - in: query
+          name: location
+          schema:
+            type: string
+          description: Filter by location (partial match)
+        - in: query
+          name: remote
+          schema:
+            type: boolean
+          description: Filter for remote jobs
+        - in: query
+          name: experience
+          schema:
+            type: string
+            enum: [entry, mid, senior, lead]
+          description: Filter by experience level
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+          description: Page number
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+          description: Results per page
       responses:
         '200':
-          description: List of jobs
+          description: Paginated list of jobs
           content:
             application/json:
               schema:
                 type: object
-                required: [jobs]
+                required: [jobs, pagination]
                 properties:
                   jobs:
                     type: array
                     items:
                       $ref: '#/components/schemas/Job'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
+                  pagination:
+                    type: object
+                    required: [page, limit, total, totalPages]
+                    properties:
+                      page:
+                        type: integer
+                        example: 1
+                      limit:
+                        type: integer
+                        example: 20
+                      total:
+                        type: integer
+                        description: Total matching jobs
+                        example: 45
+                      totalPages:
+                        type: integer
+                        example: 3
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -317,16 +413,19 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [id, job]
+                required: [message, job]
                 properties:
-                  id:
+                  message:
                     type: string
-                    description: Firestore document ID
-                    example: "job_abc123"
+                    example: "Job created successfully"
                   job:
                     $ref: '#/components/schemas/Job'
         '400':
-          $ref: '#/components/responses/ValidationError'
+          description: Invalid JSON payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '403':
@@ -335,6 +434,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation failed (Zod schema validation)
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error, details]
+                properties:
+                  error:
+                    type: string
+                    example: "Validation failed"
+                  details:
+                    type: object
+                    description: Zod error format with field-level validation issues
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -345,10 +458,12 @@ paths:
       description: |
         Retrieves a single job posting by ID.
 
-        **Authentication required**: User must be logged in.
+        **Authentication**: Optional for published jobs, required for draft jobs.
+        - Published jobs: accessible to everyone
+        - Draft jobs: only accessible to owner
+
+        **Side effects**: Increments view count for published jobs.
       operationId: getJob
-      security:
-        - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/JobIdParam'
       responses:
@@ -357,11 +472,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Job'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
+                type: object
+                required: [job]
+                properties:
+                  job:
+                    $ref: '#/components/schemas/Job'
         '404':
-          description: Job not found
+          description: Job not found (or draft job accessed by non-owner)
           content:
             application/json:
               schema:
@@ -369,15 +486,17 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-    patch:
+    put:
       tags: [Jobs]
       summary: Update job posting
       description: |
-        Updates an existing job posting.
+        Updates an existing job posting using PUT (replaces all fields).
 
         **Ownership verification**: User must be the job owner (Firestore canonical ownership check).
 
-        **Authentication required**: Owner of the job.
+        **Side effects**: Sets `publishedAt` timestamp when transitioning from draft to published.
+
+        **Authentication required**: Owner of the job with active subscription.
       operationId: updateJob
       security:
         - bearerAuth: []
@@ -395,13 +514,24 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Job'
+                type: object
+                required: [message, job]
+                properties:
+                  message:
+                    type: string
+                    example: "Job updated successfully"
+                  job:
+                    $ref: '#/components/schemas/Job'
         '400':
-          $ref: '#/components/responses/ValidationError'
+          description: Invalid JSON payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '403':
-          description: User does not own this job
+          description: User does not own this job or subscription inactive
           content:
             application/json:
               schema:
@@ -412,6 +542,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation failed (Zod schema validation)
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error, details]
+                properties:
+                  error:
+                    type: string
+                    example: "Validation failed"
+                  details:
+                    type: object
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -419,25 +562,35 @@ paths:
       tags: [Jobs]
       summary: Delete job posting
       description: |
-        Deletes a job posting and all associated applications.
+        Deletes a job posting.
 
         **Ownership verification**: User must be the job owner.
 
-        **Cascade behavior**: All applications for this job are also deleted.
+        **Cascade behavior**: DOES NOT delete associated applications (cascade code commented out).
+        Future implementation may include cascade deletion.
 
-        **Authentication required**: Owner of the job.
+        **Authentication required**: Owner of the job with active subscription.
       operationId: deleteJob
       security:
         - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/JobIdParam'
       responses:
-        '204':
-          description: Job deleted successfully (no content)
+        '200':
+          description: Job deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [message]
+                properties:
+                  message:
+                    type: string
+                    example: "Job deleted successfully"
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '403':
-          description: User does not own this job
+          description: User does not own this job or subscription inactive
           content:
             application/json:
               schema:
@@ -460,8 +613,10 @@ paths:
 
         **Requirements**:
         - User must have "seeker" role
-        - Cannot apply to own jobs
-        - Cannot apply twice to same job
+        - Job must exist and be published
+        - Cannot apply twice to same job (enforced by Firestore unique index)
+
+        **Note**: The spec previously claimed "cannot apply to own jobs" but this is NOT enforced in the implementation.
 
         **Authentication required**: Seeker role.
       operationId: applyToJob
@@ -482,20 +637,23 @@ paths:
             application/json:
               schema:
                 type: object
-                required: [id, application]
+                required: [message, application]
                 properties:
-                  id:
+                  message:
                     type: string
-                    description: Application document ID
-                    example: "app_xyz789"
+                    example: "Application submitted successfully"
                   application:
                     $ref: '#/components/schemas/Application'
         '400':
-          $ref: '#/components/responses/ValidationError'
+          description: Invalid JSON payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '403':
-          description: Cannot apply to own jobs
+          description: Seeker role required
           content:
             application/json:
               schema:
@@ -506,20 +664,41 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Duplicate application (already applied to this job)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '422':
+          description: Validation failed
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error, details]
+                properties:
+                  error:
+                    type: string
+                    example: "Validation failed"
+                  details:
+                    type: object
         '500':
           $ref: '#/components/responses/InternalServerError'
 
   /api/applications:
     get:
       tags: [Applications]
-      summary: List applications
+      summary: List applications with filtering
       description: |
         Returns applications filtered by user role:
         - **Owners**: Applications to their job postings
         - **Seekers**: Their own submitted applications
 
-        **Query parameters**:
-        - `jobId` (optional): Filter by specific job ID
+        **Query parameters** (all optional):
+        - `jobId`: Filter by specific job ID
+        - `seekerId`: Filter by seeker Firebase UID (owner only)
+        - `status`: Filter by application status (pending, reviewed, accepted, rejected)
 
         **Authentication required**: User must be logged in.
       operationId: listApplications
@@ -532,6 +711,17 @@ paths:
             type: string
           description: Filter applications by job ID
           example: "job_abc123"
+        - in: query
+          name: seekerId
+          schema:
+            type: string
+          description: Filter by seeker UID (owner only)
+        - in: query
+          name: status
+          schema:
+            type: string
+            enum: [pending, reviewed, accepted, rejected]
+          description: Filter by application status
       responses:
         '200':
           description: List of applications
@@ -550,7 +740,177 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/applications/export:
+    get:
+      tags: [Applications]
+      summary: Export applications as CSV
+      description: |
+        Exports all applications for jobs owned by the authenticated user as CSV file.
+
+        **Requirements**:
+        - User must have "owner" role
+        - User must have posted at least one job
+        - At least one application must exist for user's jobs
+
+        **Rate limiting**: 5 exports per hour per user (enforced with X-RateLimit headers).
+
+        **CSV columns**:
+        - Job Title
+        - Applicant Email
+        - Status
+        - Cover Letter
+        - Applied At (timestamp)
+        - Last Updated (timestamp)
+
+        **Authentication required**: Owner role.
+      operationId: exportApplicationsCSV
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: CSV file with all applications
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+                example: 'attachment; filename="applications-export-2025-10-18.csv"'
+            X-RateLimit-Limit:
+              schema:
+                type: string
+                example: "5"
+            X-RateLimit-Remaining:
+              schema:
+                type: string
+                example: "4"
+            X-RateLimit-Reset:
+              schema:
+                type: string
+                description: Unix timestamp when rate limit resets
+                example: "1729258800000"
+        '401':
+          description: Missing or invalid authentication
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Owner role required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: No jobs or no applications found
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error, message]
+                properties:
+                  error:
+                    type: string
+                    example: "No applications found"
+                  message:
+                    type: string
+                    example: "No applications have been submitted to your jobs"
+        '429':
+          description: Rate limit exceeded (5 exports per hour)
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error, message, retryAfter, limit, remaining, reset]
+                properties:
+                  error:
+                    type: string
+                    example: "Rate limit exceeded"
+                  message:
+                    type: string
+                    example: "You can export up to 5 times per hour. Please try again in 45 minutes."
+                  retryAfter:
+                    type: integer
+                    description: Seconds until rate limit reset
+                    example: 2700
+                  limit:
+                    type: integer
+                    example: 5
+                  remaining:
+                    type: integer
+                    example: 0
+                  reset:
+                    type: integer
+                    description: Unix timestamp when rate limit resets
+                    example: 1729258800000
+          headers:
+            Retry-After:
+              schema:
+                type: string
+                example: "2700"
+            X-RateLimit-Limit:
+              schema:
+                type: string
+                example: "5"
+            X-RateLimit-Remaining:
+              schema:
+                type: string
+                example: "0"
+            X-RateLimit-Reset:
+              schema:
+                type: string
+                example: "1729258800000"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/applications/{id}:
+    get:
+      tags: [Applications]
+      summary: Get application details
+      description: |
+        Retrieves a single application by ID.
+
+        **Access control**:
+        - Seeker can view their own applications
+        - Owner can view applications to their jobs
+
+        **Authentication required**: Seeker (own application) or Owner (job owner).
+      operationId: getApplication
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ApplicationIdParam'
+      responses:
+        '200':
+          description: Application details
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [application]
+                properties:
+                  application:
+                    $ref: '#/components/schemas/Application'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Insufficient permissions to view this application
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Application not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
     patch:
       tags: [Applications]
       summary: Update application status
@@ -565,6 +925,8 @@ paths:
         - reviewed → rejected
 
         **Ownership verification**: User must own the job this application is for.
+
+        **Side effects**: Sets `reviewedAt` timestamp when transitioning from pending to any other status.
 
         **Authentication required**: Owner of the job.
       operationId: updateApplication
@@ -584,13 +946,24 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Application'
+                type: object
+                required: [message, application]
+                properties:
+                  message:
+                    type: string
+                    example: "Application updated successfully"
+                  application:
+                    $ref: '#/components/schemas/Application'
         '400':
-          $ref: '#/components/responses/ValidationError'
+          description: Invalid JSON payload
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '403':
-          description: User does not own this job
+          description: User does not own the job or not an owner
           content:
             application/json:
               schema:
@@ -601,42 +974,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-    delete:
-      tags: [Applications]
-      summary: Delete application
-      description: |
-        Deletes a job application.
-
-        **Who can delete**:
-        - Seekers: Their own applications (withdraw)
-        - Owners: Applications to their jobs (cleanup)
-
-        **Authentication required**: Application owner or job owner.
-      operationId: deleteApplication
-      security:
-        - bearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/ApplicationIdParam'
-      responses:
-        '204':
-          description: Application deleted successfully (no content)
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          description: Insufficient permissions
+        '422':
+          description: Validation failed
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Application not found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+                type: object
+                required: [error, details]
+                properties:
+                  error:
+                    type: string
+                    example: "Validation failed"
+                  details:
+                    type: object
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -778,6 +1128,10 @@ components:
           type: string
           enum: [draft, published, closed]
           description: Job posting status
+        viewCount:
+          type: integer
+          description: Number of times job has been viewed (incremented on GET)
+          example: 42
         createdAt:
           type: string
           format: date-time
@@ -786,6 +1140,10 @@ components:
           type: string
           format: date-time
           description: Firestore server timestamp
+        publishedAt:
+          type: string
+          format: date-time
+          description: Timestamp when job was first published (set on draft → published transition)
         expiresAt:
           type: string
           format: date-time
@@ -837,7 +1195,8 @@ components:
 
     JobUpdateRequest:
       type: object
-      description: All fields optional - only provided fields will be updated
+      description: All fields required (PUT semantics - replaces entire job)
+      required: [title, description, company, location, type, status]
       properties:
         title:
           type: string
@@ -899,6 +1258,9 @@ components:
           type: string
           description: Optional cover letter text
           example: "I am very interested in this position..."
+        notes:
+          type: string
+          description: Owner notes on application (owner only, not visible to seeker)
         resumeUrl:
           type: string
           format: uri
@@ -909,6 +1271,10 @@ components:
         updatedAt:
           type: string
           format: date-time
+        reviewedAt:
+          type: string
+          format: date-time
+          description: Timestamp when status changed from pending (set automatically)
 
     ApplicationCreateRequest:
       type: object
@@ -927,6 +1293,10 @@ components:
           type: string
           enum: [reviewed, accepted, rejected]
           description: New status (only owner can update)
+        notes:
+          type: string
+          maxLength: 2000
+          description: Optional owner notes on application
 
     ErrorResponse:
       type: object
@@ -936,10 +1306,13 @@ components:
           type: string
           description: Human-readable error message
           example: "Invalid request parameters"
+        message:
+          type: string
+          description: Additional human-friendly explanation
         details:
           type: object
-          description: Optional additional error context
-          example: { "field": "title", "issue": "Title must be at least 3 characters" }
+          description: Optional additional error context (422 errors include Zod format)
+          example: { "_errors": [], "title": { "_errors": ["String must contain at least 3 character(s)"] } }
 
   responses:
     UnauthorizedError:
@@ -950,18 +1323,6 @@ components:
             $ref: '#/components/schemas/ErrorResponse'
           example:
             error: "Unauthorized"
-
-    ValidationError:
-      description: Request validation failed
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-          example:
-            error: "Validation failed"
-            details:
-              field: "title"
-              issue: "Title must be at least 3 characters"
 
     InternalServerError:
       description: Internal server error
