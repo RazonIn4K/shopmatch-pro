@@ -24,6 +24,9 @@
  * 4. Use ngrok for production webhook URL: ngrok http 3000
  */
 
+// CRITICAL: Use Node.js runtime for reliable Stripe signature verification
+export const runtime = 'nodejs'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import { stripe, STRIPE_CONFIG } from '@/lib/stripe/config'
@@ -95,8 +98,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   } catch (error: unknown) {
     console.error('Webhook processing error:', error)
 
-    // Return 200 to prevent Stripe from retrying
-    // Log error for debugging but don't expose details
+    // Return 500 so Stripe will retry the webhook
+    // Log error for debugging but don't expose details to client
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

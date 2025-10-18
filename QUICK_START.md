@@ -281,7 +281,7 @@ stripe trigger checkout.session.completed
 # Kill the process on port 3000
 lsof -ti:3000 | xargs kill -9
 
-# Or use a different port
+# Or use a different port (e.g., 3001)
 npm run dev -- -p 3001
 ```
 

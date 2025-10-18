@@ -24,7 +24,7 @@ export const runtime = 'nodejs'
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe, STRIPE_CONFIG, SUBSCRIPTION_TIERS } from '@/lib/stripe/config'
 import { verifyAuth } from '@/lib/api/auth'
-import { adminAuth } from '@/lib/firebase/admin'
+import { adminAuth, adminDb } from '@/lib/firebase/admin'
 
 /**
  * POST handler for creating Stripe Checkout Sessions
@@ -45,10 +45,18 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const userRecord = await adminAuth.getUser(userId)
     const userEmail = userRecord.email
 
+    // Check if user already has a Stripe customer ID
+    const userDoc = await adminDb.collection('users').doc(userId).get()
+    const userData = userDoc.data()
+    const existingCustomerId = userData?.stripeCustomerId as string | undefined
+
     // Get application base URL for redirects
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
-    // Create Stripe Checkout Session
+    // Generate idempotency key to prevent duplicate sessions
+    const idempotencyKey = `checkout_${userId}_${Date.now()}`
+
+    // Create Stripe Checkout Session with idempotency and customer reuse
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       payment_method_types: ['card'],
@@ -61,7 +69,11 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       success_url: `${baseUrl}/dashboard?success=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/subscribe?canceled=true`,
       client_reference_id: userId, // Pass user ID for webhook processing
-      customer_email: userEmail || undefined, // Pre-fill email if available
+      // Reuse existing customer or create new one with email
+      ...(existingCustomerId
+        ? { customer: existingCustomerId }
+        : { customer_email: userEmail || undefined }
+      ),
       metadata: {
         userId: userId,
         tier: SUBSCRIPTION_TIERS.PRO.id,
@@ -74,6 +86,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       },
       allow_promotion_codes: true, // Enable promo codes if you have them
       billing_address_collection: 'required', // Collect billing address
+    }, {
+      idempotencyKey, // Prevent duplicate sessions on retries
     })
 
     // Return the checkout session URL to redirect the user

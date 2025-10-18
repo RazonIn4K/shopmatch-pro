@@ -46,8 +46,7 @@ service cloud.firestore {
       // Job owner can read all applications for their jobs
       // Seeker can read their own applications
       allow read: if isAuthenticated() && (
-                       isOwner(resource.data.seekerId) ||
-                       isOwner(resource.data.ownerId)
+                       isOwner(resource.data.seekerId) || isOwner(get(/databases/$(database)/documents/jobs/$(resource.data.jobId)).data.ownerId)
                      );
 
       // Seekers can create applications
