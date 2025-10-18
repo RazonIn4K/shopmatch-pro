@@ -78,7 +78,8 @@ if (isServerEnvironment) {
   validateFirebaseAdminConfig({ hasServiceAccount, allowFallback })
 
   // SECURITY: Fail closed in production when credentials are missing
-  if (!hasServiceAccount && process.env.NODE_ENV === 'production') {
+  // Allow fallback mode in CI even during production builds (for build-time checks)
+  if (!hasServiceAccount && process.env.NODE_ENV === 'production' && !allowFallback) {
     throw new Error(
       'CRITICAL: Firebase Admin credentials are missing in production environment. ' +
       'Service account credentials (FIREBASE_PRIVATE_KEY, FIREBASE_CLIENT_EMAIL) are REQUIRED for production. ' +
