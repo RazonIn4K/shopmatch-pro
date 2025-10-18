@@ -92,7 +92,15 @@ npm run validate-env
 
 # Create test users (after env setup)
 npm run create-user
+
+# Webhook Testing & Monitoring (requires Stripe CLI)
+npm run webhook:test           # Trigger test webhook event
+npm run webhook:monitor        # Monitor live events in real-time
+npm run webhook:events         # Show recent webhook events
+npm run webhook:events:watch   # Watch webhook events (auto-refresh)
 ```
+
+💡 **Tip:** For complete webhook testing guide, see [docs/STRIPE_WEBHOOK_TESTING.md](./docs/STRIPE_WEBHOOK_TESTING.md)
 
 ## 📚 Documentation
 
