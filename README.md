@@ -105,6 +105,16 @@ npm run create-user
 | [MVP_IMPLEMENTATION_PLAN.md](./MVP_IMPLEMENTATION_PLAN.md) | Detailed feature breakdown |
 | [DEPLOYMENT.md](./DEPLOYMENT.md) | Production deployment guide |
 
+### Production Operations
+
+| Document | Description |
+|----------|-------------|
+| [docs/API_REFERENCE.yml](./docs/API_REFERENCE.yml) | OpenAPI 3.0 specification for all backend endpoints |
+| [docs/PRODUCTION_VERIFICATION.md](./docs/PRODUCTION_VERIFICATION.md) | Production deployment verification checklist |
+| [docs/STRIPE_WEBHOOK_PRODUCTION_SETUP.md](./docs/STRIPE_WEBHOOK_PRODUCTION_SETUP.md) | Stripe webhook configuration for production |
+| [docs/SDK_GENERATION.md](./docs/SDK_GENERATION.md) | API client SDK generation guide |
+| [docs/VERIFICATION_CHECKLIST.md](./docs/VERIFICATION_CHECKLIST.md) | Local development verification procedures |
+
 ### AI-Powered Development
 
 | Document | Description |

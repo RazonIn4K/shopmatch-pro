@@ -4,6 +4,8 @@
 
 This guide walks you through deploying ShopMatch Pro to a production environment with proper configuration for Firebase, Stripe, and hosting. The recommended platform is Vercel, but instructions for other platforms are included.
 
+> **🚀 Quick Start**: For a streamlined 25-minute production verification workflow, see [docs/PRODUCTION_DEPLOYMENT_GUIDE.md](./docs/PRODUCTION_DEPLOYMENT_GUIDE.md)
+
 ---
 
 ## Table of Contents
