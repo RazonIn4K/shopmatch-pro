@@ -188,6 +188,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }),
       })
 
+      // CRITICAL: Force token refresh to apply custom claims immediately
+      // Without this, role-gated UI won't work until Firebase refreshes the token
+      await userCredential.user.getIdToken(true)
+
     } catch (error: unknown) {
       console.error('Signup error:', error)
       setError(getAuthErrorMessage(error instanceof Error && 'code' in error ? (error as { code: string }).code : ''))
@@ -250,6 +254,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
             role: 'seeker',
           }),
         })
+
+        // CRITICAL: Force token refresh to apply custom claims immediately
+        // Without this, role-gated UI won't work until Firebase refreshes the token
+        await user.getIdToken(true)
       }
 
     } catch (error: unknown) {
