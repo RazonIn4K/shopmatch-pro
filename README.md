@@ -106,6 +106,14 @@ npm run create-user
 | [DEPLOYMENT.md](./DEPLOYMENT.md) | Production deployment guide |
 | [docs/API_REFERENCE.yml](./docs/API_REFERENCE.yml) | OpenAPI 3.0 specification for every backend endpoint |
 
+### Production Operations
+
+| Document | Description |
+|----------|-------------|
+| [docs/PRODUCTION_VERIFICATION.md](./docs/PRODUCTION_VERIFICATION.md) | End-to-end checklist for validating live deployments |
+| [docs/STRIPE_WEBHOOK_PRODUCTION_SETUP.md](./docs/STRIPE_WEBHOOK_PRODUCTION_SETUP.md) | Secure Stripe webhook configuration and monitoring guide |
+| [docs/SDK_GENERATION.md](./docs/SDK_GENERATION.md) | Workflows for regenerating and validating API clients |
+
 ### AI-Powered Development
 
 | Document | Description |
