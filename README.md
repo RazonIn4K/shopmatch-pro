@@ -104,6 +104,7 @@ npm run create-user
 | [PROJECT_STATUS.md](./PROJECT_STATUS.md) | Complete status report with metrics |
 | [MVP_IMPLEMENTATION_PLAN.md](./MVP_IMPLEMENTATION_PLAN.md) | Detailed feature breakdown |
 | [DEPLOYMENT.md](./DEPLOYMENT.md) | Production deployment guide |
+| [docs/API_REFERENCE.yml](./docs/API_REFERENCE.yml) | OpenAPI 3.0 specification for every backend endpoint |
 
 ### AI-Powered Development
 
@@ -119,6 +120,14 @@ npm run create-user
 - [Playbook](./docs/PLAYBOOK_SHOPMATCH.md) - Standard Operating Procedures for each task
 - [Architecture Decisions](./docs/adr/) - ADRs explaining why we chose each technology
 - [Runbooks](./docs/runbooks/) - Operational procedures for common issues
+
+### Production Operations
+
+| Document | Description |
+|----------|-------------|
+| [docs/PRODUCTION_VERIFICATION.md](./docs/PRODUCTION_VERIFICATION.md) | End-to-end checklist for validating live deployments |
+| [docs/STRIPE_WEBHOOK_PRODUCTION_SETUP.md](./docs/STRIPE_WEBHOOK_PRODUCTION_SETUP.md) | Secure Stripe webhook configuration and monitoring guide |
+| [docs/SDK_GENERATION.md](./docs/SDK_GENERATION.md) | Workflows for regenerating and validating API clients |
 
 **Use Persona Prompts to Simulate a Full Team**:
 - 🎯 **Product Manager** - "Why this way?" business rationale and acceptance criteria

@@ -42,7 +42,7 @@ Phase 2 implemented the complete end-to-end applications workflow, enabling job 
 - ✅ `Textarea` (Radix UI) - Form textarea component
 - ✅ Role-based dashboard routing
 
-**API Routes Implemented** (9 endpoints):
+**API Routes Implemented** (10 endpoints):
 - ✅ `GET /api/jobs` - List jobs with filters (public)
 - ✅ `POST /api/jobs` - Create new job (owner only)
 - ✅ `GET /api/jobs/[id]` - Get single job details
@@ -51,7 +51,8 @@ Phase 2 implemented the complete end-to-end applications workflow, enabling job 
 - ✅ `POST /api/jobs/[id]/apply` - Submit application (seeker only)
 - ✅ `GET /api/applications` - List applications (role-based)
 - ✅ `PATCH /api/applications/[id]` - Update application status (owner only)
-- ✅ `DELETE /api/applications/[id]` - Delete application (owner/seeker)
+- ✅ `GET /api/applications/[id]` - View application details (seeker/job owner)
+- ✅ `GET /api/applications/export` - Download applications as CSV (owner only)
 
 **Dashboards Implemented** (3 pages):
 - ✅ `/dashboard` - Role-based router (redirects to owner/seeker)
