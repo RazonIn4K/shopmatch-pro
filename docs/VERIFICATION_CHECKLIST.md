@@ -547,6 +547,32 @@ npm run dev
 
 **Steps**:
 
+**Test 0: Deploy Firestore Indexes**
+```bash
+# 1. Ensure Firebase CLI is installed and authenticated
+firebase --version
+firebase login --reauth
+
+# 2. Confirm repo configuration points at the shared project
+node -e "console.log(JSON.parse(require('fs').readFileSync('.firebaserc', 'utf8')).projects.default)"  # should output "shopmatch-pro"
+node -e "console.log(JSON.parse(require('fs').readFileSync('firebase.json', 'utf8')).firestore.indexes)"  # should output "firestore.indexes.json"
+
+# 3. Deploy Firestore indexes using the shared configuration
+firebase deploy --only firestore:indexes
+
+# Expected output excerpt
+# i  firestore: reading indexes from firestore.indexes.json...
+# i  firestore: deploy complete
+# ✔  firestore: deployed indexes in shopmatch-pro (jobs ownerId ASC, createdAt DESC)
+# i  firestore: no indexes pending deletion
+```
+
+**Verification**:
+- [ ] Command executes without errors (exit code 0)
+- [ ] CLI output lists `firestore.indexes.json` as deployed and confirms the `jobs` composite index `(ownerId ASC, createdAt DESC)`
+- [ ] CLI output ends with `no indexes pending deletion`
+- [ ] Firebase console shows the composite index as `READY`
+
 **Test 1: User Document Read (Own)**
 1. Sign in as test user
 2. Open browser DevTools → Network
