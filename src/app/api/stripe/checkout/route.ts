@@ -25,6 +25,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { stripe, STRIPE_CONFIG, SUBSCRIPTION_TIERS } from '@/lib/stripe/config'
 import { verifyAuth } from '@/lib/api/auth'
 import { adminAuth, adminDb } from '@/lib/firebase/admin'
+import { getAppBaseUrl } from '@/lib/env'
 
 /**
  * POST handler for creating Stripe Checkout Sessions
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const existingCustomerId = userData?.stripeCustomerId as string | undefined
 
     // Get application base URL for redirects
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const baseUrl = getAppBaseUrl()
 
     // Generate idempotency key to prevent duplicate sessions
     const idempotencyKey = `checkout_${userId}_${Date.now()}`

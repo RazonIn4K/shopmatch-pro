@@ -17,6 +17,7 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/lib/contexts/AuthContext'
 import { Toaster } from '@/components/ui/sonner'
+import { getMetadataBase } from '@/lib/env'
 
 /**
  * Inter font configuration for consistent typography
@@ -44,7 +45,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'),
+  metadataBase: getMetadataBase(),
   alternates: {
     canonical: '/',
   },

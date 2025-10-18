@@ -25,6 +25,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe/config'
 import { verifyAuth } from '@/lib/api/auth'
 import { adminDb } from '@/lib/firebase/admin'
+import { getAppBaseUrl } from '@/lib/env'
 
 /**
  * POST handler for creating Stripe Customer Portal Sessions
@@ -61,7 +62,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     // Get application base URL for redirects
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    const baseUrl = getAppBaseUrl()
 
     // Create Stripe Customer Portal Session
     const session = await stripe.billingPortal.sessions.create({
