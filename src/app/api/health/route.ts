@@ -19,6 +19,7 @@
  */
 
 import { NextResponse } from 'next/server'
+import { getEnvStatus } from '@/lib/config/env-validator'
 
 /**
  * Comprehensive health check response interface
@@ -56,6 +57,14 @@ interface HealthCheckResponse {
 
   /** General error message for unexpected failures */
   error?: string
+
+  /** Detailed environment validation results (only when checks.environment is false) */
+  envDetails?: {
+    totalRequired: number
+    totalPresent: number
+    missingCount: number
+    missingVars: string[]
+  }
 }
 
 /**
@@ -110,21 +119,20 @@ export async function GET(): Promise<NextResponse<HealthCheckResponse>> {
   }
 
   try {
-    // Check if required environment variables are present
-    const requiredEnvVars = [
-      'NEXT_PUBLIC_FIREBASE_API_KEY',
-      'FIREBASE_PROJECT_ID',
-      'STRIPE_SECRET_KEY',
-      'STRIPE_PRICE_ID_PRO',
-    ]
+    // Validate environment variables using centralized validator
+    const envStatus = getEnvStatus()
 
-    const missingVars = requiredEnvVars.filter(varName => !process.env[varName])
-
-    if (missingVars.length === 0) {
+    if (envStatus.valid) {
       healthCheck.checks.environment = true
     } else {
       healthCheck.checks.environment = false
-      healthCheck.errors = [`Missing environment variables: ${missingVars.join(', ')}`]
+      healthCheck.errors = [`Missing ${envStatus.missing.length} required environment variables`]
+      healthCheck.envDetails = {
+        totalRequired: envStatus.totalRequired,
+        totalPresent: envStatus.totalPresent,
+        missingCount: envStatus.missing.length,
+        missingVars: envStatus.missing.map(m => m.name), // Only expose names, not descriptions (security)
+      }
     }
 
     // Try to initialize Firebase (basic smoke test)
