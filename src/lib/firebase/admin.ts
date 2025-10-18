@@ -56,6 +56,8 @@ function validateFirebaseAdminConfig(params: { hasServiceAccount: boolean; allow
 }
 
 const isServerEnvironment = typeof window === 'undefined'
+// Allows automated tests to force server-side validation even in jsdom environments.
+const forceServerValidation = process.env.FORCE_FIREBASE_ADMIN_VALIDATION === 'true'
 const rawPrivateKey = process.env.FIREBASE_PRIVATE_KEY ?? ''
 
 // Check for fallback mode FIRST (before validating service account)
@@ -74,11 +76,17 @@ const hasServiceAccount =
   Boolean(process.env.FIREBASE_CLIENT_EMAIL)
 
 // Validate configuration on module import (server-side only)
-if (isServerEnvironment) {
+if (isServerEnvironment || forceServerValidation) {
   validateFirebaseAdminConfig({ hasServiceAccount, allowFallback })
 
   if (!hasServiceAccount && allowFallback) {
-     
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error(
+        '[firebase-admin] Service account credentials are required in production. ' +
+        'Unset ALLOW_FIREBASE_ADMIN_FALLBACK and provide FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY.'
+      )
+    }
+
     console.warn(
       '[firebase-admin] Running without service account credentials. Admin features are disabled. ' +
       'Set FIREBASE_PRIVATE_KEY (with BEGIN/END PRIVATE KEY) to enable full functionality.'

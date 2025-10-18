@@ -179,7 +179,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const token = await userCredential.user.getIdToken()
       await fetch('/api/users/initialize-claims', {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
@@ -187,6 +187,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
           role: role,
         }),
       })
+
+      // Force refresh to ensure new claims are available immediately
+      await userCredential.user.getIdToken(true)
 
     } catch (error: unknown) {
       console.error('Signup error:', error)
@@ -242,7 +245,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const token = await user.getIdToken()
         await fetch('/api/users/initialize-claims', {
           method: 'POST',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
           },
@@ -250,6 +253,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
             role: 'seeker',
           }),
         })
+
+        await user.getIdToken(true)
       }
 
     } catch (error: unknown) {

@@ -955,6 +955,7 @@ gh pr create --title "[QA-001] Verify quality gates" --body "Testing all quality
 
 **Automated Quality Gates**:
 - [ ] CI: All checks passing (build, lint, type check)
+- [ ] Unit: `npm run test:unit` (Stripe checkout idempotency & Firebase Admin fallback guard)
 - [ ] First-load JS: ≤ 300 KB (verify artifact)
 - [ ] Accessibility: Zero violations (verify artifact)
 - [ ] CodeQL: No security issues (if enabled)

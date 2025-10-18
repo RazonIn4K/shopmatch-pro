@@ -24,6 +24,8 @@
  * 4. Use ngrok for production webhook URL: ngrok http 3000
  */
 
+export const runtime = 'nodejs'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import { stripe, STRIPE_CONFIG } from '@/lib/stripe/config'
@@ -58,8 +60,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Get raw request body for signature verification
     // CRITICAL: Must use raw text, not parsed JSON
     const body = await request.text()
-    const headersList = await headers()
-    const signature = headersList.get('stripe-signature')
+    const signature = headers().get('stripe-signature')
 
     if (!signature) {
       console.error('Missing Stripe signature header')
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   } catch (error: unknown) {
     console.error('Webhook processing error:', error)
 
-    // Return 200 to prevent Stripe from retrying
+    // Return 500 so Stripe will retry. Handlers must remain idempotent.
     // Log error for debugging but don't expose details
     return NextResponse.json(
       { error: 'Internal server error' },

@@ -104,6 +104,8 @@ function SubscribePageContent() {
       // Get Firebase auth token for API authentication
       const token = await user.getIdToken()
 
+      const idempotencyKey = crypto.randomUUID()
+
       // Create checkout session
       const response = await fetch('/api/stripe/checkout', {
         method: 'POST',
@@ -111,6 +113,7 @@ function SubscribePageContent() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
+        body: JSON.stringify({ idempotencyKey }),
       })
 
       if (!response.ok) {

@@ -12,7 +12,7 @@ A modern job board platform built with Next.js 15, Firebase, and Stripe. Connect
 
 - All core features implemented
 - Production build passing
-- Dev server running on http://localhost:3001
+- Dev server running on http://localhost:3000
 - Awaiting Firebase and Stripe configuration
 
 📊 [View Detailed Status Report →](./PROJECT_STATUS.md)
@@ -35,7 +35,7 @@ A modern job board platform built with Next.js 15, Firebase, and Stripe. Connect
 3. **Access the Application**
    ```
    Development server is already running at:
-   http://localhost:3001
+   http://localhost:3000
    ```
 
 📖 [Read Full Quick Start Guide →](./QUICK_START.md)
@@ -75,7 +75,7 @@ A modern job board platform built with Next.js 15, Firebase, and Stripe. Connect
 ## 🛠️ Development Commands
 
 ```bash
-# Start development server (currently running on port 3001)
+# Start development server (currently running on port 3000)
 npm run dev
 
 # Build for production
@@ -290,8 +290,8 @@ Ready to deploy to production? See [DEPLOYMENT.md](./DEPLOYMENT.md) for:
 
 **Dev server won't start:**
 ```bash
-# Kill process on port 3001
-lsof -ti:3001 | xargs kill -9
+# Kill process on port 3000
+lsof -ti:3000 | xargs kill -9
 npm run dev
 ```
 
