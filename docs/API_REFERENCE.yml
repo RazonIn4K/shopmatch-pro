@@ -1,107 +1,976 @@
 openapi: 3.0.3
 info:
   title: ShopMatch Pro API
-  version: 0.1.0
+  description: |
+    RESTful API for ShopMatch Pro job board platform.
+
+    **Authentication**: All endpoints (except /api/health) require Firebase authentication.
+    Include the Firebase ID token in the Authorization header as `Bearer <token>`.
+
+    **Base URL**: Dynamic - uses Vercel URL in deployments, localhost:3000 in development.
+    See docs/DEPLOYMENT.md for base URL configuration.
+
+    **Error Handling**: All endpoints return standardized error responses with:
+    - `error`: Human-readable error message
+    - `details`: Optional additional error context
+
+    **Rate Limiting**: Not currently implemented (planned for future release).
+
+  version: 1.0.0
+  contact:
+    name: ShopMatch Pro Support
+    url: https://github.com/RazonIn4K/shopmatch-pro
+
 servers:
-  - url: https://localhost:3000
+  - url: http://localhost:3000
+    description: Local development server
+  - url: https://shopmatch-pro.vercel.app
+    description: Production server (example - replace with actual domain)
+
+tags:
+  - name: System
+    description: System health and status endpoints
+  - name: Authentication
+    description: User authentication and authorization
+  - name: Stripe
+    description: Subscription and payment processing
+  - name: Jobs
+    description: Job posting management
+  - name: Applications
+    description: Job application management
+
 paths:
   /api/health:
     get:
       tags: [System]
-      summary: Health check
+      summary: Health check endpoint
+      description: |
+        Comprehensive system health check that validates:
+        - Environment variable configuration (13 required variables)
+        - Firebase client SDK initialization
+        - Stripe SDK configuration
+
+        **No authentication required** - used by monitoring systems.
+      operationId: getHealth
       responses:
         '200':
-          description: OK
+          description: System healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthCheckResponse'
+              examples:
+                healthy:
+                  value:
+                    status: ok
+                    timestamp: "2025-10-18T07:00:00.000Z"
+                    environment: production
+                    checks:
+                      firebase: true
+                      stripe: true
+                      environment: true
+                missingEnv:
+                  value:
+                    status: error
+                    timestamp: "2025-10-18T07:00:00.000Z"
+                    environment: production
+                    checks:
+                      firebase: false
+                      stripe: false
+                      environment: false
+                    errors: ["Missing 3 required environment variables"]
+                    envDetails:
+                      totalRequired: 13
+                      totalPresent: 10
+                      missingCount: 3
+                      missingVars: ["STRIPE_WEBHOOK_SECRET", "FIREBASE_PRIVATE_KEY", "FIREBASE_CLIENT_EMAIL"]
+
+  /api/users/initialize-claims:
+    post:
+      tags: [Authentication]
+      summary: Initialize custom claims after signup
+      description: |
+        Sets initial Firebase custom claims for a newly registered user.
+        Called automatically after user creation to set up:
+        - User role (owner/seeker)
+        - Subscription status (subActive: false initially)
+
+        **Authentication required**: Must be called by the user themselves.
+      operationId: initializeClaims
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Claims initialized successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Custom claims initialized successfully"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/stripe/checkout:
     post:
       tags: [Stripe]
-      summary: Create checkout session
+      summary: Create Stripe Checkout session
+      description: |
+        Creates a Stripe Checkout Session for Pro subscription purchase.
+        Returns a session URL to redirect the user to Stripe's hosted checkout page.
+
+        **Flow**:
+        1. User clicks "Subscribe" button
+        2. Frontend calls this endpoint
+        3. Backend creates Stripe session with user ID
+        4. Frontend redirects to session.url
+        5. User completes payment on Stripe
+        6. Stripe webhook updates subscription status
+        7. User redirected to /dashboard?success=true
+
+        **Authentication required**: User must be logged in.
+      operationId: createCheckoutSession
+      security:
+        - bearerAuth: []
       responses:
         '200':
-          description: Created
+          description: Checkout session created
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [url, sessionId]
+                properties:
+                  url:
+                    type: string
+                    format: uri
+                    description: Stripe Checkout page URL to redirect user to
+                    example: "https://checkout.stripe.com/c/pay/cs_test_..."
+                  sessionId:
+                    type: string
+                    description: Checkout session ID for tracking
+                    example: "cs_test_a1b2c3d4e5f6g7h8i9j0"
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    get:
+      tags: [Stripe]
+      summary: Get checkout endpoint information
+      description: Development/debugging endpoint - provides configuration info
+      operationId: getCheckoutInfo
+      responses:
+        '200':
+          description: Checkout configuration information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  note:
+                    type: string
+                  config:
+                    type: object
+
   /api/stripe/portal:
     post:
       tags: [Stripe]
       summary: Create customer portal session
+      description: |
+        Creates a Stripe Customer Portal session for subscription management.
+        Users can update payment methods, cancel subscriptions, and view invoices.
+
+        **Authentication required**: User must be logged in with active subscription.
+      operationId: createPortalSession
+      security:
+        - bearerAuth: []
       responses:
         '200':
-          description: Created
+          description: Portal session created
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [url]
+                properties:
+                  url:
+                    type: string
+                    format: uri
+                    description: Stripe Customer Portal URL
+                    example: "https://billing.stripe.com/p/session/..."
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: No Stripe customer ID found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/stripe/webhook:
     post:
       tags: [Stripe]
-      summary: Webhook endpoint (raw body signature verify)
+      summary: Stripe webhook endpoint
+      description: |
+        Receives webhook events from Stripe for subscription lifecycle management.
+
+        **Handles events**:
+        - `checkout.session.completed` - Links Stripe customer to Firebase user
+        - `customer.subscription.created` - Sets subActive custom claim to true
+        - `customer.subscription.updated` - Updates subscription status
+        - `customer.subscription.deleted` - Sets subActive custom claim to false
+
+        **Security**: Verifies webhook signature using raw request body.
+
+        **No authentication required** - uses webhook signature verification.
+      operationId: handleWebhook
+      requestBody:
+        required: true
+        description: Raw webhook payload from Stripe (signature verified)
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Stripe Event object (varies by event type)
       responses:
         '200':
-          description: OK
+          description: Webhook processed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: boolean
+                    example: true
+        '400':
+          description: Webhook signature verification failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
   /api/jobs:
     get:
       tags: [Jobs]
-      summary: List jobs (owner filtered by claims)
+      summary: List jobs
+      description: |
+        Returns jobs filtered by user role:
+        - **Owners**: Only their own posted jobs
+        - **Seekers**: All published jobs from all owners
+
+        **Authentication required**: User must be logged in.
+      operationId: listJobs
+      security:
+        - bearerAuth: []
       responses:
         '200':
-          description: OK
+          description: List of jobs
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [jobs]
+                properties:
+                  jobs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Job'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
     post:
       tags: [Jobs]
-      summary: Create job (owner + active subscription)
+      summary: Create job posting
+      description: |
+        Creates a new job posting.
+
+        **Requirements**:
+        - User must have "owner" role
+        - User must have active subscription (subActive: true)
+
+        **Authentication required**: Owner with active subscription.
+      operationId: createJob
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobCreateRequest'
       responses:
         '201':
-          description: Created
+          description: Job created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [id, job]
+                properties:
+                  id:
+                    type: string
+                    description: Firestore document ID
+                    example: "job_abc123"
+                  job:
+                    $ref: '#/components/schemas/Job'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Active subscription required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/jobs/{id}:
     get:
       tags: [Jobs]
+      summary: Get job details
+      description: |
+        Retrieves a single job posting by ID.
+
+        **Authentication required**: User must be logged in.
+      operationId: getJob
+      security:
+        - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema: { type: string }
+        - $ref: '#/components/parameters/JobIdParam'
       responses:
-        '200': { description: OK }
+        '200':
+          description: Job details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
     patch:
       tags: [Jobs]
+      summary: Update job posting
+      description: |
+        Updates an existing job posting.
+
+        **Ownership verification**: User must be the job owner (Firestore canonical ownership check).
+
+        **Authentication required**: Owner of the job.
+      operationId: updateJob
+      security:
+        - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema: { type: string }
+        - $ref: '#/components/parameters/JobIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JobUpdateRequest'
       responses:
-        '200': { description: Updated }
+        '200':
+          description: Job updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: User does not own this job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
     delete:
       tags: [Jobs]
+      summary: Delete job posting
+      description: |
+        Deletes a job posting and all associated applications.
+
+        **Ownership verification**: User must be the job owner.
+
+        **Cascade behavior**: All applications for this job are also deleted.
+
+        **Authentication required**: Owner of the job.
+      operationId: deleteJob
+      security:
+        - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema: { type: string }
+        - $ref: '#/components/parameters/JobIdParam'
       responses:
-        '204': { description: Deleted }
+        '204':
+          description: Job deleted successfully (no content)
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: User does not own this job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/jobs/{id}/apply:
+    post:
+      tags: [Applications]
+      summary: Submit job application
+      description: |
+        Submits an application to a job posting.
+
+        **Requirements**:
+        - User must have "seeker" role
+        - Cannot apply to own jobs
+        - Cannot apply twice to same job
+
+        **Authentication required**: Seeker role.
+      operationId: applyToJob
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/JobIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationCreateRequest'
+      responses:
+        '201':
+          description: Application submitted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [id, application]
+                properties:
+                  id:
+                    type: string
+                    description: Application document ID
+                    example: "app_xyz789"
+                  application:
+                    $ref: '#/components/schemas/Application'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Cannot apply to own jobs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/applications:
     get:
       tags: [Applications]
-      summary: List applications for owner
+      summary: List applications
+      description: |
+        Returns applications filtered by user role:
+        - **Owners**: Applications to their job postings
+        - **Seekers**: Their own submitted applications
+
+        **Query parameters**:
+        - `jobId` (optional): Filter by specific job ID
+
+        **Authentication required**: User must be logged in.
+      operationId: listApplications
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: jobId
+          schema:
+            type: string
+          description: Filter applications by job ID
+          example: "job_abc123"
       responses:
         '200':
-          description: OK
+          description: List of applications
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [applications]
+                properties:
+                  applications:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Application'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/applications/{id}:
     patch:
       tags: [Applications]
+      summary: Update application status
+      description: |
+        Updates the status of a job application.
+
+        **Allowed status transitions** (owner only):
+        - pending → reviewed
+        - pending → accepted
+        - pending → rejected
+        - reviewed → accepted
+        - reviewed → rejected
+
+        **Ownership verification**: User must own the job this application is for.
+
+        **Authentication required**: Owner of the job.
+      operationId: updateApplication
+      security:
+        - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-          schema: { type: string }
+        - $ref: '#/components/parameters/ApplicationIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplicationUpdateRequest'
       responses:
-        '200': { description: Updated }
-  /api/users/initialize-claims:
-    post:
-      tags: [Users]
-      summary: Initialize custom claims post-signup
+        '200':
+          description: Application updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Application'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: User does not own this job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Application not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      tags: [Applications]
+      summary: Delete application
+      description: |
+        Deletes a job application.
+
+        **Who can delete**:
+        - Seekers: Their own applications (withdraw)
+        - Owners: Applications to their jobs (cleanup)
+
+        **Authentication required**: Application owner or job owner.
+      operationId: deleteApplication
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ApplicationIdParam'
       responses:
-        '200': { description: OK }
+        '204':
+          description: Application deleted successfully (no content)
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          description: Insufficient permissions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Application not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+      description: |
+        Firebase ID token obtained after user authentication.
+
+        **How to obtain**:
+        1. User signs in via Firebase Auth (email/password or Google OAuth)
+        2. Firebase Auth returns ID token
+        3. Frontend includes token in Authorization header: `Bearer <token>`
+
+        **Token refresh**: Tokens expire after 1 hour. Frontend must refresh before expiration.
+
+  parameters:
+    JobIdParam:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
+      description: Firestore job document ID
+      example: "job_abc123"
+
+    ApplicationIdParam:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: string
+      description: Firestore application document ID
+      example: "app_xyz789"
+
+  schemas:
+    HealthCheckResponse:
+      type: object
+      required: [status, timestamp, environment, checks]
+      properties:
+        status:
+          type: string
+          enum: [ok, error]
+          description: Overall system status
+        timestamp:
+          type: string
+          format: date-time
+          description: ISO 8601 timestamp of health check
+        environment:
+          type: string
+          description: Node.js environment (development, production, test)
+          example: "production"
+        checks:
+          type: object
+          required: [firebase, stripe, environment]
+          properties:
+            firebase:
+              type: boolean
+              description: Firebase client SDK initialization status
+            stripe:
+              type: boolean
+              description: Stripe SDK configuration status
+            environment:
+              type: boolean
+              description: Environment variable validation status
+        errors:
+          type: array
+          items:
+            type: string
+          description: Error messages (only when status is error)
+        envDetails:
+          type: object
+          description: Detailed environment validation (only when checks.environment is false)
+          properties:
+            totalRequired:
+              type: integer
+              example: 13
+            totalPresent:
+              type: integer
+              example: 10
+            missingCount:
+              type: integer
+              example: 3
+            missingVars:
+              type: array
+              items:
+                type: string
+              example: ["STRIPE_WEBHOOK_SECRET", "FIREBASE_PRIVATE_KEY"]
+
+    Job:
+      type: object
+      required: [id, ownerId, title, description, company, location, type, status, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          description: Firestore document ID
+          example: "job_abc123"
+        ownerId:
+          type: string
+          description: Firebase UID of job poster
+          example: "user_xyz789"
+        title:
+          type: string
+          description: Job title
+          example: "Senior Full-Stack Engineer"
+        description:
+          type: string
+          description: Detailed job description (Markdown supported)
+          example: "We are looking for an experienced full-stack engineer..."
+        company:
+          type: string
+          description: Company name
+          example: "ShopMatch Inc."
+        location:
+          type: string
+          description: Job location (city, remote, hybrid)
+          example: "San Francisco, CA (Remote)"
+        type:
+          type: string
+          enum: [full-time, part-time, contract, freelance]
+          description: Employment type
+        salary:
+          type: object
+          description: Optional salary range
+          properties:
+            min:
+              type: number
+              example: 120000
+            max:
+              type: number
+              example: 180000
+            currency:
+              type: string
+              example: "USD"
+        status:
+          type: string
+          enum: [draft, published, closed]
+          description: Job posting status
+        createdAt:
+          type: string
+          format: date-time
+          description: Firestore server timestamp
+        updatedAt:
+          type: string
+          format: date-time
+          description: Firestore server timestamp
+        expiresAt:
+          type: string
+          format: date-time
+          description: Optional expiration date
+
+    JobCreateRequest:
+      type: object
+      required: [title, description, company, location, type]
+      properties:
+        title:
+          type: string
+          minLength: 3
+          maxLength: 200
+          example: "Senior Full-Stack Engineer"
+        description:
+          type: string
+          minLength: 50
+          maxLength: 10000
+          example: "We are looking for an experienced full-stack engineer..."
+        company:
+          type: string
+          minLength: 2
+          maxLength: 100
+          example: "ShopMatch Inc."
+        location:
+          type: string
+          minLength: 2
+          maxLength: 200
+          example: "San Francisco, CA (Remote)"
+        type:
+          type: string
+          enum: [full-time, part-time, contract, freelance]
+        salary:
+          type: object
+          properties:
+            min:
+              type: number
+              minimum: 0
+            max:
+              type: number
+              minimum: 0
+            currency:
+              type: string
+              example: "USD"
+        status:
+          type: string
+          enum: [draft, published]
+          default: draft
+
+    JobUpdateRequest:
+      type: object
+      description: All fields optional - only provided fields will be updated
+      properties:
+        title:
+          type: string
+          minLength: 3
+          maxLength: 200
+        description:
+          type: string
+          minLength: 50
+          maxLength: 10000
+        company:
+          type: string
+          minLength: 2
+          maxLength: 100
+        location:
+          type: string
+          minLength: 2
+          maxLength: 200
+        type:
+          type: string
+          enum: [full-time, part-time, contract, freelance]
+        salary:
+          type: object
+          properties:
+            min:
+              type: number
+            max:
+              type: number
+            currency:
+              type: string
+        status:
+          type: string
+          enum: [draft, published, closed]
+
+    Application:
+      type: object
+      required: [id, jobId, seekerId, ownerId, status, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          description: Firestore document ID
+          example: "app_xyz789"
+        jobId:
+          type: string
+          description: Reference to jobs collection
+          example: "job_abc123"
+        seekerId:
+          type: string
+          description: Firebase UID of applicant
+          example: "user_seeker123"
+        ownerId:
+          type: string
+          description: Job owner UID (denormalized for queries)
+          example: "user_owner456"
+        status:
+          type: string
+          enum: [pending, reviewed, accepted, rejected]
+          description: Application status
+        coverLetter:
+          type: string
+          description: Optional cover letter text
+          example: "I am very interested in this position..."
+        resumeUrl:
+          type: string
+          format: uri
+          description: Cloud Storage URL for resume (optional, future feature)
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ApplicationCreateRequest:
+      type: object
+      properties:
+        coverLetter:
+          type: string
+          maxLength: 5000
+          description: Optional cover letter
+          example: "I am very interested in this position..."
+
+    ApplicationUpdateRequest:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [reviewed, accepted, rejected]
+          description: New status (only owner can update)
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+          description: Human-readable error message
+          example: "Invalid request parameters"
+        details:
+          type: object
+          description: Optional additional error context
+          example: { "field": "title", "issue": "Title must be at least 3 characters" }
+
+  responses:
+    UnauthorizedError:
+      description: Missing or invalid authentication token
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Unauthorized"
+
+    ValidationError:
+      description: Request validation failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Validation failed"
+            details:
+              field: "title"
+              issue: "Title must be at least 3 characters"
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error: "Internal server error"
+
 security:
   - bearerAuth: []
