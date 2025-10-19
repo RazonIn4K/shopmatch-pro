@@ -25,8 +25,9 @@
 - [adr/0003-hosting-vercel.md](adr/0003-hosting-vercel.md)
 
 ## Operations
-- [runbooks/STRIPE_WEBHOOK_RUNBOOK.md](runbooks/STRIPE_WEBHOOK_RUNBOOK.md)
-- [INCIDENT_RESPONSE.md](INCIDENT_RESPONSE.md)
+- [runbooks/STRIPE_WEBHOOK_RUNBOOK.md](runbooks/STRIPE_WEBHOOK_RUNBOOK.md) — Stripe webhook incident response
+- [STRIPE_WEBHOOK_TESTING.md](STRIPE_WEBHOOK_TESTING.md) — Complete webhook testing and monitoring guide
+- [INCIDENT_RESPONSE.md](INCIDENT_RESPONSE.md) — General incident response procedures
 
 ## Team Simulation & Workflow
 - [WORKFLOW_ORDER.md](WORKFLOW_ORDER.md) — end-to-end order of work & gates
