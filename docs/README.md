@@ -1,33 +1,42 @@
 # ShopMatch Pro — Documentation Index
 
-> Canonical documentation set for MVP + team simulation. Aligned with **Technology Landscape 2025** (decision matrix, S-tiers) and your **Universal Framework**.
+> Canonical documentation set for production-ready job board platform. Aligned with **Technology Landscape 2025** (decision matrix, S-tiers) and your **Universal Framework**.
 
-**Project:** shopmatch-pro · **S-Tier:** S2 (Standardized) · **Updated:** 2025-10-15
+**Project:** shopmatch-pro · **S-Tier:** S2 (Standardized) · **Status:** ✅ Production Ready · **Updated:** 2025-10-19
 
-## Core
-- [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) — **Phased project plan with progress tracking** 🆕
-- [ARCHITECTURE.md](ARCHITECTURE.md) — diagrams, data flows, dependencies
-- [API_REFERENCE.yml](API_REFERENCE.yml) — OpenAPI surface (server routes + webhook)
-- [SECURITY.md](SECURITY.md) — auth, roles, Firestore rules model, secrets, threat model
-- [TESTING.md](TESTING.md) — test pyramid, commands, coverage, environments
-- [DEPLOYMENT.md](DEPLOYMENT.md) — Vercel + Stripe webhook checklist
-- [OBSERVABILITY.md](OBSERVABILITY.md) — events, logs, metrics, dashboards
-- [ANALYTICS_SCHEMA.md](ANALYTICS_SCHEMA.md) — PM event taxonomy + schema
-- [FIRESTORE_RULES_SPEC.md](FIRESTORE_RULES_SPEC.md) — rules spec + emulator tests
-- [AI_TOOLING_SETUP.md](AI_TOOLING_SETUP.md) — Complete AI configuration (Claude, Copilot, CI gates)
-- [GITHUB_SETUP_GUIDE.md](GITHUB_SETUP_GUIDE.md) — Complete repository setup (rulesets, security, code owners)
-- [ENVIRONMENT_VARIABLES.md](ENVIRONMENT_VARIABLES.md) — Complete environment variable reference
+## 🎯 Production Status
+- [PRODUCTION_LAUNCH_COMPLETE.md](PRODUCTION_LAUNCH_COMPLETE.md) — **Complete production verification & launch report** ✅
+- [MONITORING_CHECKLIST.md](MONITORING_CHECKLIST.md) — Daily/weekly monitoring procedures
+- [FUTURE_ROADMAP.md](FUTURE_ROADMAP.md) — 12-month feature roadmap
+- [PRODUCTION_DEPLOYMENT_GUIDE.md](PRODUCTION_DEPLOYMENT_GUIDE.md) — Production deployment reference
+
+## 📐 Core Architecture
+- [ARCHITECTURE.md](ARCHITECTURE.md) — System diagrams, data flows, component architecture
+- [SECURITY.md](SECURITY.md) — Auth, roles, Firestore rules, threat model
+- [TESTING.md](TESTING.md) — Test pyramid, commands, coverage budgets
+- [DEPLOYMENT.md](DEPLOYMENT.md) — Vercel deployment + Stripe webhook setup
+- [OBSERVABILITY.md](OBSERVABILITY.md) — Events, logs, metrics, dashboards
+- [ANALYTICS_SCHEMA.md](ANALYTICS_SCHEMA.md) — Product analytics event taxonomy
+- [FIRESTORE_RULES_SPEC.md](FIRESTORE_RULES_SPEC.md) — Security rules specification
+- [ENVIRONMENT_VARIABLES.md](ENVIRONMENT_VARIABLES.md) — Complete env var reference
+
+## 🔧 Setup & Configuration
+- [GITHUB_SETUP_GUIDE.md](GITHUB_SETUP_GUIDE.md) — Complete repository setup (15 min)
+- [GITHUB_GUI_SETUP_CHECKLIST.md](GITHUB_GUI_SETUP_CHECKLIST.md) — Quick setup checklist
+- [RULESET_QUICK_REFERENCE.md](RULESET_QUICK_REFERENCE.md) — Branch protection reference
+- [REPOSITORY_GUARDRAILS.md](REPOSITORY_GUARDRAILS.md) — Technical deep dive
 - [VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md) — Smoke and full test procedures
+- [AI_TOOLING_SETUP.md](AI_TOOLING_SETUP.md) — AI tool integration (Claude, Copilot)
 
-## Governance
-- [adr/0001-payments-stripe.md](adr/0001-payments-stripe.md)
-- [adr/0002-auth-firestore.md](adr/0002-auth-firestore.md)
-- [adr/0003-hosting-vercel.md](adr/0003-hosting-vercel.md)
+## 📋 Governance (ADRs)
+- [adr/0001-payments-stripe.md](adr/0001-payments-stripe.md) — Why Stripe over alternatives
+- [adr/0002-auth-firestore.md](adr/0002-auth-firestore.md) — Why Firebase Auth over alternatives
+- [adr/0003-hosting-vercel.md](adr/0003-hosting-vercel.md) — Why Vercel over alternatives
 
-## Operations
-- [runbooks/STRIPE_WEBHOOK_RUNBOOK.md](runbooks/STRIPE_WEBHOOK_RUNBOOK.md) — Stripe webhook incident response
-- [STRIPE_WEBHOOK_TESTING.md](STRIPE_WEBHOOK_TESTING.md) — Complete webhook testing and monitoring guide
-- [INCIDENT_RESPONSE.md](INCIDENT_RESPONSE.md) — General incident response procedures
+## 🚨 Operations & Runbooks
+- [runbooks/STRIPE_WEBHOOK_RUNBOOK.md](runbooks/STRIPE_WEBHOOK_RUNBOOK.md) — Stripe webhook troubleshooting
+- [WEBHOOK_EVENT_RESEND_GUIDE.md](WEBHOOK_EVENT_RESEND_GUIDE.md) — Webhook event resend tool
+- [INCIDENT_RESPONSE.md](INCIDENT_RESPONSE.md) — Incident response procedures
 
 ## Team Simulation & Workflow
 - [WORKFLOW_ORDER.md](WORKFLOW_ORDER.md) — end-to-end order of work & gates
