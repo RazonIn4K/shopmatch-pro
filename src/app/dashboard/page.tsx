@@ -1,16 +1,55 @@
 'use client'
 
-import { useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 import { useAuth } from '@/lib/contexts/AuthContext'
+import { auth } from '@/lib/firebase/client'
 
 export default function DashboardPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
   const { user, loading } = useAuth()
+  const [isRefreshingToken, setIsRefreshingToken] = useState(false)
+  const [refreshMessage, setRefreshMessage] = useState('Loading...')
+
+  // Check if redirected from successful subscription
+  const isSubscriptionSuccess = searchParams.get('success') === 'true'
 
   useEffect(() => {
-    if (!loading) {
+    async function handleSubscriptionSuccess() {
+      if (isSubscriptionSuccess && user && !isRefreshingToken) {
+        // User just completed subscription - refresh their token to get updated custom claims
+        setIsRefreshingToken(true)
+        setRefreshMessage('Setting up your subscription...')
+        
+        try {
+          const currentUser = auth.currentUser
+          if (currentUser) {
+            // Force token refresh to get updated custom claims (subActive: true)
+            await currentUser.getIdToken(true)
+            setRefreshMessage('Subscription activated! Redirecting...')
+            
+            // Wait a brief moment for the success message to be visible
+            await new Promise(resolve => setTimeout(resolve, 800))
+          }
+        } catch (error) {
+          console.error('Error refreshing token:', error)
+          // Continue anyway - user can manually refresh if needed
+        } finally {
+          setIsRefreshingToken(false)
+          // Remove success param and proceed to role-based redirect
+          router.replace('/dashboard')
+        }
+        return
+      }
+    }
+
+    handleSubscriptionSuccess()
+  }, [isSubscriptionSuccess, user, isRefreshingToken, router])
+
+  useEffect(() => {
+    if (!loading && !isRefreshingToken && !isSubscriptionSuccess) {
       if (!user) {
         router.push('/login')
       } else if (user.role === 'owner') {
@@ -21,12 +60,17 @@ export default function DashboardPage() {
         router.push('/jobs')
       }
     }
-  }, [user, loading, router])
+  }, [user, loading, router, isRefreshingToken, isSubscriptionSuccess])
 
   return (
     <main className="container mx-auto py-12">
-      <div className="flex items-center justify-center">
+      <div className="flex flex-col items-center justify-center gap-4">
         <div className="h-8 w-48 animate-pulse rounded-md bg-muted" />
+        {isRefreshingToken && (
+          <p className="text-sm text-muted-foreground animate-pulse">
+            {refreshMessage}
+          </p>
+        )}
       </div>
     </main>
   )
