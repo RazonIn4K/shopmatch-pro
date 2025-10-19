@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 
 import { useAuth } from '@/lib/contexts/AuthContext'
 import { auth } from '@/lib/firebase/client'
 
-export default function DashboardPage() {
+function DashboardContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user, loading } = useAuth()
@@ -22,14 +22,14 @@ export default function DashboardPage() {
         // User just completed subscription - refresh their token to get updated custom claims
         setIsRefreshingToken(true)
         setRefreshMessage('Setting up your subscription...')
-        
+
         try {
           const currentUser = auth.currentUser
           if (currentUser) {
             // Force token refresh to get updated custom claims (subActive: true)
             await currentUser.getIdToken(true)
             setRefreshMessage('Subscription activated! Redirecting...')
-            
+
             // Wait a brief moment for the success message to be visible
             await new Promise(resolve => setTimeout(resolve, 800))
           }
@@ -73,5 +73,19 @@ export default function DashboardPage() {
         )}
       </div>
     </main>
+  )
+}
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={
+      <main className="container mx-auto py-12">
+        <div className="flex flex-col items-center justify-center gap-4">
+          <div className="h-8 w-48 animate-pulse rounded-md bg-muted" />
+        </div>
+      </main>
+    }>
+      <DashboardContent />
+    </Suspense>
   )
 }
