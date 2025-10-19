@@ -122,11 +122,11 @@ async function processWebhookEvent(event: { type: string; data: { object: unknow
     switch (event.type as StripeWebhookEvent) {
       case 'customer.subscription.created':
       case 'customer.subscription.updated':
-        await handleSubscriptionUpdate(event.data.object as { customer: string; id: string; status: string })
+        await handleSubscriptionUpdate(event.data.object as StripeSubscriptionPayload)
         break
 
       case 'customer.subscription.deleted':
-        await handleSubscriptionCancellation(event.data.object as { customer: string })
+        await handleSubscriptionCancellation(event.data.object as { customer: string; metadata?: Record<string, string | undefined> })
         break
 
       case 'checkout.session.completed':
@@ -150,7 +150,14 @@ async function processWebhookEvent(event: { type: string; data: { object: unknow
  *
  * @param subscription - Stripe subscription object
  */
-async function handleSubscriptionUpdate(subscription: { customer: string; id: string; status: string }): Promise<void> {
+interface StripeSubscriptionPayload {
+  customer: string
+  id: string
+  status: string
+  metadata?: Record<string, string | undefined>
+}
+
+async function handleSubscriptionUpdate(subscription: StripeSubscriptionPayload): Promise<void> {
   const customerId = subscription.customer
   const status = subscription.status // 'active', 'canceled', 'incomplete', etc.
 
@@ -164,13 +171,37 @@ async function handleSubscriptionUpdate(subscription: { customer: string; id: st
     const usersRef = adminDb.collection('users')
     const query = await usersRef.where('stripeCustomerId', '==', customerId).get()
 
-    if (query.empty) {
-      console.log(`No user found for Stripe customer ${customerId}`)
-      return
+    let userDocRef = query.docs[0]?.ref
+    let userId = query.docs[0]?.id
+
+    if (!userDocRef) {
+      const metadataUserId = subscription.metadata?.userId
+      if (!metadataUserId) {
+        console.log(`No user found for Stripe customer ${customerId} and no metadata.userId present`)
+        return
+      }
+
+      const metadataDoc = await usersRef.doc(metadataUserId).get()
+      if (!metadataDoc.exists) {
+        console.log(`No user document found for metadata.userId ${metadataUserId}`)
+        return
+      }
+
+      console.log(`Resolved user ${metadataUserId} via subscription metadata fallback`)
+      userDocRef = metadataDoc.ref
+      userId = metadataUserId
+
+      // Ensure customer linkage is persisted if we resolved via metadata fallback
+      await userDocRef.update({
+        stripeCustomerId: customerId,
+        updatedAt: new Date(),
+      })
     }
 
-    const userDoc = query.docs[0]
-    const userId = userDoc.id
+    if (!userDocRef || !userId) {
+      console.log(`Unable to resolve user for Stripe customer ${customerId}`)
+      return
+    }
 
     // Get existing user record to preserve existing custom claims (e.g., role)
     const userRecord = await adminAuth.getUser(userId)
@@ -186,7 +217,7 @@ async function handleSubscriptionUpdate(subscription: { customer: string; id: st
     })
 
     // Update Firestore document with subscription details
-    await userDoc.ref.update({
+    await userDocRef.update({
       subActive: true,
       stripeCustomerId: customerId,
       subscriptionId: subscription.id,
@@ -209,7 +240,7 @@ async function handleSubscriptionUpdate(subscription: { customer: string; id: st
  *
  * @param subscription - Stripe subscription object
  */
-async function handleSubscriptionCancellation(subscription: { customer: string }): Promise<void> {
+async function handleSubscriptionCancellation(subscription: { customer: string; metadata?: Record<string, string | undefined> }): Promise<void> {
   const customerId = subscription.customer
 
   try {
@@ -217,13 +248,31 @@ async function handleSubscriptionCancellation(subscription: { customer: string }
     const usersRef = adminDb.collection('users')
     const query = await usersRef.where('stripeCustomerId', '==', customerId).get()
 
-    if (query.empty) {
-      console.log(`No user found for Stripe customer ${customerId}`)
-      return
+    let userDocRef = query.docs[0]?.ref
+    let userId = query.docs[0]?.id
+
+    if (!userDocRef) {
+      const metadataUserId = subscription.metadata?.userId
+      if (!metadataUserId) {
+        console.log(`No user found for Stripe customer ${customerId} and no metadata.userId present`)
+        return
+      }
+
+      const metadataDoc = await usersRef.doc(metadataUserId).get()
+      if (!metadataDoc.exists) {
+        console.log(`No user document found for metadata.userId ${metadataUserId}`)
+        return
+      }
+
+      console.log(`Resolved user ${metadataUserId} via subscription metadata fallback`)
+      userDocRef = metadataDoc.ref
+      userId = metadataUserId
     }
 
-    const userDoc = query.docs[0]
-    const userId = userDoc.id
+    if (!userDocRef || !userId) {
+      console.log(`Unable to resolve user for Stripe customer ${customerId}`)
+      return
+    }
 
     // Get existing user record to preserve existing custom claims (e.g., role)
     const userRecord = await adminAuth.getUser(userId)
@@ -238,7 +287,7 @@ async function handleSubscriptionCancellation(subscription: { customer: string }
     })
 
     // Update Firestore document
-    await userDoc.ref.update({
+    await userDocRef.update({
       subActive: false,
       subscriptionId: null,
       subscriptionStatus: 'canceled',
