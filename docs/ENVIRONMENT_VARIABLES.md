@@ -273,6 +273,28 @@ stripe prices create \
 3. Add your domain (e.g., `shopmatch.pro`)
 4. For local development, `localhost` is pre-authorized
 
+### NEXT_PUBLIC_SENTRY_DSN (Optional - Monitoring)
+
+**Description**: Sentry Data Source Name (DSN) for error tracking and performance monitoring.
+
+**How to Get**:
+1. Create a Sentry account at https://sentry.io/signup/
+2. Create a new project (select "Next.js" as the platform)
+3. Copy the DSN from Settings → Projects → [Your Project] → Client Keys (DSN)
+
+**Format**: `https://PUBLIC_KEY@o0.ingest.sentry.io/PROJECT_ID`
+
+**Example**: `https://abc123def456@o123456.ingest.sentry.io/7890123`
+
+**Environment-specific values**:
+| Environment | Value | Purpose |
+|------------|-------|---------|
+| **Local Development** | Optional (comment out for local dev) | Avoid noise in Sentry dashboard |
+| **Staging** | Use staging project DSN | Test error tracking before production |
+| **Production** | Use production project DSN | Real error monitoring |
+
+**Note**: This variable is prefixed with `NEXT_PUBLIC_` because Sentry captures errors from both client and server. The DSN is not a secret - it's safe to expose in browser code.
+
 ## Validation
 
 ### Automatic Validation Script

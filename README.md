@@ -32,10 +32,11 @@ A modern job board platform built with Next.js 15, Firebase, and Stripe. Connect
 **Production Readiness Score:** 100% ✅
 
 ### **Quick Links**
-- 📊 [Production Launch Complete →](./docs/PRODUCTION_LAUNCH_COMPLETE.md)
+- 🚀 **[Launch Readiness Roadmap →](./docs/LAUNCH_READINESS_ROADMAP.md)** ⭐ **START HERE**
+- 📊 [Monitoring Setup Guide →](./docs/NEXT_PHASE_MONITORING_SETUP.md) (Next Step)
+- ✅ [Production Launch Complete →](./docs/PRODUCTION_LAUNCH_COMPLETE.md)
 - 📈 [Monitoring Checklist →](./docs/MONITORING_CHECKLIST.md)
 - 🗺️ [Future Roadmap →](./docs/FUTURE_ROADMAP.md)
-- 📖 [Deployment Guide →](./docs/PRODUCTION_DEPLOYMENT_GUIDE.md)
 
 ## 🚀 Quick Start
 
