@@ -27,6 +27,7 @@
 - [REPOSITORY_GUARDRAILS.md](REPOSITORY_GUARDRAILS.md) — Technical deep dive
 - [VERIFICATION_CHECKLIST.md](VERIFICATION_CHECKLIST.md) — Smoke and full test procedures
 - [AI_TOOLING_SETUP.md](AI_TOOLING_SETUP.md) — AI tool integration (Claude, Copilot)
+- [SENTRY_SETUP_GUIDE.md](SENTRY_SETUP_GUIDE.md) — Error tracking setup (15-20 min)
 
 ## 📋 Governance (ADRs)
 - [adr/0001-payments-stripe.md](adr/0001-payments-stripe.md) — Why Stripe over alternatives
