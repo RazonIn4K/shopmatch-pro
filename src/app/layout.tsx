@@ -18,6 +18,8 @@ import './globals.css'
 import { AuthProvider } from '@/lib/contexts/AuthContext'
 import { Toaster } from '@/components/ui/sonner'
 import { getMetadataBase } from '@/lib/env'
+import { Footer } from '@/components/footer'
+import { CookieConsent } from '@/components/cookie-consent'
 
 /**
  * Inter font configuration for consistent typography
@@ -97,7 +99,13 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <AuthProvider>
-          {children}
+          <div className="flex flex-col min-h-screen">
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+          </div>
+          <CookieConsent />
           <Toaster />
         </AuthProvider>
       </body>
