@@ -10,8 +10,8 @@ export default withSentryConfig(nextConfig, {
   // For all available options, see:
   // https://github.com/getsentry/sentry-webpack-plugin#options
 
-  org: "davidortizhighencodelearningco",
-  project: "javascript-nextjs",
+  org: "shopmatch-pro",
+  project: "shopmatch-pro",
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
