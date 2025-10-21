@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 
 import { assertActiveSubscription, verifyAuth } from '@/lib/api/auth'
 import { ApiError, handleApiError } from '@/lib/api/errors'
-import { adminDb, type Timestamp } from '@/lib/firebase/admin'
+import { adminDb } from '@/lib/firebase/admin'
 import { jobFormSchema, jobStatuses, jobTypes } from '@/types'
 import type { Job } from '@/types'
 
@@ -74,10 +74,10 @@ function transformJobDocument(doc: FirebaseFirestore.DocumentSnapshot): Job {
   return {
     id: doc.id,
     ...data,
-    createdAt: (data.createdAt as Timestamp)?.toDate?.() ?? data.createdAt,
-    updatedAt: (data.updatedAt as Timestamp)?.toDate?.() ?? data.updatedAt,
-    publishedAt: (data.publishedAt as Timestamp)?.toDate?.() ?? data.publishedAt,
-    expiresAt: (data.expiresAt as Timestamp)?.toDate?.() ?? data.expiresAt,
+    createdAt: (data.createdAt as FirebaseFirestore.Timestamp)?.toDate?.() ?? data.createdAt,
+    updatedAt: (data.updatedAt as FirebaseFirestore.Timestamp)?.toDate?.() ?? data.updatedAt,
+    publishedAt: (data.publishedAt as FirebaseFirestore.Timestamp)?.toDate?.() ?? data.publishedAt,
+    expiresAt: (data.expiresAt as FirebaseFirestore.Timestamp)?.toDate?.() ?? data.expiresAt,
   } as Job
 }
 
