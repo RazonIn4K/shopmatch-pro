@@ -1,47 +1,77 @@
 /**
- * Login Page for ShopMatch Pro
+ * Login Page
  *
- * Provides user authentication interface with support for email/password
- * and Google OAuth sign-in methods. Includes error handling, loading states,
- * and seamless user experience.
- *
- * Features:
- * - Email/password authentication
- * - Google OAuth integration
- * - Password reset functionality
- * - Form validation with Zod schema
- * - Responsive design with shadcn/ui components
- * - Error state management and user feedback
- *
- * Architecture:
- * - Uses custom hooks (useLogin, usePasswordReset) for business logic
- * - Separates concerns: UI components vs authentication logic
- * - Extracted forms into separate components to reduce complexity
- * - Testable and maintainable code structure
+ * Acts as a lightweight orchestrator that chooses between the login
+ * and password reset views. Business logic is encapsulated in the
+ * corresponding hooks, keeping this component declarative.
  */
 
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 
-import { LoginForm } from './LoginForm'
-import { PasswordResetForm } from './PasswordResetForm'
+import { LoginView } from './LoginView'
+import { PasswordResetView } from './PasswordResetView'
+import { useLogin } from './useLogin'
+import { usePasswordReset } from './usePasswordReset'
 
 /**
- * Login Page Component
+ * LoginPage Component
  *
- * Main authentication interface that handles user sign-in flows.
- * Coordinates between login form and password reset form.
- *
- * Refactored to reduce cyclomatic complexity (was 13, now < 5)
- * and method length (was 214 lines, now < 50 lines).
+ * Switches between the login view and the password reset view based on
+ * user interaction. All form/state logic is delegated to custom hooks.
  */
 export default function LoginPage() {
   const [isResettingPassword, setIsResettingPassword] = useState(false)
 
-  if (isResettingPassword) {
-    return <PasswordResetForm onBackToLogin={() => setIsResettingPassword(false)} />
-  }
+  const {
+    form: loginForm,
+    isLoading: isLoginLoading,
+    authError: loginError,
+    handleEmailLogin,
+    handleGoogleLogin,
+  } = useLogin()
 
-  return <LoginForm onForgotPassword={() => setIsResettingPassword(true)} />
+  const {
+    form: resetForm,
+    isLoading: isResetLoading,
+    authError: resetError,
+    handlePasswordReset,
+    clearAuthError,
+  } = usePasswordReset()
+
+  const showResetView = useCallback(() => {
+    loginForm.clearErrors()
+    setIsResettingPassword(true)
+    clearAuthError()
+  }, [clearAuthError, loginForm])
+
+  const showLoginView = useCallback(() => {
+    resetForm.reset()
+    clearAuthError()
+    setIsResettingPassword(false)
+  }, [clearAuthError, resetForm])
+
+  return (
+    <main className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+      {isResettingPassword ? (
+        <PasswordResetView
+          form={resetForm}
+          isLoading={isResetLoading}
+          authError={resetError}
+          onSubmit={handlePasswordReset}
+          onBack={showLoginView}
+        />
+      ) : (
+        <LoginView
+          form={loginForm}
+          isLoading={isLoginLoading}
+          authError={loginError}
+          onSubmit={handleEmailLogin}
+          onGoogleLogin={handleGoogleLogin}
+          onForgotPassword={showResetView}
+        />
+      )}
+    </main>
+  )
 }

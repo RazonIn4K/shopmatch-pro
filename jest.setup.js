@@ -13,5 +13,6 @@ jest.mock('@/lib/firebase/client', () => ({
 }));
 
 // Global TextEncoder/TextDecoder polyfill for Jest environment
-global.TextEncoder = require('util').TextEncoder;
-global.TextDecoder = require('util').TextDecoder;
+import { TextEncoder, TextDecoder } from 'util';
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;

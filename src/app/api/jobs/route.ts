@@ -164,7 +164,7 @@ async function parseAndValidateJobPayload(request: Request) {
 
   const parsed = jobFormSchema.safeParse(payload)
   if (!parsed.success) {
-    throw new ApiError('Validation failed', 422, parsed.error.format())
+    throw new ApiError('Validation failed', 422, { issues: parsed.error.issues })
   }
   return parsed.data
 }
