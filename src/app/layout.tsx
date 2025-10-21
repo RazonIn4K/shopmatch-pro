@@ -36,12 +36,12 @@ const inter = Inter({ subsets: ['latin'] })
  * Update these values based on your specific branding and SEO requirements.
  */
 export const metadata: Metadata = {
-  title: 'ShopMatch Pro - Find Your Perfect Job Match',
-  description: 'Connect employers with talented job seekers. Post jobs, apply to positions, and find your perfect career match with ShopMatch Pro.',
-  keywords: ['jobs', 'employment', 'career', 'hiring', 'job board', 'recruitment'],
-  authors: [{ name: 'ShopMatch Pro Team' }],
-  creator: 'ShopMatch Pro',
-  publisher: 'ShopMatch Pro',
+  title: 'ShopMatch Pro - Portfolio Demo Project',
+  description: 'Portfolio demonstration of a production-grade SaaS job board platform. Built with Next.js 15, Firebase, Stripe, and TypeScript. This is a test/demo project - no real transactions occur.',
+  keywords: ['portfolio', 'demo', 'nextjs', 'typescript', 'firebase', 'stripe', 'full-stack', 'web development'],
+  authors: [{ name: 'David Ortiz' }],
+  creator: 'David Ortiz',
+  publisher: 'David Ortiz',
   formatDetection: {
     email: false,
     address: false,
@@ -52,29 +52,33 @@ export const metadata: Metadata = {
     canonical: '/',
   },
   openGraph: {
-    title: 'ShopMatch Pro - Find Your Perfect Job Match',
-    description: 'Connect employers with talented job seekers. Post jobs, apply to positions, and find your perfect career match.',
+    title: 'ShopMatch Pro - Portfolio Demo Project',
+    description: 'Portfolio demonstration of a production-grade SaaS platform. Test mode only - no real transactions.',
     url: '/',
-    siteName: 'ShopMatch Pro',
+    siteName: 'ShopMatch Pro Demo',
     locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'ShopMatch Pro - Find Your Perfect Job Match',
-    description: 'Connect employers with talented job seekers. Post jobs, apply to positions, and find your perfect career match.',
+    title: 'ShopMatch Pro - Portfolio Demo',
+    description: 'Portfolio demonstration project showcasing full-stack SaaS development. Test mode only.',
     creator: '@shopmatchpro',
   },
   robots: {
-    index: true,
-    follow: true,
+    index: false,
+    follow: false,
+    noarchive: true,
+    nosnippet: true,
+    noimageindex: true,
     googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      index: false,
+      follow: false,
     },
+  },
+  other: {
+    'demo-project': 'true',
+    'test-mode': 'true',
   },
 }
 
