@@ -38,7 +38,7 @@ export default function JobsPage() {
 
   if (loading) {
     return (
-      <main className="container mx-auto py-12">
+      <main className="container mx-auto flex-1 py-12">
         <div className="space-y-4">
           <div className="h-8 w-48 animate-pulse rounded-md bg-muted" />
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -53,7 +53,7 @@ export default function JobsPage() {
 
   if (error) {
     return (
-      <main className="container mx-auto py-12">
+      <main className="container mx-auto flex-1 py-12">
         <div className="rounded-lg border border-destructive bg-destructive/10 p-6 text-center">
           <h2 className="text-lg font-semibold text-destructive">Error loading jobs</h2>
           <p className="text-sm text-muted-foreground">{error}</p>
@@ -66,7 +66,7 @@ export default function JobsPage() {
   }
 
   return (
-    <main className="container mx-auto py-12">
+    <main className="container mx-auto flex-1 py-12">
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Browse Jobs</h1>

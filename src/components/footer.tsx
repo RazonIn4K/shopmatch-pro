@@ -15,7 +15,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-1">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">ShopMatch Pro</h3>
+            <div className="text-lg font-bold text-gray-900 mb-4">ShopMatch Pro</div>
             <p className="text-sm text-gray-600">
               Connecting talented job seekers with great opportunities.
             </p>
@@ -23,7 +23,7 @@ export function Footer() {
 
           {/* Product Links */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-900 mb-4">Product</h4>
+            <div className="text-sm font-semibold text-gray-900 mb-4">Product</div>
             <ul className="space-y-2">
               <li>
                 <Link 
@@ -54,7 +54,7 @@ export function Footer() {
 
           {/* Company Links */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-900 mb-4">Company</h4>
+            <div className="text-sm font-semibold text-gray-900 mb-4">Company</div>
             <ul className="space-y-2">
               <li>
                 <a 
@@ -77,7 +77,7 @@ export function Footer() {
 
           {/* Legal Links */}
           <div>
-            <h4 className="text-sm font-semibold text-gray-900 mb-4">Legal</h4>
+            <div className="text-sm font-semibold text-gray-900 mb-4">Legal</div>
             <ul className="space-y-2">
               <li>
                 <Link 

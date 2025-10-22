@@ -87,7 +87,7 @@ export default function EditJobPage() {
 
   if (loading || authLoading || !job) {
     return (
-      <main className="container mx-auto py-12">
+      <main className="container mx-auto flex-1 py-12">
         <div className="mx-auto max-w-4xl">
           <div className="h-96 animate-pulse rounded-lg bg-muted" />
         </div>
@@ -96,7 +96,7 @@ export default function EditJobPage() {
   }
 
   return (
-    <main className="container mx-auto py-12">
+    <main className="container mx-auto flex-1 py-12">
       <div className="mx-auto max-w-4xl">
         <Card>
           <CardHeader>

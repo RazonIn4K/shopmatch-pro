@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function TermsOfService() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <main className="min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white shadow-sm rounded-lg p-8">
           <Link 
@@ -213,6 +213,6 @@ export default function TermsOfService() {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

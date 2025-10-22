@@ -122,7 +122,7 @@ export default function OwnerDashboardPage() {
 
   if (loading || authLoading) {
     return (
-      <main className="container mx-auto py-12">
+      <main className="container mx-auto flex-1 py-12">
         <div className="space-y-6">
           <div className="h-12 w-48 animate-pulse rounded-md bg-muted" />
           <div className="grid gap-4 md:grid-cols-3">
@@ -140,7 +140,7 @@ export default function OwnerDashboardPage() {
   const pendingApplications = applications.filter((a) => a.status === 'pending').length
 
   return (
-    <main className="container mx-auto py-12">
+    <main className="container mx-auto flex-1 py-12">
       <div className="space-y-8">
         <div className="flex items-center justify-between">
           <div>

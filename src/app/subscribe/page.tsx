@@ -156,12 +156,13 @@ function SubscribePageContent() {
    */
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+      <main className="flex-1 min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <h1 className="sr-only">Subscribe</h1>
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
           <p className="text-muted-foreground">Loading...</p>
         </div>
-      </div>
+      </main>
     )
   }
 
@@ -175,7 +176,7 @@ function SubscribePageContent() {
    * Main subscription interface
    */
   return (
-    <main className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <main className="flex-1 min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">

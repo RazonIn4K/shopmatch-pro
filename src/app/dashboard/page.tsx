@@ -69,7 +69,8 @@ function DashboardContent() {
   }, [user, loading, router, isRefreshingToken, isSubscriptionSuccess])
 
   return (
-    <main className="container mx-auto py-12">
+    <main className="container mx-auto flex-1 py-12">
+      <h1 className="sr-only">Dashboard Loading</h1>
       <div className="flex flex-col items-center justify-center gap-4">
         <div className="h-8 w-48 animate-pulse rounded-md bg-muted" />
         {isRefreshingToken && (
@@ -85,7 +86,8 @@ function DashboardContent() {
 export default function DashboardPage() {
   return (
     <Suspense fallback={
-      <main className="container mx-auto py-12">
+      <main className="container mx-auto flex-1 py-12">
+        <h1 className="sr-only">Dashboard Loading</h1>
         <div className="flex flex-col items-center justify-center gap-4">
           <div className="h-8 w-48 animate-pulse rounded-md bg-muted" />
         </div>

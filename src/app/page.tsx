@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+    <main className="flex-1 min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Demo Notice Banner */}
       <div className="bg-yellow-50 border-b-2 border-yellow-200 px-4 py-3">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 text-center">
@@ -41,7 +41,10 @@ export default function Home() {
         </div>
 
         {/* Key Features */}
-        <div className="grid md:grid-cols-3 gap-8 mt-16">
+        <h2 className="text-3xl font-bold text-center text-gray-900 mt-16 mb-8">
+          Key Features
+        </h2>
+        <div className="grid md:grid-cols-3 gap-8">
           <div className="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
             <div className="text-blue-600 mb-4">
               <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -108,12 +111,12 @@ export default function Home() {
 
         {/* Test Credentials */}
         <div className="mt-16 bg-gray-50 border border-gray-200 rounded-lg p-6 max-w-2xl mx-auto">
-          <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
             <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
             </svg>
             Test Credentials
-          </h3>
+          </h2>
           <div className="grid sm:grid-cols-2 gap-4 text-sm">
             <div className="bg-white p-4 rounded border border-gray-200">
               <p className="font-semibold text-gray-700 mb-2">Employer Account</p>
@@ -133,9 +136,9 @@ export default function Home() {
 
         {/* Tech Stack */}
         <div className="mt-16 text-center">
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-6">
+          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-6">
             Built With
-          </h3>
+          </h2>
           <div className="flex flex-wrap justify-center gap-4 text-sm text-gray-600">
             <span className="px-4 py-2 bg-white border border-gray-200 rounded-full">Next.js 15</span>
             <span className="px-4 py-2 bg-white border border-gray-200 rounded-full">TypeScript</span>
