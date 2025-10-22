@@ -49,7 +49,8 @@ describe('useLogin', () => {
     await act(async () => {
       result.current.form.setValue('email', 'test@example.com');
       result.current.form.setValue('password', 'password123');
-      await result.current.handleEmailLogin({ preventDefault: jest.fn() } as React.FormEvent);
+      const mockEvent = { preventDefault: jest.fn() } as unknown as React.FormEvent;
+      await result.current.handleEmailLogin(mockEvent);
     });
 
     expect(mockSignin).toHaveBeenCalledWith('test@example.com', 'password123');
@@ -73,7 +74,8 @@ describe('useLogin', () => {
     await act(async () => {
       result.current.form.setValue('email', 'test@example.com');
       result.current.form.setValue('password', 'wrongpassword');
-      await result.current.handleEmailLogin({ preventDefault: jest.fn() } as React.FormEvent);
+      const mockEvent = { preventDefault: jest.fn() } as unknown as React.FormEvent;
+      await result.current.handleEmailLogin(mockEvent);
     });
 
     rerender(); // Rerender to pick up the updated authError from mockReturnValue

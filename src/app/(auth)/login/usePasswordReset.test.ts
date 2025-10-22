@@ -38,7 +38,8 @@ describe('usePasswordReset', () => {
 
     await act(async () => {
       result.current.form.setValue('email', 'test@example.com');
-      await result.current.handlePasswordReset({ preventDefault: jest.fn() } as React.FormEvent);
+      const mockEvent = { preventDefault: jest.fn() } as unknown as React.FormEvent;
+      await result.current.handlePasswordReset(mockEvent);
     });
 
     expect(result.current.isLoading).toBe(false);
@@ -61,7 +62,8 @@ describe('usePasswordReset', () => {
 
     await act(async () => {
       result.current.form.setValue('email', 'nonexistent@example.com');
-      await result.current.handlePasswordReset({ preventDefault: jest.fn() } as React.FormEvent);
+      const mockEvent = { preventDefault: jest.fn() } as unknown as React.FormEvent;
+      await result.current.handlePasswordReset(mockEvent);
     });
 
     rerender(); // Rerender to pick up the updated authError from mockReturnValue
