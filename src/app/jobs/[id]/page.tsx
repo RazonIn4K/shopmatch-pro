@@ -95,7 +95,7 @@ export default function JobDetailPage() {
 
   if (loading) {
     return (
-      <main className="container mx-auto py-12">
+      <main className="container mx-auto flex-1 py-12">
         <div className="mx-auto max-w-4xl space-y-6">
           <div className="h-12 w-2/3 animate-pulse rounded-md bg-muted" />
           <div className="h-96 animate-pulse rounded-lg bg-muted" />
@@ -106,7 +106,7 @@ export default function JobDetailPage() {
 
   if (!job) {
     return (
-      <main className="container mx-auto py-12">
+      <main className="container mx-auto flex-1 py-12">
         <div className="text-center">
           <h2 className="text-2xl font-bold">Job not found</h2>
           <Button onClick={() => router.push('/jobs')} className="mt-4">
@@ -118,7 +118,7 @@ export default function JobDetailPage() {
   }
 
   return (
-    <main className="container mx-auto py-12">
+    <main className="container mx-auto flex-1 py-12">
       <div className="mx-auto max-w-4xl space-y-6">
         <Button variant="ghost" onClick={() => router.push('/jobs')}>
           ← Back to jobs

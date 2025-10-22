@@ -125,7 +125,7 @@ export default function SignupPage() {
    * Main signup form interface
    */
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <main className="flex-1 min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
           <h1 className="text-2xl font-bold text-center">Join ShopMatch Pro</h1>

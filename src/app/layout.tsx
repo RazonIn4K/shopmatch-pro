@@ -104,9 +104,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <AuthProvider>
           <div className="flex flex-col min-h-screen">
-            <main className="flex-1">
-              {children}
-            </main>
+            {children}
             <Footer />
           </div>
           <CookieConsent />
