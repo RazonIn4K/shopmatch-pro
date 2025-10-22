@@ -17,6 +17,21 @@ type JobListFilters = {
   limit: number
 }
 
+function isMissingIndexError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') {
+    return false
+  }
+
+  const code = (error as { code?: unknown }).code
+  const message = (error as { message?: unknown }).message
+  const normalizedMessage = typeof message === 'string' ? message.toLowerCase() : ''
+
+  return (
+    (code === 9 || code === 'failed-precondition') &&
+    normalizedMessage.includes('requires an index')
+  )
+}
+
 function parseBoolean(value: string | null): boolean | undefined {
   if (value === null) return undefined
   if (['true', '1', 'yes'].includes(value.toLowerCase())) return true
@@ -101,11 +116,52 @@ async function handleLocationFiltering(
   }).length
 
   // Filter current page results by location
-  const filteredJobs = jobs.filter((job) =>
-    job.location.toLowerCase().includes(locationLower)
-  )
+  const filteredJobs = jobs.filter((job) => {
+    if (typeof job.location !== 'string') {
+      return false
+    }
+    return job.location.toLowerCase().includes(locationLower)
+  })
 
   return { filteredJobs, filteredTotal: locationMatchCount }
+}
+
+function toTimestampMillis(value: unknown): number {
+  if (value instanceof Date) {
+    return value.getTime()
+  }
+  if (typeof value === 'number') {
+    return value
+  }
+  if (typeof value === 'string') {
+    const parsed = Date.parse(value)
+    return Number.isNaN(parsed) ? 0 : parsed
+  }
+  if (
+    value &&
+    typeof value === 'object' &&
+    'toDate' in value &&
+    typeof (value as { toDate: () => Date }).toDate === 'function'
+  ) {
+    return (value as { toDate: () => Date }).toDate().getTime()
+  }
+  return 0
+}
+
+function sortJobsByCreatedAtDesc(jobs: Job[]): Job[] {
+  return [...jobs].sort((a, b) => toTimestampMillis(b.createdAt) - toTimestampMillis(a.createdAt))
+}
+
+function filterJobsByLocation(jobs: Job[], location: string) {
+  const locationLower = location.toLowerCase()
+  const filtered = jobs.filter((job) => {
+    const jobLocation = typeof job.location === 'string' ? job.location : ''
+    return jobLocation.toLowerCase().includes(locationLower)
+  })
+  return {
+    filteredJobs: filtered,
+    filteredTotal: filtered.length,
+  }
 }
 
 export async function GET(request: Request) {
@@ -123,33 +179,72 @@ export async function GET(request: Request) {
     const offset = (filters.page - 1) * filters.limit
     const paginatedQuery = baseQuery.orderBy('createdAt', 'desc').limit(filters.limit).offset(offset)
 
-    const snapshot = await paginatedQuery.get()
-    const jobs: Job[] = snapshot.docs.map(transformJobDocument)
+    try {
+      const snapshot = await paginatedQuery.get()
+      const jobs: Job[] = snapshot.docs.map(transformJobDocument)
 
-    // Handle location filter and count
-    let filteredJobs = jobs
-    let filteredTotal: number
+      // Handle location filter and count
+      let filteredJobs = jobs
+      let filteredTotal: number
 
-    if (filters.location) {
-      const result = await handleLocationFiltering(jobs, baseQuery, filters.location)
-      filteredJobs = result.filteredJobs
-      filteredTotal = result.filteredTotal
-    } else {
-      // No location filter - use standard count query
-      const countSnapshot = await baseQuery.count().get()
-      filteredTotal = countSnapshot.data().count
+      if (filters.location) {
+        const result = await handleLocationFiltering(jobs, baseQuery, filters.location)
+        filteredJobs = result.filteredJobs
+        filteredTotal = result.filteredTotal
+      } else {
+        // No location filter - use standard count query
+        const countSnapshot = await baseQuery.count().get()
+        filteredTotal = countSnapshot.data().count
+      }
+
+      return NextResponse.json({
+        jobs: filteredJobs,
+        pagination: {
+          page: filters.page,
+          limit: filters.limit,
+          total: filteredTotal,
+          pages: Math.ceil(filteredTotal / filters.limit),
+        },
+      })
+    } catch (queryError) {
+      if (!isMissingIndexError(queryError)) {
+        throw queryError
+      }
+
+      // Fallback logic when composite indexes are missing in production.
+      const fallbackSnapshot = await baseQuery.get()
+      const allJobs = fallbackSnapshot.docs.map(transformJobDocument)
+      const sortedJobs = sortJobsByCreatedAtDesc(allJobs)
+      const locationResult = filters.location
+        ? filterJobsByLocation(sortedJobs, filters.location)
+        : { filteredJobs: sortedJobs, filteredTotal: sortedJobs.length }
+
+      const paginatedJobs = locationResult.filteredJobs.slice(offset, offset + filters.limit)
+
+      return NextResponse.json({
+        jobs: paginatedJobs,
+        pagination: {
+          page: filters.page,
+          limit: filters.limit,
+          total: locationResult.filteredTotal,
+          pages: Math.ceil(locationResult.filteredTotal / filters.limit),
+        },
+        meta: {
+          fallbackApplied: true,
+          message:
+            'Composite Firestore index missing. Served results via in-memory fallback. Deploy indexes to restore optimized queries.',
+        },
+      })
     }
-
-    return NextResponse.json({
-      jobs: filteredJobs,
-      pagination: {
-        page: filters.page,
-        limit: filters.limit,
-        total: filteredTotal,
-        pages: Math.ceil(filteredTotal / filters.limit),
-      },
-    })
   } catch (error) {
+    if (isMissingIndexError(error)) {
+      return handleApiError(
+        new ApiError('Firestore index missing for requested filters', 503, {
+          code: (error as { code?: unknown }).code,
+          hint: 'Run firebase deploy --only firestore:indexes to publish the new composite indexes.',
+        })
+      )
+    }
     return handleApiError(error)
   }
 }
