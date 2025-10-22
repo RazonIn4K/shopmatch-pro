@@ -1,0 +1,50 @@
+# ShopMatch Pro - Portfolio Demo Project
+# This is a demonstration/portfolio project in test mode
+# No real business operations or transactions occur
+
+User-agent: *
+Disallow: /
+
+# Explicitly block all major crawlers
+User-agent: Googlebot
+Disallow: /
+
+User-agent: Googlebot-Image
+Disallow: /
+
+User-agent: Bingbot
+Disallow: /
+
+User-agent: Slurp
+Disallow: /
+
+User-agent: DuckDuckBot
+Disallow: /
+
+User-agent: Baiduspider
+Disallow: /
+
+User-agent: YandexBot
+Disallow: /
+
+# Block AI crawlers
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /
+
+User-agent: cohere-ai
+Disallow: /
+
+# This is a portfolio demonstration project
+# View source code: https://github.com/RazonIn4K/shopmatch-pro

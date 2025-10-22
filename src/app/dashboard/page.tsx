@@ -18,7 +18,10 @@ function DashboardContent() {
 
   useEffect(() => {
     async function handleSubscriptionSuccess() {
-      if (isSubscriptionSuccess && user && !isRefreshingToken) {
+      const shouldHandleSuccess = isSubscriptionSuccess && user
+      const canRefreshToken = !isRefreshingToken
+
+      if (shouldHandleSuccess && canRefreshToken) {
         // User just completed subscription - refresh their token to get updated custom claims
         setIsRefreshingToken(true)
         setRefreshMessage('Setting up your subscription...')
@@ -49,16 +52,19 @@ function DashboardContent() {
   }, [isSubscriptionSuccess, user, isRefreshingToken, router])
 
   useEffect(() => {
-    if (!loading && !isRefreshingToken && !isSubscriptionSuccess) {
-      if (!user) {
-        router.push('/login')
-      } else if (user.role === 'owner') {
-        router.push('/dashboard/owner')
-      } else if (user.role === 'seeker') {
-        router.push('/dashboard/seeker')
-      } else {
-        router.push('/jobs')
-      }
+    const isReadyForRedirect = !loading && !isRefreshingToken && !isSubscriptionSuccess
+    if (!isReadyForRedirect) {
+      return
+    }
+
+    if (!user) {
+      router.push('/login')
+    } else if (user.role === 'owner') {
+      router.push('/dashboard/owner')
+    } else if (user.role === 'seeker') {
+      router.push('/dashboard/seeker')
+    } else {
+      router.push('/jobs')
     }
   }, [user, loading, router, isRefreshingToken, isSubscriptionSuccess])
 

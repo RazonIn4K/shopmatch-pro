@@ -16,6 +16,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run validate-env` — Verify all required Firebase and Stripe environment variables are configured correctly (run after any .env.local changes)
 - `npm run create-user` — Create test users in Firebase with proper Firestore documents and roles (useful for development and testing)
 
+### Testing Commands
+- `npm run test:unit` — Run Jest unit tests for hooks and utilities
+- `npm run test:e2e` — Run Playwright E2E tests (requires server running on :3000)
+- `npm run test:a11y` — Run accessibility tests with axe-core
+
 ## Documentation Stack & Workflow Gates
 
 - Use `docs/README.md` as the canonical index; it links to architecture, security, testing, deployment, analytics, observability, and Firestore rule specs.
@@ -48,6 +53,14 @@ The codebase follows Next.js App Router conventions with these key organizationa
 - **Route Organization**: `src/app/` contains all routes. Auth pages live in `(auth)` group to share layouts without affecting URLs. API routes follow RESTful patterns under `src/app/api/`.
 
 - **Module Boundaries**: `src/lib/` houses shared integrations and utilities organized by service (firebase/, stripe/). `src/components/` contains reusable UI primitives built with Radix UI and Tailwind.
+
+- **Hook-Based Architecture**: Authentication pages use custom hooks to separate business logic from UI rendering. For example, `(auth)/login/` contains:
+  - `schemas.ts` - Zod validation schemas
+  - `useLogin.ts` - Email/password + Google OAuth logic
+  - `usePasswordReset.ts` - Password reset flow logic
+  - `page.tsx` - Pure presentational component
+  - `*.test.ts` - Jest unit tests for hooks (9/9 passing)
+  - E2E tests in `e2e/login.spec.ts` cover full user flows
 
 - **Configuration Centralization**: All Firebase and Stripe configuration lives in dedicated config files (`src/lib/firebase/`, `src/lib/stripe/config.ts`) with comprehensive documentation explaining security rationale and usage patterns.
 
