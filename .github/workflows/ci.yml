@@ -294,18 +294,18 @@ jobs:
         cache: 'npm'
 
     - name: Install dependencies
-      run: npm ci
+      run: npm ci  # Use 'ci' for faster, deterministic installs
 
     - name: Install Playwright browsers
       run: npx playwright install --with-deps chromium
 
     - name: Run production smoke tests
-      run: BASE_URL=https://shopmatch-pro.vercel.app npx playwright test verify-demo-login.spec.ts --reporter=line
+      run: BASE_URL=https://shopmatch-pro.vercel.app npx playwright test e2e/verify-demo-login.spec.ts --reporter=line
       env:
         CI: true
 
     - name: Upload smoke test results
-      if: always()
+      if: failure()  # Upload artifacts only when tests fail
       uses: actions/upload-artifact@v4
       with:
         name: production-smoke-test-results
