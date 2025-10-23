@@ -119,10 +119,10 @@ When GitHub Copilot code review is enabled on your repository:
 ```bash
 # Local testing commands
 npm run lint                    # ESLint
-npm run typecheck              # TypeScript
+npm run typecheck              # TypeScript (no emit)
 npm run build                  # Production build
 FIRST_LOAD_BUDGET_KB=300 node scripts/ci/measure-first-load.mjs  # Bundle check
-npm run test:e2e               # Accessibility tests
+npm run test:a11y              # Accessibility tests
 ```
 
 ---
@@ -420,7 +420,7 @@ git checkout -b feat/MP-126-new-feature
 npm run lint
 npm run typecheck
 npm run build
-npm run test:e2e
+npm run test:a11y
 
 # 6. Create PR (enforced template)
 # GitHub Copilot automatically reviews using custom instructions
@@ -496,7 +496,7 @@ npm run test:e2e
    npm run typecheck
    npm run build
    FIRST_LOAD_BUDGET_KB=300 node scripts/ci/measure-first-load.mjs
-   npm run test:e2e
+   npm run test:a11y
    ```
 
 ### **Optional Enhancements**
