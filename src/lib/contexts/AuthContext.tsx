@@ -177,9 +177,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       // Initialize custom claims on the server
       const token = await userCredential.user.getIdToken()
-      await fetch('/api/users/initialize-claims', {
+      const claimsResponse = await fetch('/api/users/initialize-claims', {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
@@ -187,6 +187,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
           role: role,
         }),
       })
+
+      // CRITICAL: Check if claims initialization succeeded
+      if (!claimsResponse.ok) {
+        const errorData = await claimsResponse.json().catch(() => ({ error: 'Unknown error' }))
+        console.error('Failed to initialize custom claims:', errorData)
+        throw new Error(`Failed to initialize user permissions: ${errorData.error || claimsResponse.statusText}`)
+      }
 
       // CRITICAL: Force token refresh to apply custom claims immediately
       // Without this, role-gated UI won't work until Firebase refreshes the token
@@ -244,9 +251,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         // Initialize custom claims on the server
         const token = await user.getIdToken()
-        await fetch('/api/users/initialize-claims', {
+        const claimsResponse = await fetch('/api/users/initialize-claims', {
           method: 'POST',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${token}`,
           },
@@ -254,6 +261,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
             role: 'seeker',
           }),
         })
+
+        // CRITICAL: Check if claims initialization succeeded
+        if (!claimsResponse.ok) {
+          const errorData = await claimsResponse.json().catch(() => ({ error: 'Unknown error' }))
+          console.error('Failed to initialize custom claims:', errorData)
+          throw new Error(`Failed to initialize user permissions: ${errorData.error || claimsResponse.statusText}`)
+        }
 
         // CRITICAL: Force token refresh to apply custom claims immediately
         // Without this, role-gated UI won't work until Firebase refreshes the token
