@@ -10,6 +10,9 @@ jobs:
   check-snyk-expiry:
     name: Check Snyk Policy Expiration
     runs-on: ubuntu-latest
+    permissions:
+      contents: read      # Required to checkout code
+      issues: write       # Required to create/update security policy review issues
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
