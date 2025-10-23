@@ -1,28 +1,21 @@
 # Snyk (https://snyk.io) policy file
 
-# Ignore hardcoded passwords in development/test scripts
-# These scripts are not deployed to production and only used for local testing
+# Safe to ignore - documentation strings, not actual secrets
 ignore:
-  # Hardcoded test passwords in helper scripts
-  SNYK-JS-HARDCODED-PASSWORD:
-    - scripts/create-user.js:
-        reason: Development script for creating test users locally
-        expires: never
-    - scripts/test-seeker-dashboard.js:
-        reason: Test script with ephemeral users (timestamp-based emails)
-        expires: never
-    - scripts/verify-end-to-end.js:
-        reason: CI test script with ephemeral test users
-        expires: never
+  'SNYK-JS-SHOPMATCHPRO-*':
+    - 'src/lib/config/env-validator.ts':
+        reason: 'Documentation strings for environment variable validation, not actual secrets'
+        expires: '2026-01-01T00:00:00.000Z'
 
-  # Hardcoded credentials in development scripts
-  SNYK-JS-HARDCODED-CREDENTIALS:
-    - scripts/create-user.js:
-        reason: Development script for local testing only
-        expires: never
+# Safe to ignore - test/demo credentials only
+  'SNYK-JS-SHOPMATCHPRO-HARDCODED-PASSWORD':
+    - 'e2e/**/*.spec.ts':
+        reason: 'Test credentials for E2E tests, never used in production'
+    - 'scripts/**/*.js':
+        reason: 'Demo user creation scripts with publicly documented credentials'
 
-# Patch updates applied by Snyk
-patch: {}
-
-# Version: 2.0
-version: v1.25.0
+# Already mitigated - domain validation implemented
+  'SNYK-JS-SHOPMATCHPRO-OPEN-REDIRECT':
+    - 'src/app/subscribe/page.tsx':
+        reason: 'URL validated against stripe.com domain and HTTPS protocol before redirect'
+        expires: '2026-01-01T00:00:00.000Z'
