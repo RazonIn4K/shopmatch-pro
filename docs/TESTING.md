@@ -7,14 +7,38 @@
 - **Rules (Emulator):** allow/deny matrices for users/jobs/applications
 
 ## Commands
-- `npm run test:unit` — Jest unit/component suite
+
+### Test Execution
+- `npm run test:unit` — Jest unit/component tests
 - `npm run test:unit:watch` — Jest with watch mode for development
 - `npm run test:unit:coverage` — Generate coverage report
-- `npm run test:e2e` — Playwright regression suite
-- `npm run test:a11y` — Accessibility smoke tests (axe-core via Playwright)
-- `npm run test:rules` — Firestore security rules via emulator
+- `npm run test:e2e` — Playwright E2E tests (requires server on :3000)
+- `npm run test:e2e:ui` — Playwright UI mode (interactive debugging)
+- `npm run test:e2e:headed` — Run tests with visible browser
+- `npm run test:e2e:debug` — Playwright debugger (step-through mode)
+- `npm run test:a11y` — Accessibility tests (axe-core via Playwright)
+
+### Code Quality
 - `npm run lint` — ESLint + TypeScript checks
-- `npm run typecheck` — TypeScript compiler (no emit)
+- `npm run build` — Production build (includes TypeScript compilation)
+
+### Firebase Emulator Testing
+Firestore security rules are tested locally via Firebase emulators:
+
+```bash
+# Install Firebase Tools globally (one-time setup)
+npm install -g firebase-tools
+
+# Start Firestore emulator
+firebase emulators:start --only firestore
+
+# In another terminal, run tests that interact with Firestore
+npm run test:unit
+
+# Stop emulators: Ctrl+C
+```
+
+**Note**: Most unit tests use mocked Firebase services. Emulator testing is primarily for validating Firestore security rules behavior.
 
 ## Budgets & Gates
 
@@ -51,60 +75,3 @@
 - [ ] Color contrast meets WCAG AA (4.5:1 text, 3:1 UI)
 - [ ] Focus indicators visible on all focusable elements
 - [ ] Forms have proper labels and error messages
-
-**Color Contrast Verification**:
-
-ShopMatch Pro uses CSS custom properties (variables) for theming. Understanding how these variables resolve to actual colors is critical for accessibility compliance.
-
-**CSS Variable Resolution**:
-```css
-/* src/app/globals.css */
-:root {
-  --foreground: 0 0% 3.9%;  /* HSL: 3.9% lightness = very dark gray */
-}
-
-.dark {
-  --foreground: 0 0% 98%;   /* HSL: 98% lightness = very light gray */
-}
-```
-
-When you use `text-foreground` in a component:
-```typescript
-<h1 className="text-foreground">Welcome to ShopMatch Pro</h1>
-```
-
-Tailwind CSS resolves this to:
-```css
-color: hsl(0 0% 3.9%);  /* ≈ rgb(10, 10, 10) - nearly black */
-```
-
-**Verified Contrast Ratios** (as of 2025-01-22):
-- `text-foreground` on white background: **21:1** (exceeds 4.5:1 WCAG AA requirement)
-- `text-blue-600` links: **7:1** (exceeds 4.5:1 requirement)
-- Dark mode `text-foreground` on dark background: **18:1** (exceeds requirement)
-
-**How to Verify Contrast Ratios**:
-
-1. **Inspect Production HTML**:
-   ```bash
-   curl -s https://shopmatch-pro.vercel.app/login | grep -A 2 "text-foreground"
-   ```
-
-2. **Check Computed Color in Browser**:
-   - Right-click element → Inspect
-   - Go to Computed tab
-   - Look for `color` property
-   - Browser shows actual RGB/HSL value
-
-3. **Calculate Contrast Ratio**:
-   - Use [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker/)
-   - Or use browser DevTools (Chrome: inspect → Accessibility → Contrast)
-   - Enter foreground and background colors
-   - Verify ratio meets WCAG AA (4.5:1 for normal text, 3:1 for large text)
-
-**Common Pitfalls**:
-- ❌ Don't assume `text-foreground` is `text-gray-600` - it's a CSS variable
-- ❌ Don't test contrast in dev mode only - always verify production deployment
-- ❌ Don't forget dark mode - test both light and dark themes
-- ✅ Do check computed colors in browser DevTools
-- ✅ Do use automated tools (axe-core) to catch issues early
