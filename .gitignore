@@ -83,3 +83,10 @@ firestore-debug.log
 ui-debug.log
 firebase-debug.log
 database-debug.log
+docs/PLAYWRIGHT_PRODUCTION_TEST_REPORT.md
+docs/FIREBASE_GOOGLE_OAUTH_SETUP.md
+docs/LOGOUT_UI_IMPLEMENTATION.md
+docs/PRODUCTION_READINESS_SUMMARY.md
+docs/IMMEDIATE_ACTION_CHECKLIST.md
+docs/NEXT_STEPS_SUMMARY.md
+docs/PR68_VERIFICATION_SUMMARY.md
