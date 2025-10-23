@@ -29,10 +29,10 @@ test('diagnose login failure - employer account', async ({ page }) => {
   
   console.log('=== CLICKING SIGN IN ===')
   await page.getByRole('button', { name: /sign in/i }).click()
-  
-  // Wait a bit to see what happens
-  await page.waitForTimeout(5000)
-  
+
+  // Wait for navigation to complete (either to dashboard or back to login with error)
+  await page.waitForURL((url) => url.pathname.includes('/dashboard') || url.pathname === '/login', { timeout: 10000 })
+
   console.log('=== CURRENT URL ===', page.url())
   
   // Check for error messages
@@ -56,10 +56,10 @@ test('diagnose jobs page', async ({ page }) => {
   page.on('pageerror', err => console.log('BROWSER ERROR:', err.message))
   
   await page.goto('/jobs')
-  
-  // Wait a few seconds to see what loads
-  await page.waitForTimeout(3000)
-  
+
+  // Wait for page to finish loading (look for main content or loading state to disappear)
+  await page.waitForLoadState('networkidle')
+
   console.log('=== JOBS PAGE URL ===', page.url())
   
   const bodyText = await page.textContent('body')

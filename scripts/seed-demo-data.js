@@ -199,7 +199,7 @@ async function main() {
     try {
       ownerRecord = await auth.getUserByEmail('owner@test.com')
       console.log(`✅ Found owner: ${ownerRecord.uid}`)
-    } catch (error) {
+    } catch {
       console.error('❌ Demo owner account not found!')
       console.error('   Please run: npm run create-demo-users')
       console.error('   Details:', error instanceof Error ? error.message : error)
@@ -271,7 +271,7 @@ async function main() {
         await db.collection('applications').add(applicationData)
         console.log(`   ✅ Applied to job ${i + 1} (status: ${applicationData.status})`)
       }
-    } catch (error) {
+    } catch {
       console.log('⚠️  Seeker account not found - skipping applications')
       console.log('   Run: npm run create-demo-users to create seeker account')
       console.log('   Details:', error instanceof Error ? error.message : error)
