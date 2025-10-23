@@ -133,7 +133,7 @@ npm run test:e2e               # Accessibility tests
 
 **Branch Naming**:
 - **Format**: `type/<ID>-<slug>`
-- **Types**: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `perf`, `ci`
+- **Types**: `feat`, `fix`, `perf`, `sec`, `docs`, `test`, `refactor`, `ci`, `build`
 - **Examples**:
   - ✅ `feat/MP-123-stripe-checkout`
   - ✅ `fix/MP-124-auth-redirect`
