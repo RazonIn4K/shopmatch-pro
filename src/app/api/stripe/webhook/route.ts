@@ -207,20 +207,18 @@ async function handleSubscriptionUpdate(subscription: StripeSubscriptionPayload)
       return
     }
 
-    // Get existing user record to preserve existing custom claims (e.g., role)
+    // Determine if subscription grants access (only 'active' status)
     const isActive = status === 'active'
-    if (!isActive) {
-      console.log(`Subscription ${subscription.id} not active (status: ${status}), skipping claim update.`)
-      // Still update Firestore status
-    }
 
+    // Get existing user record to preserve existing custom claims (e.g., role)
     const userRecord = await adminAuth.getUser(userId)
     const existingClaims = userRecord.customClaims || {}
 
-    // Merge new subscription claims with existing claims
+    // CRITICAL: Update custom claims with actual subscription status
+    // This controls API access - must match Stripe subscription state
     await adminAuth.setCustomUserClaims(userId, {
       ...existingClaims,
-      subActive: true,
+      subActive: isActive, // ✅ Was hardcoded to true (security bug)
       subscriptionId: subscription.id,
       updatedAt: new Date().toISOString(),
     })
@@ -234,11 +232,11 @@ async function handleSubscriptionUpdate(subscription: StripeSubscriptionPayload)
       updatedAt: new Date(),
     })
 
-    if (!isActive) {
-      return
+    if (isActive) {
+      console.log(`✅ Activated subscription access for user ${userId} (status: ${status})`)
+    } else {
+      console.log(`⚠️ Deactivated subscription access for user ${userId} (status: ${status})`)
     }
-
-    console.log(`✅ Activated subscription access for user ${userId}`)
 
   } catch (error: unknown) {
     console.error('Error updating subscription:', error)
