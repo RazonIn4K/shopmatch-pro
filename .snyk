@@ -19,3 +19,19 @@ ignore:
     - 'src/app/subscribe/page.tsx':
         reason: 'URL validated against stripe.com domain and HTTPS protocol before redirect'
         expires: '2026-01-01T00:00:00.000Z'
+
+# Safe to ignore - false positive (blob URL, not user input)
+  'SNYK-JS-SHOPMATCHPRO-DOM-XSS':
+    - 'src/components/applications-export-button.tsx':
+        reason: 'Creates download link with blob URL from CSV data, not unsanitized user input. Uses createElement, not innerHTML.'
+        expires: '2026-01-01T00:00:00.000Z'
+
+# Safe to ignore - server-side logging only
+  'SNYK-JS-SHOPMATCHPRO-FORMAT-STRING':
+    - 'src/app/api/applications/export/route.ts':
+        reason: 'Server-side console.error for debugging, not exposed to client or used in production logs'
+
+# Safe to ignore - false positive (variable name flagged incorrectly)
+  'SNYK-JS-SHOPMATCHPRO-HARDCODED-CREDENTIALS':
+    - 'scripts/create-user.js':
+        reason: 'Variable name "email" flagged incorrectly as hardcoded credential, not actual secret'
