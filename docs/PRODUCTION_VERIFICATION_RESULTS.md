@@ -4,6 +4,8 @@
 **Verification Status**: 90% Complete - Ready for Final Steps
 **Deployment**: https://shopmatch-pro.vercel.app/
 
+> **Latest Update (October 23, 2025):** Automated production smoke tests are live (PR #64) and passing on every push to `main`. Google Search Console verification asset (`public/googlee573592846ba27d6.html`) merged via PR #67. Repository cleanup completed; `main` currently at commit `91263b1`.
+
 ---
 
 ## Executive Summary

@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader } from '@/components/ui/card'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { UserRole } from '@/lib/contexts/AuthContext'
+import { cn } from '@/lib/utils'
 
 import type { UseSignupReturn } from './useSignup'
 
@@ -59,22 +60,22 @@ export function SignupView({
   const [selectedRole, setSelectedRole] = useState<UserRole>('seeker')
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader className="space-y-1">
-        <h1 className="text-2xl font-bold text-center">Join ShopMatch Pro</h1>
-        <CardDescription className="text-center">
+    <Card className="w-full max-w-md border border-slate-200/70 bg-white/95 text-foreground shadow-xl shadow-slate-900/10 backdrop-blur-sm dark:border-slate-700/60 dark:bg-slate-900/90 dark:text-slate-50 dark:shadow-[0_30px_80px_-40px_rgba(15,23,42,0.85)]">
+      <CardHeader className="space-y-2 text-center">
+        <h1 className="text-3xl font-semibold tracking-tight text-foreground">Join ShopMatch Pro</h1>
+        <CardDescription className="text-base text-muted-foreground dark:text-slate-300">
           Create your account to get started
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-5">
         {/* Google OAuth Button */}
         <Button
           onClick={onGoogleSignup}
           disabled={isLoading}
           variant="outline"
-          className="w-full"
+          className="w-full justify-center gap-2 border border-slate-200/70 bg-white text-foreground transition-colors hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 dark:hover:bg-slate-700/80"
         >
-          <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" aria-hidden="true">
+          <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
             <title>Google logo</title>
             <path
               fill="currentColor"
@@ -98,10 +99,12 @@ export function SignupView({
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
+            <span className="w-full border-t border-slate-200/80 dark:border-slate-700/60" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">Or continue with email</span>
+            <span className="rounded-md bg-white px-3 py-1 text-xs font-semibold text-muted-foreground dark:bg-slate-900 dark:text-slate-300">
+              Or continue with email
+            </span>
           </div>
         </div>
 
@@ -114,11 +117,12 @@ export function SignupView({
               name="displayName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Display Name</FormLabel>
+                  <FormLabel className="text-sm font-semibold text-foreground">Display Name</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       placeholder="Enter your full name"
+                      className="bg-slate-50/80 text-foreground placeholder:text-slate-500 focus-visible:ring-primary/70 focus-visible:ring-offset-2 dark:bg-slate-800/70 dark:text-slate-50 dark:placeholder:text-slate-400"
                       disabled={isLoading}
                     />
                   </FormControl>
@@ -133,12 +137,13 @@ export function SignupView({
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="text-sm font-semibold text-foreground">Email</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       type="email"
                       placeholder="Enter your email"
+                      className="bg-slate-50/80 text-foreground placeholder:text-slate-500 focus-visible:ring-primary/70 focus-visible:ring-offset-2 dark:bg-slate-800/70 dark:text-slate-50 dark:placeholder:text-slate-400"
                       disabled={isLoading}
                     />
                   </FormControl>
@@ -153,30 +158,38 @@ export function SignupView({
               name="role"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>I am a:</FormLabel>
+                  <FormLabel className="text-sm font-semibold text-foreground">I am a:</FormLabel>
                   <FormControl>
                     <div className="grid grid-cols-2 gap-2">
                       <Button
                         type="button"
-                        variant={selectedRole === 'owner' ? 'default' : 'outline'}
+                        variant="outline"
                         onClick={() => {
                           setSelectedRole('owner')
                           field.onChange('owner')
                         }}
                         disabled={isLoading}
-                        className="justify-start"
+                        className={cn(
+                          "justify-start border border-slate-200/80 bg-white/90 text-foreground shadow-sm transition-transform hover:translate-y-[-1px] hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 dark:hover:bg-slate-700/80",
+                          selectedRole === 'owner' &&
+                            "border-blue-500 bg-blue-600 text-white shadow-lg shadow-blue-600/20 hover:bg-blue-500 focus-visible:ring-blue-400 dark:border-blue-400 dark:bg-blue-500 dark:hover:bg-blue-400"
+                        )}
                       >
                         🏢 Employer
                       </Button>
                       <Button
                         type="button"
-                        variant={selectedRole === 'seeker' ? 'default' : 'outline'}
+                        variant="outline"
                         onClick={() => {
                           setSelectedRole('seeker')
                           field.onChange('seeker')
                         }}
                         disabled={isLoading}
-                        className="justify-start"
+                        className={cn(
+                          "justify-start border border-slate-200/80 bg-white/90 text-foreground shadow-sm transition-transform hover:translate-y-[-1px] hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 dark:hover:bg-slate-700/80",
+                          selectedRole === 'seeker' &&
+                            "border-blue-500 bg-blue-600 text-white shadow-lg shadow-blue-600/20 hover:bg-blue-500 focus-visible:ring-blue-400 dark:border-blue-400 dark:bg-blue-500 dark:hover:bg-blue-400"
+                        )}
                       >
                         🔍 Job Seeker
                       </Button>
@@ -193,12 +206,13 @@ export function SignupView({
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel className="text-sm font-semibold text-foreground">Password</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       type="password"
                       placeholder="Create a password"
+                      className="bg-slate-50/80 text-foreground placeholder:text-slate-500 focus-visible:ring-primary/70 focus-visible:ring-offset-2 dark:bg-slate-800/70 dark:text-slate-50 dark:placeholder:text-slate-400"
                       disabled={isLoading}
                     />
                   </FormControl>
@@ -213,12 +227,13 @@ export function SignupView({
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Confirm Password</FormLabel>
+                  <FormLabel className="text-sm font-semibold text-foreground">Confirm Password</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       type="password"
                       placeholder="Confirm your password"
+                      className="bg-slate-50/80 text-foreground placeholder:text-slate-500 focus-visible:ring-primary/70 focus-visible:ring-offset-2 dark:bg-slate-800/70 dark:text-slate-50 dark:placeholder:text-slate-400"
                       disabled={isLoading}
                     />
                   </FormControl>
@@ -229,16 +244,20 @@ export function SignupView({
 
             {authError && <AuthAlert message={authError} />}
 
-            <Button type="submit" disabled={isLoading} className="w-full">
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-blue-600 text-white shadow-lg shadow-blue-600/20 transition-colors hover:bg-blue-500 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-400"
+            >
               {isLoading ? 'Creating account...' : 'Create Account'}
             </Button>
           </form>
         </Form>
       </CardContent>
-      <CardFooter className="flex flex-col space-y-2">
-        <div className="text-sm text-center text-muted-foreground">
+      <CardFooter className="flex flex-col space-y-3 text-center">
+        <div className="text-sm text-muted-foreground dark:text-slate-300">
           Already have an account?{' '}
-          <Link href="/login" className="text-primary hover:underline">
+          <Link href="/login" className="font-semibold text-blue-600 hover:underline dark:text-blue-400 dark:hover:text-blue-300">
             Sign in
           </Link>
         </div>

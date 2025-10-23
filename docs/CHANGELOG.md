@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Demo smoke test suite for CI/CD integration (`e2e/verify-demo-login.spec.ts`)
 - Verification summary documenting all production deployment claims
 - CI workflow updated to include production smoke tests on main branch merges
+- Google Search Console verification asset tracked (`public/googlee573592846ba27d6.html`) with activation guidance
 
 #### Testing
 - **Smoke Tests**: 3 lightweight tests verifying critical demo flows
@@ -44,6 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - CI workflow now runs production smoke tests after merges to main
 - Smoke test results retained for 30 days (vs 7 days for other test artifacts)
+- Repository housekeeping: closed outdated PRs (#44, #45, #61) and pruned merged branches
 
 ---
 

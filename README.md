@@ -22,6 +22,7 @@
 - ✅ **Complex Integrations**: Authentication (Firebase), Payments (Stripe), Real-time data
 - ✅ **Professional Workflow**: Git, CI/CD, documentation, code review process
 - ✅ **AI-Assisted Development**: Effective orchestration of modern AI development tools
+- ✅ **Always-On Monitoring**: Automated production smoke tests verify critical flows on every push to `main`
 
 ### **Technical Highlights** 💡
 
@@ -106,10 +107,21 @@
 
 ### Development Tools
 - **Version Control:** Git + GitHub with branch protection
-- **CI/CD:** GitHub Actions (lint, build, security scans)
+- **CI/CD:** GitHub Actions (branch/commit validation, accessibility, first-load budget, production smoke tests)
 - **Package Manager:** npm
 - **Linting:** ESLint + Prettier
 - **Testing:** Manual E2E + Firebase Emulator
+- **Guardrails:** Branch naming enforced as `type/ID-slug` (`feat|fix|perf|sec|docs|test|refactor|ci|build`); use `ci` for infrastructure changes
+
+## 🧭 Repository Structure
+- `src/` – Next.js 15 App Router source (routes, components, providers, utilities)
+- `e2e/` – Playwright suites (`login`, `demo-diagnostics`, `verify-demo-login` smoke tests run in CI)
+- `docs/` – Comprehensive documentation (architecture, security, runbooks, checklists, ADRs)
+- `.github/workflows/ci.yml` – All CI jobs (branch naming + commit checks, build, accessibility, production smoke tests)
+- `scripts/` – Automation scripts (e.g., `create-demo-users.js`, CI helpers)
+- `public/` – Static assets and integrations, including Google Search Console verifier `googlee573592846ba27d6.html`
+- `playwright-report/` – Latest local Playwright artifacts (ignored in CI unless tests fail)
+- `vercel.json` & `lighthouse-budgets.json` – Deployment routing and performance budgets
 
 ## 🛠️ Development Commands
 
