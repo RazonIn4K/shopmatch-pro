@@ -229,11 +229,11 @@ async function main() {
     // Create sample jobs
     console.log('\n🏢 Creating sample jobs...')
     const sampleJobs = getSampleJobs(ownerRecord.uid)
-    const jobIds = []
+    const jobDocs = []
 
     for (const jobData of sampleJobs) {
       const docRef = await db.collection('jobs').add(jobData)
-      jobIds.push(docRef.id)
+      jobDocs.push({ id: docRef.id, data: jobData })
       console.log(`   ✅ Created: ${jobData.title} (${docRef.id})`)
     }
 
@@ -248,13 +248,22 @@ async function main() {
       console.log('\n📨 Creating sample applications...')
       
       // Apply to first 3 jobs
-      for (let i = 0; i < Math.min(3, jobIds.length); i++) {
+      const applicationStatuses = ['pending', 'reviewed', 'accepted']
+
+      for (let i = 0; i < Math.min(3, jobDocs.length); i++) {
+        const { id: jobId, data: jobSnapshot } = jobDocs[i]
         const applicationData = {
-          jobId: jobIds[i],
+          jobId,
           seekerId: seekerRecord.uid,
-          status: i === 0 ? 'pending' : i === 1 ? 'reviewing' : 'accepted',
+          ownerId: ownerRecord.uid,
+          jobTitle: jobSnapshot.title,
+          company: jobSnapshot.company,
+          jobType: jobSnapshot.type,
+          seekerName: seekerRecord.displayName ?? 'Demo Seeker',
+          seekerEmail: seekerRecord.email ?? 'seeker@test.com',
+          status: applicationStatuses[i] ?? 'pending',
           coverLetter: 'I am very interested in this position and believe my skills would be a great match for your team.',
-          resume: 'https://example.com/resume.pdf',
+          resumeUrl: 'https://example.com/resume.pdf',
           createdAt: new Date(),
           updatedAt: new Date(),
         }
