@@ -4,7 +4,7 @@
  * These tests help identify what's broken in the demo
  */
 
-import { test, expect } from '@playwright/test'
+import { test } from '@playwright/test'
 
 const EMPLOYER_CREDENTIALS = {
   email: 'owner@test.com',

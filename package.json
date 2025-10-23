@@ -8,8 +8,11 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
     "validate-env": "node scripts/validate-env.js",
+    "create-demo-users": "node scripts/create-demo-users.js",
     "create-user": "node scripts/create-user.js",
+    "seed-demo-data": "node scripts/seed-demo-data.js",
     "webhook:diagnose": "sh scripts/diagnose-webhook.sh",
     "webhook:test": "sh scripts/diagnose-webhook.sh --test",
     "webhook:monitor": "sh scripts/diagnose-webhook.sh --monitor",
@@ -24,7 +27,8 @@
     "test:e2e:debug": "playwright test --debug",
     "test:unit": "jest",
     "test:unit:watch": "jest --watch",
-    "test:unit:coverage": "jest --coverage"
+    "test:unit:coverage": "jest --coverage",
+    "test:rules": "node test-firestore-rules.js"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",

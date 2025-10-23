@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { act, render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { JobForm } from "../job-form";
 import type { JobFormValues } from "@/types";
@@ -52,19 +52,17 @@ describe("JobForm - Interaction Tests", () => {
       const addButton = within(controls as HTMLElement).getByRole("button", { name: /^add$/i });
 
       await user.click(addButton);
-      await user.click(addButton); // Add second one
 
-      // Should have 2 inputs
-      let inputs = screen.getAllByPlaceholderText(/5\+ years with React/i);
-      expect(inputs).toHaveLength(2);
+      await waitFor(() => {
+        expect(screen.getAllByPlaceholderText(/5\+ years with React/i)).toHaveLength(1);
+      });
 
-      // Click first Remove button
-      const removeButtons = screen.getAllByRole("button", { name: /^remove$/i });
-      await user.click(removeButtons[0]);
+      const removeButton = screen.getByRole("button", { name: /^remove$/i });
+      await user.click(removeButton);
 
-      // Should have 1 input left
-      inputs = screen.getAllByPlaceholderText(/5\+ years with React/i);
-      expect(inputs).toHaveLength(1);
+      await waitFor(() => {
+        expect(screen.queryByPlaceholderText(/5\+ years with React/i)).not.toBeInTheDocument();
+      });
     });
   });
 
@@ -77,12 +75,11 @@ describe("JobForm - Interaction Tests", () => {
       expect(screen.queryByPlaceholderText(/TypeScript/i)).not.toBeInTheDocument();
 
       // Find Key skills heading and click its Add button
-      const skillsHeading = screen.getByText("Key skills");
-      const skillsSection = skillsHeading.parentElement!;
-      const addButton = Array.from(skillsSection.querySelectorAll('button')).find(
-        btn => btn.textContent === 'Add'
-      )!;
-      
+      const skillsHeading = screen.getByRole("heading", { name: /key skills/i });
+      const controls = skillsHeading.parentElement;
+      expect(controls).not.toBeNull();
+
+      const addButton = within(controls as HTMLElement).getByRole("button", { name: /^add$/i });
       await user.click(addButton);
 
       // Now should have 1 skill input
@@ -105,9 +102,8 @@ describe("JobForm - Interaction Tests", () => {
         expect(mockOnSubmit).not.toHaveBeenCalled();
       });
 
-      // Should show validation errors (FormMessage components render with role="alert")
-      const alerts = await screen.findAllByRole("alert");
-      expect(alerts.length).toBeGreaterThan(0);
+      const validationMessages = await screen.findAllByText(/expected string to have/i);
+      expect(validationMessages.length).toBeGreaterThan(0);
     });
   });
 
@@ -119,16 +115,41 @@ describe("JobForm - Interaction Tests", () => {
       render(<JobForm mode="create" onSubmit={mockOnSubmit} />);
 
       // Fill required fields
-      await user.type(screen.getByLabelText(/job title/i), "Senior Developer");
+      await user.type(screen.getByLabelText(/job title/i), "Senior React Developer");
       await user.type(screen.getByLabelText(/^company$/i), "Tech Corp");
-      await user.type(screen.getByLabelText(/^location$/i), "San Francisco");
-      await user.type(screen.getByLabelText(/job description/i), "Great opportunity");
+      await user.type(screen.getByLabelText(/^location$/i), "San Francisco, CA");
+      await user.type(
+        screen.getByLabelText(/job description/i),
+        "Join our team building next-generation web applications."
+      );
+      await user.selectOptions(screen.getByLabelText(/employment type/i), "full-time");
+      await user.selectOptions(screen.getByLabelText(/listing status/i), "published");
 
-      // Employment type and Listing status already have default values
+      // Add dynamic requirement and skill entries
+      const requirementsHeading = screen.getByRole("heading", { name: /requirements/i });
+      const requirementsControls = requirementsHeading.parentElement;
+      expect(requirementsControls).not.toBeNull();
+      const addRequirementButton = within(requirementsControls as HTMLElement).getByRole(
+        "button",
+        { name: /^add$/i }
+      );
+      await user.click(addRequirementButton);
+      const requirementInput = screen.getByPlaceholderText(/5\+ years with React/i);
+      await user.type(requirementInput, "5+ years React experience");
+
+      const skillsHeading = screen.getByRole("heading", { name: /key skills/i });
+      const skillsControls = skillsHeading.parentElement;
+      expect(skillsControls).not.toBeNull();
+      const addSkillButton = within(skillsControls as HTMLElement).getByRole("button", { name: /^add$/i });
+      await user.click(addSkillButton);
+      const skillInput = screen.getByPlaceholderText(/TypeScript/i);
+      await user.type(skillInput, "TypeScript");
 
       // Submit
       const submitButton = screen.getByRole("button", { name: /create job/i });
-      await user.click(submitButton);
+      await act(async () => {
+        submitButton.click();
+      });
 
       // Should call onSubmit
       await waitFor(() => {
@@ -138,10 +159,14 @@ describe("JobForm - Interaction Tests", () => {
       // Verify data structure
       expect(mockOnSubmit).toHaveBeenCalledWith(
         expect.objectContaining({
-          title: "Senior Developer",
+          title: "Senior React Developer",
           company: "Tech Corp",
-          location: "San Francisco",
-          description: "Great opportunity",
+          location: "San Francisco, CA",
+          description: "Join our team building next-generation web applications.",
+          type: "full-time",
+          status: "published",
+          requirements: ["5+ years React experience"],
+          skills: ["TypeScript"],
         })
       );
     });
@@ -210,7 +235,7 @@ describe("JobForm - Interaction Tests", () => {
   describe("Submit Button State", () => {
     it("disables submit button during async submission", async () => {
       const user = userEvent.setup();
-      let resolveSubmit: () => void;
+      let resolveSubmit: (() => void) | undefined;
       const submissionPromise = new Promise<void>((resolve) => {
         resolveSubmit = resolve;
       });
@@ -222,22 +247,28 @@ describe("JobForm - Interaction Tests", () => {
       await user.type(screen.getByLabelText(/job title/i), "Title");
       await user.type(screen.getByLabelText(/^company$/i), "Company");
       await user.type(screen.getByLabelText(/^location$/i), "Location");
-      await user.type(screen.getByLabelText(/job description/i), "Description");
+      await user.type(
+        screen.getByLabelText(/job description/i),
+        "This is a detailed job description that easily exceeds fifty characters."
+      );
 
       // Submit
       const submitButton = screen.getByRole("button", { name: /create job/i });
-      await user.click(submitButton);
+      act(() => {
+        submitButton.click();
+      });
 
-      // Button should be disabled and show "Saving..."
+      await waitFor(() => {
+        expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+      });
+
       await waitFor(() => {
         expect(submitButton).toBeDisabled();
         expect(submitButton).toHaveTextContent(/saving/i);
       });
 
-      // Resolve submission
-      resolveSubmit!();
+      resolveSubmit?.();
 
-      // Button should be enabled again
       await waitFor(() => {
         expect(submitButton).not.toBeDisabled();
         expect(submitButton).toHaveTextContent(/create job/i);

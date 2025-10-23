@@ -202,6 +202,7 @@ async function main() {
     } catch (error) {
       console.error('❌ Demo owner account not found!')
       console.error('   Please run: npm run create-demo-users')
+      console.error('   Details:', error instanceof Error ? error.message : error)
       process.exit(1)
     }
 
@@ -264,6 +265,7 @@ async function main() {
     } catch (error) {
       console.log('⚠️  Seeker account not found - skipping applications')
       console.log('   Run: npm run create-demo-users to create seeker account')
+      console.log('   Details:', error instanceof Error ? error.message : error)
     }
 
     console.log('\n🎉 Demo data seeded successfully!')

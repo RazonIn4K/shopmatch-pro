@@ -7,11 +7,14 @@
 - **Rules (Emulator):** allow/deny matrices for users/jobs/applications
 
 ## Commands
-- `npm run test` — unit/component
-- `npm run test:e2e` — Playwright
-- `npm run emulators` — Firestore rules tests
-- `npm run typecheck` — TS
-- `npm run lint` — ESLint + a11y
+- `npm run test:unit` — Jest unit/component suite
+- `npm run test:unit:watch` — Jest with watch mode for development
+- `npm run test:unit:coverage` — Generate coverage report
+- `npm run test:e2e` — Playwright regression suite
+- `npm run test:a11y` — Accessibility smoke tests (axe-core via Playwright)
+- `npm run test:rules` — Firestore security rules via emulator
+- `npm run lint` — ESLint + TypeScript checks
+- `npm run typecheck` — TypeScript compiler (no emit)
 
 ## Budgets & Gates
 

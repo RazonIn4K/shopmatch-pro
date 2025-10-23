@@ -126,43 +126,6 @@ async function handleLocationFiltering(
   return { filteredJobs, filteredTotal: locationMatchCount }
 }
 
-function toTimestampMillis(value: unknown): number {
-  if (value instanceof Date) {
-    return value.getTime()
-  }
-  if (typeof value === 'number') {
-    return value
-  }
-  if (typeof value === 'string') {
-    const parsed = Date.parse(value)
-    return Number.isNaN(parsed) ? 0 : parsed
-  }
-  if (
-    value &&
-    typeof value === 'object' &&
-    'toDate' in value &&
-    typeof (value as { toDate: () => Date }).toDate === 'function'
-  ) {
-    return (value as { toDate: () => Date }).toDate().getTime()
-  }
-  return 0
-}
-
-function sortJobsByCreatedAtDesc(jobs: Job[]): Job[] {
-  return [...jobs].sort((a, b) => toTimestampMillis(b.createdAt) - toTimestampMillis(a.createdAt))
-}
-
-function filterJobsByLocation(jobs: Job[], location: string) {
-  const locationLower = location.toLowerCase()
-  const filtered = jobs.filter((job) => {
-    const jobLocation = typeof job.location === 'string' ? job.location : ''
-    return jobLocation.toLowerCase().includes(locationLower)
-  })
-  return {
-    filteredJobs: filtered,
-    filteredTotal: filtered.length,
-  }
-}
 
 export async function GET(request: Request) {
   try {
@@ -173,6 +136,8 @@ export async function GET(request: Request) {
       if (auth.uid !== filters.ownerId) {
         throw new ApiError('Unauthorized: cannot filter by another user\'s jobs', 403)
       }
+      // Ensure user has active subscription to access owner-specific data
+      assertActiveSubscription(auth)
     }
 
     const baseQuery = buildJobsQuery(filters)
@@ -211,30 +176,19 @@ export async function GET(request: Request) {
         throw queryError
       }
 
-      // Fallback logic when composite indexes are missing in production.
-      const fallbackSnapshot = await baseQuery.get()
-      const allJobs = fallbackSnapshot.docs.map(transformJobDocument)
-      const sortedJobs = sortJobsByCreatedAtDesc(allJobs)
-      const locationResult = filters.location
-        ? filterJobsByLocation(sortedJobs, filters.location)
-        : { filteredJobs: sortedJobs, filteredTotal: sortedJobs.length }
-
-      const paginatedJobs = locationResult.filteredJobs.slice(offset, offset + filters.limit)
-
-      return NextResponse.json({
-        jobs: paginatedJobs,
-        pagination: {
-          page: filters.page,
-          limit: filters.limit,
-          total: locationResult.filteredTotal,
-          pages: Math.ceil(locationResult.filteredTotal / filters.limit),
-        },
-        meta: {
-          fallbackApplied: true,
-          message:
-            'Composite Firestore index missing. Served results via in-memory fallback. Deploy indexes to restore optimized queries.',
-        },
-      })
+      // Fail-fast approach: Return explicit error when indexes are missing
+      // This prevents DoS attacks via unbounded memory consumption
+      return handleApiError(
+        new ApiError(
+          'Composite Firestore index missing. Deploy indexes to restore functionality.',
+          503,
+          {
+            code: 'MISSING_INDEX',
+            hint: 'Run: firebase deploy --only firestore:indexes',
+            docs: 'https://firebase.google.com/docs/firestore/query-data/indexing',
+          }
+        )
+      )
     }
   } catch (error) {
     if (isMissingIndexError(error)) {

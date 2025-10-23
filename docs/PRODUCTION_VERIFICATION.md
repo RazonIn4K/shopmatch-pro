@@ -248,10 +248,8 @@ Everything is working as expected.
    ```
 
 2. **Add Demo Reset Script**
-   ```bash
-   # Restore demo to pristine state
-   npm run reset-demo
-   ```
+   - Implement a CLI utility (for example, `node scripts/reset-demo.js`) to restore the
+     demo environment to a pristine state on demand.
 
 3. **CI/CD Demo Verification**
    ```yaml
