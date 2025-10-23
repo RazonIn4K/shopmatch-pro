@@ -8,7 +8,7 @@
 
 Comprehensive E2E testing revealed **3 critical issues** preventing the demo from working as advertised on the homepage:
 
-1. ❌ **Demo login credentials are invalid** - Users cannot login with advertised credentials
+1. ❌ **Demo login credentials are invalid** - Users cannot log in with advertised credentials
 2. ❌ **Jobs page displays error message** - API returns 500 error
 3. ⚠️ **No demo data exists** - No jobs or applications to demonstrate features
 
@@ -21,7 +21,7 @@ The homepage advertises these credentials:
 - **Employer Account:** `owner@test.com` / `testtest123`
 - **Job Seeker Account:** `seeker@test.com` / `testtest123`
 
-However, these accounts **do not exist** in Firebase Authentication. Users attempting to login see:
+However, these accounts **do not exist** in Firebase Authentication. Users attempting to log in see:
 ```
 Firebase: Error (auth/invalid-credential)
 ```
@@ -154,7 +154,7 @@ Currently, the API seems to work for public jobs, so the 500 error is likely fro
 ## Issue #3: No Demo Data ⚠️
 
 ### Problem
-Even if login and API work, there are **no jobs** in the database to demonstrate the platform's features.
+Even if logging in and the API work, there are **no jobs** in the database to demonstrate the platform's features.
 
 ### Impact
 - Browse Jobs page shows: "No jobs available"
@@ -251,7 +251,7 @@ Demo Flow Tests:      ❌ 12/18 failed (credential issues)
 ### Immediate (P0)
 - [ ] Configure Firebase Admin credentials on Vercel
 - [ ] Run `npm run create-demo-users` to create accounts
-- [ ] Verify login works with homepage credentials
+- [ ] Verify log in works with homepage credentials
 - [ ] Verify `/api/jobs` returns 200 status
 
 ### High Priority (P1)
@@ -278,8 +278,8 @@ Demo Flow Tests:      ❌ 12/18 failed (credential issues)
 
 After fixes are deployed, verify:
 
-- [ ] Can login with `owner@test.com` / `testtest123`
-- [ ] Can login with `seeker@test.com` / `testtest123`
+- [ ] Can log in with `owner@test.com` / `testtest123`
+- [ ] Can log in with `seeker@test.com` / `testtest123`
 - [ ] Jobs page loads without errors
 - [ ] Jobs page shows sample jobs
 - [ ] Can click into job details
