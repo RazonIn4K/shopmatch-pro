@@ -1032,4 +1032,66 @@ This AI-powered workflow enables **solo developers to operate at team velocity**
 - Create first GitHub Issues from roadmap with persona labels
 - Start daily Execution Journal entries with SKIN format
 
+---
+
+## Maintenance Schedule
+
+### Monthly (1st of Each Month)
+- **Security Policy Review** ✅ Automated
+  - GitHub Actions workflow checks `.snyk` policy expiration dates
+  - Creates issue if suppressions are within 90 days of expiry
+  - Workflow: `.github/workflows/security-policy-review.yml`
+  - Manual override: Review `.snyk` file and update expiry dates
+
+### Quarterly (Every 3 Months)
+- **Dependency Landscape Review**
+  - Run Researcher persona prompt for landscape drift
+  - Check for breaking changes in Firebase, Stripe, Next.js, Vercel
+  - Update ADRs if significant changes affect Decision Matrix scores
+  - Review Dependabot PRs and update dependencies
+
+- **Security Policy Manual Review**
+  - Re-evaluate all Snyk suppressions in `.snyk`
+  - Confirm false positives are still false positives
+  - Update expiry dates for valid suppressions
+  - Remove suppressions for resolved issues
+  - Document findings in `docs/SECURITY.md`
+
+- **Accessibility Audit**
+  - Run manual accessibility checklist from `docs/TESTING.md`
+  - Test with screen readers (NVDA, JAWS, VoiceOver)
+  - Verify keyboard navigation on all pages
+  - Check color contrast with updated brand colors (if changed)
+
+### Bi-Annually (Every 6 Months)
+- **Tech Stack Health Check**
+  - Review all major dependencies for EOL warnings
+  - Evaluate migration paths for deprecated packages
+  - Update Technology Landscape alignment document
+  - Plan major version upgrades (Next.js, React, Firebase SDK)
+
+- **Performance Baseline Review**
+  - Run Lighthouse CI on production deployment
+  - Compare bundle sizes against historical baseline
+  - Review Core Web Vitals from production analytics
+  - Identify optimization opportunities
+
+### Annually (Once Per Year)
+- **Comprehensive Security Audit**
+  - Full OWASP Top 10 review with Security Engineer persona
+  - Penetration testing of authentication flows
+  - Review all Firestore security rules with emulator tests
+  - Update threat model in `docs/SECURITY.md`
+
+- **Documentation Refresh**
+  - Review all `docs/` files for accuracy
+  - Update API reference (`docs/API_REFERENCE.yml`)
+  - Refresh architecture diagrams
+  - Archive outdated ADRs, create new ones for major decisions
+
+**Calendar Integration**:
+- Add reminders to your calendar/project management tool
+- Security policy review is automated (check GitHub Issues monthly)
+- All other tasks require manual scheduling
+
 For questions or issues with this workflow, refer to [WORKFLOW_ORDER.md](./docs/WORKFLOW_ORDER.md) and [PLAYBOOK_SHOPMATCH.md](./docs/PLAYBOOK_SHOPMATCH.md)

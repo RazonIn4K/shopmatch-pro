@@ -22,8 +22,8 @@
  * Exits with code 1 if budget exceeded, 0 otherwise.
  */
 
-import { readFileSync, writeFileSync, statSync } from 'fs'
-import { resolve, relative, sep } from 'path'
+import { readFileSync, writeFileSync } from 'fs'
+import { validateFilePath } from '../utils/validate-file-path.js'
 
 const FIRST_LOAD_BUDGET_KB = parseInt(process.env.FIRST_LOAD_BUDGET_KB || '300', 10)
 const REPORT_PATH = process.env.REPORT_PATH || 'first-load-report.json'
@@ -33,35 +33,13 @@ const buildOutputPath = process.argv[2]
 let buildOutput
 
 if (buildOutputPath) {
-  const cwd = resolve(process.cwd())
-  const resolvedPath = resolve(cwd, buildOutputPath)
-  const relativePath = relative(cwd, resolvedPath)
-
-  // Reject paths that traverse outside the repo root
-  if (relativePath.startsWith('..') || relativePath.split(sep).includes('..')) {
-    console.error('❌ Error: Invalid file path (parent directory references are not allowed)')
-    process.exit(1)
-  }
-
-  // Ensure the resolved path is a file within the project directory
-  if (!resolvedPath.startsWith(cwd)) {
-    console.error('❌ Error: File path must be within the current working directory')
-    process.exit(1)
-  }
-
   try {
-    const stats = statSync(resolvedPath)
-    if (!stats.isFile()) {
-      console.error('❌ Error: Provided path must point to a file')
-      process.exit(1)
-    }
+    const validatedPath = validateFilePath(buildOutputPath)
+    buildOutput = readFileSync(validatedPath, 'utf-8')
   } catch (error) {
-    console.error(`❌ Error: Unable to read file at ${buildOutputPath}`)
-    console.error(error instanceof Error ? error.message : String(error))
+    console.error('❌ Error:', error instanceof Error ? error.message : String(error))
     process.exit(1)
   }
-
-  buildOutput = readFileSync(resolvedPath, 'utf-8')
 } else {
   // Read from stdin
   buildOutput = readFileSync(0, 'utf-8')
