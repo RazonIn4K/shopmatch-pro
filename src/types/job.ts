@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { timestampSchema } from './timestamp'
+
 /**
  * Enumerations for job metadata.
  */
@@ -69,10 +71,10 @@ export const jobSchema = z.object({
   status: z.enum(jobStatuses).default('draft'),
   viewCount: z.number().int().nonnegative().default(0),
   applicationCount: z.number().int().nonnegative().default(0),
-  createdAt: z.date().or(z.any()).optional(),
-  updatedAt: z.date().or(z.any()).optional(),
-  publishedAt: z.date().or(z.any()).optional(),
-  expiresAt: z.date().or(z.any()).optional(),
+  createdAt: timestampSchema.optional(),
+  updatedAt: timestampSchema.optional(),
+  publishedAt: timestampSchema.optional(),
+  expiresAt: timestampSchema.optional(),
 })
 
 export type Job = z.infer<typeof jobSchema>
