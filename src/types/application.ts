@@ -1,6 +1,7 @@
 import { z } from 'zod'
 
 import { jobTypes } from './job'
+import { timestampSchema } from './timestamp'
 
 export const applicationStatuses = ['pending', 'reviewed', 'accepted', 'rejected'] as const
 export type ApplicationStatus = (typeof applicationStatuses)[number]
@@ -32,9 +33,9 @@ export const applicationSchema = z.object({
   seekerEmail: z.string().email('Seeker email is required'),
   status: z.enum(applicationStatuses).default('pending'),
   notes: z.string().max(2000).optional(),
-  createdAt: z.date().or(z.any()).optional(),
-  updatedAt: z.date().or(z.any()).optional(),
-  reviewedAt: z.date().or(z.any()).optional(),
+  createdAt: timestampSchema.optional(),
+  updatedAt: timestampSchema.optional(),
+  reviewedAt: timestampSchema.optional(),
 })
 
 export type Application = z.infer<typeof applicationSchema>

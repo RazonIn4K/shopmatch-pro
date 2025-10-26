@@ -41,8 +41,7 @@ export function JobForm({
   className,
 }: JobFormProps) {
   const form = useForm<JobFormValues>({
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    resolver: zodResolver(jobFormSchema) as any,
+    resolver: zodResolver(jobFormSchema),
     defaultValues: {
       ...defaultJobFormValues,
       ...initialValues,
