@@ -15,11 +15,10 @@
 
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Download, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '@/lib/contexts/AuthContext'
-import { auth } from '@/lib/firebase/client'
 
 interface ExportState {
   loading: boolean
@@ -34,18 +33,38 @@ export function ApplicationsExportButton() {
     error: null,
     success: false,
   })
+  const { loading, error, success } = state
+  const resetTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const isMountedRef = useRef(true)
 
-  const handleExport = async () => {
-    if (!user) {
-      setState({ loading: false, error: 'Please sign in to export applications', success: false })
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false
+      if (resetTimerRef.current) {
+        clearTimeout(resetTimerRef.current)
+      }
+    }
+  }, [])
+
+  const handleExport = useCallback(async () => {
+    if (loading) {
       return
     }
 
-    setState({ loading: true, error: null, success: false })
+    if (!user) {
+      if (isMountedRef.current) {
+        setState({ loading: false, error: 'Please sign in to export applications', success: false })
+      }
+      return
+    }
+
+    if (isMountedRef.current) {
+      setState({ loading: true, error: null, success: false })
+    }
 
     try {
       // Get fresh ID token
-      const idToken = await auth.currentUser?.getIdToken()
+      const idToken = await user.getIdToken()
       if (!idToken) {
         throw new Error('Authentication required')
       }
@@ -105,32 +124,42 @@ export function ApplicationsExportButton() {
       document.body.removeChild(a)
       URL.revokeObjectURL(url)
 
+      if (!isMountedRef.current) {
+        return
+      }
+
       setState({ loading: false, error: null, success: true })
 
       // Reset success message after 3 seconds
-      setTimeout(() => {
-        setState((prev) => ({ ...prev, success: false }))
+      resetTimerRef.current = setTimeout(() => {
+        if (!isMountedRef.current) {
+          return
+        }
+        setState(prev => ({ ...prev, success: false }))
+        resetTimerRef.current = null
       }, 3000)
     } catch (error) {
       console.error('Export error:', error)
-      setState({
-        loading: false,
-        error: error instanceof Error ? error.message : 'Export failed',
-        success: false,
-      })
+      if (isMountedRef.current) {
+        setState({
+          loading: false,
+          error: error instanceof Error ? error.message : 'Export failed',
+          success: false,
+        })
+      }
     }
-  }
+  }, [loading, user])
 
   return (
     <div className="space-y-2">
       <Button
         onClick={handleExport}
-        disabled={state.loading}
+        disabled={loading}
         variant="outline"
         size="sm"
         className="gap-2"
       >
-        {state.loading ? (
+        {loading ? (
           <>
             <Loader2 className="h-4 w-4 animate-spin" />
             <span>Exporting...</span>
@@ -143,13 +172,13 @@ export function ApplicationsExportButton() {
         )}
       </Button>
 
-      {state.error && (
+      {error && (
         <div className="text-sm text-destructive" role="alert">
-          {state.error}
+          {error}
         </div>
       )}
 
-      {state.success && (
+      {success && (
         <div className="text-sm text-green-600" role="status">
           ✓ Applications exported successfully
         </div>
