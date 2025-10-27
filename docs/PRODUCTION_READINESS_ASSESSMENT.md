@@ -27,7 +27,7 @@ Based on the Pre-Launch Checklist from CLAUDE.md, here's the current state:
 | Item | Status | Evidence |
 |------|--------|----------|
 | **Firestore Security Rules** | ✅ Deployed | `firestore.rules` with role-based access, subscription verification |
-| **Firestore Indexes** | ✅ Ready | 28 composite indexes defined in `firestore.indexes.json` |
+| **Firestore Indexes** | ✅ Optimized | 4 composite indexes (reduced from 28 - 86% optimization) |
 | **Environment Variables** | ✅ Configured | Production env vars verified (Sentry DSN, App URL, Stripe webhook) |
 | **Stripe Webhooks** | ✅ Configured | Webhook secret configured for all environments |
 | **Error Monitoring (Sentry)** | ✅ Active | Full Sentry integration with source maps, component annotations |
@@ -65,7 +65,7 @@ Based on the Pre-Launch Checklist from CLAUDE.md, here's the current state:
 - Firestore user documents with role assignment ✅
 
 **Database**: Cloud Firestore
-- 28 composite indexes defined ✅
+- 4 optimized composite indexes (reduced from 28) ✅
 - Security rules with authentication checks ✅
 - Real-time subscriptions for dashboards ✅
 
@@ -369,7 +369,7 @@ Before pressing "Deploy to Production", verify:
 - [x] Production environment variables configured in Vercel
 - [x] Stripe webhook endpoint configured with production URL
 - [x] Firebase security rules deployed
-- [x] Firebase composite indexes in READY state (28 indexes)
+- [x] Firebase composite indexes in READY state (4 optimized indexes)
 - [x] Sentry DSN configured and error tracking active
 - [x] Custom domain configured (or using vercel.app URL)
 - [x] No secrets in git history
