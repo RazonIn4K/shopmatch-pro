@@ -7,9 +7,13 @@ import * as Sentry from "@sentry/nextjs";
 Sentry.init({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
 
-  // Adjust this value in production, or use tracesSampler for greater control
-  tracesSampleRate: 1.0,
+  // Performance Monitoring: Sample 10% of transactions in production
+  // Set to 1.0 in development for full visibility
+  tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
 
   // Setting this option to true will print useful information to the console while you're setting up Sentry.
   debug: false,
+
+  // HTTP integration is automatically enabled for Next.js server-side
+  // No additional integrations needed - Next.js SDK handles this automatically
 });

@@ -17,6 +17,7 @@
 - [TESTING.md](TESTING.md) — Test pyramid, commands, coverage budgets
 - [DEPLOYMENT.md](DEPLOYMENT.md) — Vercel deployment + Stripe webhook setup
 - [OBSERVABILITY.md](OBSERVABILITY.md) — Events, logs, metrics, dashboards
+- [PERFORMANCE_MONITORING.md](PERFORMANCE_MONITORING.md) — Sentry Performance + Vercel Analytics setup
 - [ANALYTICS_SCHEMA.md](ANALYTICS_SCHEMA.md) — Product analytics event taxonomy
 - [FIRESTORE_RULES_SPEC.md](FIRESTORE_RULES_SPEC.md) — Security rules specification
 - [ENVIRONMENT_VARIABLES.md](ENVIRONMENT_VARIABLES.md) — Complete env var reference
