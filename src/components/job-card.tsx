@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from 'react'
+import Link from 'next/link'
 
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -14,7 +15,8 @@ export interface JobCardProps {
   job: Job
   variant?: JobCardVariant
   showActions?: boolean
-  onView?: (jobId: string) => void
+  href?: string // For SSR with Next.js Link
+  onView?: (jobId: string) => void // For client-side navigation
   onEdit?: (jobId: string) => void
   onDelete?: (jobId: string) => void
 }
@@ -84,6 +86,7 @@ export function JobCard({
   job,
   variant = 'default',
   showActions = false,
+  href,
   onView,
   onEdit,
   onDelete,
@@ -153,9 +156,15 @@ export function JobCard({
       </CardContent>
 
       <CardFooter className={cn('flex items-center justify-between', variant === 'compact' && 'pt-3')}>
-        <Button variant="link" onClick={handleView} className="px-0">
-          View details
-        </Button>
+        {href ? (
+          <Button variant="link" asChild className="px-0">
+            <Link href={href}>View details</Link>
+          </Button>
+        ) : (
+          <Button variant="link" onClick={handleView} className="px-0">
+            View details
+          </Button>
+        )}
         {showActions && (
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" onClick={handleEdit}>
