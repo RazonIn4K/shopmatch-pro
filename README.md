@@ -153,6 +153,81 @@ npm run webhook:events:watch   # Watch webhook events (auto-refresh)
 
 💡 **Tip:** For complete webhook testing guide, see [docs/runbooks/STRIPE_WEBHOOK_RUNBOOK.md](./docs/runbooks/STRIPE_WEBHOOK_RUNBOOK.md)
 
+## 🎨 Demo: Product Scraping & AI Enrichment
+
+This repository includes a **safe, local demo** of a data extraction and enrichment pipeline. Perfect for showcasing web scraping, data processing, and AI integration patterns.
+
+### What's Included
+
+- **Sample Data**: 5 dummy products with HTML files in `examples/html/`
+- **CSV Input**: `examples/products.csv` with product metadata
+- **CLI Script**: `scripts/scrape-and-enrich-products.js` that:
+  - Reads CSV product data
+  - Loads corresponding HTML files
+  - Extracts title, price, and description using pattern matching
+  - Calls `generateEnrichedDescription()` stub (ready for LLM integration)
+  - Writes enriched output to `output/enriched_products.csv`
+
+### How to Run
+
+```bash
+# Run the demo pipeline
+npm run demo:scrape
+
+# Or with custom paths
+node scripts/scrape-and-enrich-products.js <input_csv> <output_csv>
+```
+
+### Example Output
+
+```csv
+title,price,enriched_description
+Premium Wireless Headphones,$79.99,"Experience crystal-clear audio with advanced noise cancellation..."
+Durable USB-C Cable 2m,$12.99,"High-quality USB-C cable with reinforced connectors..."
+```
+
+### Extending the Demo
+
+The script includes a stub function `generateEnrichedDescription()` ready for AI integration:
+
+```javascript
+// TODO: Replace with actual LLM API call:
+// - OpenAI API (gpt-4, gpt-3.5-turbo)
+// - Anthropic Claude API
+// - Google Vertex AI / PaLM
+// - Local LLM (Ollama, LM Studio)
+// - Hugging Face Inference API
+
+async function generateEnrichedDescription(rawDescription) {
+  const response = await openai.chat.completions.create({
+    model: "gpt-4",
+    messages: [{
+      role: "user",
+      content: `Enhance this product description with compelling marketing copy: "${rawDescription}"`
+    }]
+  });
+  return response.choices[0].message.content;
+}
+```
+
+### Web Scraping Best Practices
+
+**⚠️ Important**: When scraping real websites, always:
+
+1. **Check robots.txt** - Respect crawling rules: `https://example.com/robots.txt`
+2. **Review Terms of Service** - Verify scraping is permitted
+3. **Implement Rate Limiting** - Don't hammer servers; use delays between requests
+4. **Set User-Agent** - Identify your bot in HTTP headers
+5. **Cache Results** - Don't re-scrape the same content repeatedly
+6. **Handle Errors Gracefully** - Catch 429 (rate limit), 403 (forbidden), 500 (server errors)
+7. **Use Official APIs** - Prefer APIs over scraping when available
+
+**Related Resources**:
+- [robots.txt Standard](https://www.robotstxt.org/)
+- [Web Scraping Best Practices](https://en.wikipedia.org/wiki/Web_scraping#Legal_considerations)
+- [Cheerio Documentation](https://cheerio.js.org/) - HTML parsing library for Node.js
+- [Playwright Guide](https://playwright.dev/) - Browser automation for dynamic content
+
 ## 📚 Documentation
 
 ### Production & Deployment

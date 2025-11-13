@@ -28,7 +28,8 @@
     "test:unit": "jest",
     "test:unit:watch": "jest --watch",
     "test:unit:coverage": "jest --coverage",
-    "test:rules": "node test-firestore-rules.js"
+    "test:rules": "node test-firestore-rules.js",
+    "demo:scrape": "node scripts/scrape-and-enrich-products.js"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",
