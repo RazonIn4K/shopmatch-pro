@@ -90,3 +90,6 @@ docs/PRODUCTION_READINESS_SUMMARY.md
 docs/IMMEDIATE_ACTION_CHECKLIST.md
 docs/NEXT_STEPS_SUMMARY.md
 docs/PR68_VERIFICATION_SUMMARY.md
+
+# Snyk Security Extension - AI Rules (auto-generated)
+.windsurf/rules/snyk_rules.md
