@@ -112,6 +112,15 @@ function generateJobPostingsStructuredData(jobs: Job[]) {
   }
 }
 
+function serializeStructuredData(data: unknown) {
+  return JSON.stringify(data)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029')
+}
+
 export default async function JobsPage() {
   const { jobs, total } = await getPublishedJobs()
 
@@ -122,7 +131,7 @@ export default async function JobsPage() {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateJobPostingsStructuredData(jobs)),
+            __html: serializeStructuredData(generateJobPostingsStructuredData(jobs)),
           }}
         />
       )}
