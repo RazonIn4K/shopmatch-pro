@@ -10,12 +10,10 @@ const navItems = [
     label: 'Overview',
     href: '/dashboard',
     matches: ['/dashboard', '/dashboard/owner', '/dashboard/seeker'],
-    description: 'Owner & seeker dashboards',
   },
   {
     label: 'Analytics',
     href: '/dashboard/analytics',
-    description: 'Executive-ready KPIs',
   },
 ]
 

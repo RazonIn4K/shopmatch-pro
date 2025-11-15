@@ -24,7 +24,8 @@ export type Insight = {
   description: string
 }
 
-interface AnalyticsDataset {
+export interface AnalyticsDataset {
+  label: string
   summary: SummaryMetric[]
   distribution: BarDatum[]
   velocity: BarDatum[]
@@ -34,6 +35,7 @@ interface AnalyticsDataset {
 
 const datasets: Record<MetricDatasetKey, AnalyticsDataset> = {
   jobBoard: {
+    label: 'Job Board',
     summary: [
       { label: 'Jobs Posted (QTD)', value: '128', trend: '+18% vs last quarter', trendVariant: 'positive' },
       { label: 'Matches Generated', value: '342', trend: '+9% vs last quarter', trendVariant: 'positive' },
@@ -79,6 +81,7 @@ const datasets: Record<MetricDatasetKey, AnalyticsDataset> = {
     ],
   },
   courseMarketplace: {
+    label: 'Course Marketplace',
     summary: [
       { label: 'Courses Launched (QTD)', value: '56', trend: '+24% vs last quarter', trendVariant: 'positive' },
       { label: 'Enrollments', value: '1,980', trend: '+12% vs last quarter', trendVariant: 'positive' },
