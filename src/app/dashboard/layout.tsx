@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 
 import { DashboardNav } from '@/components/dashboard-nav'
+import { DashboardAuthGuard } from '@/components/dashboard-auth-guard'
 
 interface DashboardLayoutProps {
   children: ReactNode
@@ -8,11 +9,13 @@ interface DashboardLayoutProps {
 
 export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
-    <div className="min-h-screen bg-background">
-      <DashboardNav />
-      <div className="bg-background">
-        {children}
+    <DashboardAuthGuard>
+      <div className="min-h-screen bg-background">
+        <DashboardNav />
+        <div className="bg-background">
+          {children}
+        </div>
       </div>
-    </div>
+    </DashboardAuthGuard>
   )
 }
