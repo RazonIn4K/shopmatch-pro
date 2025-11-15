@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 
+/* eslint-disable @typescript-eslint/no-require-imports */
+
 /**
  * Safe Product Scraping & AI Enrichment Demo
  *
@@ -21,9 +23,26 @@ const path = require('path');
 // Configuration
 // ============================================================================
 
-const DEFAULT_INPUT_CSV = path.join(__dirname, '../examples/products.csv');
-const DEFAULT_OUTPUT_CSV = path.join(__dirname, '../output/enriched_products.csv');
-const EXAMPLES_HTML_DIR = path.join(__dirname, '../examples/html');
+const PROJECT_ROOT = path.resolve(path.join(__dirname, '..'));
+const DEFAULT_INPUT_CSV = path.join(PROJECT_ROOT, 'examples/products.csv');
+const DEFAULT_OUTPUT_CSV = path.join(PROJECT_ROOT, 'output/enriched_products.csv');
+const EXAMPLES_HTML_DIR = path.join(PROJECT_ROOT, 'examples/html');
+
+function resolveSafeCsvPath(candidatePath, fallbackPath) {
+  if (!candidatePath) return fallbackPath;
+
+  const resolvedPath = path.resolve(candidatePath);
+  if (!resolvedPath.startsWith(PROJECT_ROOT)) {
+    throw new Error('File access must stay within the project directory.');
+  }
+
+  const ext = path.extname(resolvedPath).toLowerCase();
+  if (ext !== '.csv') {
+    throw new Error('Only CSV files are allowed for input/output.');
+  }
+
+  return resolvedPath;
+}
 
 // ============================================================================
 // Utility Functions
@@ -158,8 +177,8 @@ function writeEnrichedCSV(enrichedProducts, outputPath) {
 
 function main() {
   // Parse command line arguments
-  const inputCSV = process.argv[2] || DEFAULT_INPUT_CSV;
-  const outputCSV = process.argv[3] || DEFAULT_OUTPUT_CSV;
+  const inputCSV = resolveSafeCsvPath(process.argv[2], DEFAULT_INPUT_CSV);
+  const outputCSV = resolveSafeCsvPath(process.argv[3], DEFAULT_OUTPUT_CSV);
 
   console.log('🚀 Product Scraping & Enrichment Pipeline');
   console.log('==========================================\n');
