@@ -89,6 +89,26 @@
 - 📱 Fully responsive design
 - ⚡ Built with Next.js 15 + Turbopack
 
+## 📈 Analytics & Insights Demo
+
+Show clients how you reason about hiring performance with the new **Analytics & Insights** dashboard:
+
+- **Portfolio-ready KPIs**: Jobs posted, matches generated, time-to-match, and interview rate (seeded data for demos)
+- **Conversion funnel**: Visualizes drop-off from job views through hires, making it easy to discuss optimization ideas
+- **Narrative insights**: Highlight top-performing roles, competitive markets, and overall pipeline health—perfect for executive summaries
+- **Navigation**: `Dashboard → Analytics` (or visit `/dashboard/analytics` directly)
+
+### Screenshot Gallery
+
+| View | Screenshot |
+|------|------------|
+| Desktop overview | ![Analytics desktop](./docs/screenshots/analytics-desktop.png) |
+| Mobile summary | ![Analytics mobile](./docs/screenshots/analytics-mobile.png) |
+
+> 💡 **Client hand-off tip:** Swap the seeded data with live metrics by wiring the cards and charts to your analytics warehouse (BigQuery, Firestore, Supabase, etc.) or marketing tracking tools. The layout is fully responsive and uses the same design tokens as the rest of the dashboard, so it’s production-ready once you connect real data sources.
+
+**Config-driven datasets:** The analytics view reads from `src/app/dashboard/analytics/demo-metrics.ts`. Flip `ACTIVE_METRIC_DATASET` (e.g., `jobBoard`, `courseMarketplace`) or add your own vertical to instantly change every KPI/funnel/insight card.
+
 ## 📁 Tech Stack
 
 ### Frontend
