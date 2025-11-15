@@ -44,8 +44,11 @@ async function getPublishedJobs(): Promise<{ jobs: Job[]; total: number }> {
         ? `https://${process.env.VERCEL_URL}`
         : process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
-    const response = await fetch(`${baseUrl}/api/jobs?limit=100`, {
-      cache: 'no-store', // Always fetch fresh data
+    // Fetch jobs with a 1-hour revalidation period.
+    // This serves static pages from the cache for performance and re-fetches
+    // in the background if data is older than 1 hour.
+    const response = await fetch(`${baseUrl}/api/jobs?status=published&limit=100`, {
+      next: { revalidate: 3600 }, // Revalidate every hour
       headers: {
         'Content-Type': 'application/json',
       },
