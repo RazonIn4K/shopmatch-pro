@@ -5,12 +5,12 @@
    ```bash
    npm install
    ```
-2. Start the dev server:
+2. Start the dev server with Doppler so the Firebase/Stripe secrets and smoke-test creds load automatically:
    ```bash
-   npm run dev
+   doppler run --project firebase-shopmatch --config dev -- npm run dev
    ```
 3. Open http://localhost:3000 in your browser.
-4. Sign in with a demo account (e.g., owner@test.com / testtest123) or run `npm run create-user` to seed a user.
+4. Sign in with the shared demo owner account (from `DEMO_OWNER_EMAIL` / `DEMO_OWNER_PASSWORD`, defaults owner@test.com / testtest123). Update these in Doppler if you rotate credentials.
 5. Navigate to **Dashboard → Analytics** (or visit http://localhost:3000/dashboard/analytics directly). The dashboard nav highlights the active section.
 
 ## 2. 60–90 Second Loom Script

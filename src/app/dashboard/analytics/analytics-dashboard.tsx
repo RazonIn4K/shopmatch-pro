@@ -46,7 +46,7 @@ function SummaryCard({ label, value, trend, trendVariant = 'neutral', onInteract
   }
 
   return (
-    <Card
+    <Card data-testid="kpi"
       role="button"
       tabIndex={0}
       aria-label={`View ${label} metric details`}
@@ -109,7 +109,7 @@ function FunnelCard({ data }: { data: FunnelStage[] }): ReactElement {
   const maxValue = data.reduce((max, item) => Math.max(max, item.value), 0)
 
   return (
-    <Card>
+    <Card data-testid="funnel">
       <CardHeader>
         <CardTitle>Conversion Funnel</CardTitle>
         <CardDescription>From first view through confirmed hire.</CardDescription>
@@ -161,6 +161,10 @@ function InsightList({ data }: { data: Insight[] }): ReactElement {
 }
 
 export function AnalyticsDashboard({ dataset }: AnalyticsDashboardProps): ReactElement {
+  useEffect(() => {
+    console.log('AnalyticsDashboard dataset received:', dataset)
+  }, [dataset])
+
   useEffect(() => {
     void trackEvent('analytics_page_viewed', { dataset: dataset.label })
   }, [dataset.label])
