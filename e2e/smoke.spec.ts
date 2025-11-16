@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 
 /**
  * ShopMatch Pro Smoke Tests
- * 
+ *
  * Sequential checks for critical paths. Captures console errors/warnings.
  * Uses demo credentials where auth required.
  * Unauth tests use fresh contexts (default in Playwright).
@@ -10,9 +10,11 @@ import { test, expect } from '@playwright/test'
 test.describe('Smoke Tests', () => {
   const DEMO_OWNER_EMAIL = process.env.DEMO_OWNER_EMAIL
   const DEMO_OWNER_PASSWORD = process.env.DEMO_OWNER_PASSWORD
+  const secretsMissing = !DEMO_OWNER_EMAIL || !DEMO_OWNER_PASSWORD
 
-  if (!DEMO_OWNER_EMAIL || !DEMO_OWNER_PASSWORD) {
-    throw new Error('Set DEMO_OWNER_EMAIL and DEMO_OWNER_PASSWORD in your environment before running smoke tests')
+  if (secretsMissing) {
+    console.warn('⚠️  Skipping authenticated smoke tests: DEMO_OWNER_EMAIL and DEMO_OWNER_PASSWORD not configured')
+    console.warn('   Configure these secrets in GitHub Settings → Secrets → Actions to enable full smoke test coverage')
   }
 
   test.beforeEach(async ({ page }) => {
@@ -85,42 +87,46 @@ test.describe('Smoke Tests', () => {
   })
 
   test('3b. Dashboard Role-based - Authenticated Owner', async ({ page }) => {
+    test.skip(secretsMissing, 'Secrets required: DEMO_OWNER_EMAIL and DEMO_OWNER_PASSWORD')
+
     console.log('🔍 Login as owner for dashboard check')
     await page.goto('/login')
-    await page.getByLabel(/email/i).fill(DEMO_OWNER_EMAIL)
-    await page.getByLabel(/password/i).fill(DEMO_OWNER_PASSWORD)
+    await page.getByLabel(/email/i).fill(DEMO_OWNER_EMAIL!)
+    await page.getByLabel(/password/i).fill(DEMO_OWNER_PASSWORD!)
     await page.getByRole('button', { name: /sign in/i }).click()
     await expect(page).toHaveURL(/\/dashboard/)
-    
+
     // Role-based redirect (owner dashboard)
     await expect(page.getByRole('heading', { level: 1, name: /Owner Dashboard/i })).toBeVisible()
     console.log('✅ Dashboard Auth: PASS - Owner role dashboard loads.')
   })
 
   test('4. Analytics Page @ /dashboard/analytics', async ({ page }) => {
+    test.skip(secretsMissing, 'Secrets required: DEMO_OWNER_EMAIL and DEMO_OWNER_PASSWORD')
+
     console.log('🔍 Visiting: /dashboard/analytics (auth required)')
-    
+
     // Ensure auth first
     await page.goto('/login')
-    await page.getByLabel(/email/i).fill(DEMO_OWNER_EMAIL)
-    await page.getByLabel(/password/i).fill(DEMO_OWNER_PASSWORD)
+    await page.getByLabel(/email/i).fill(DEMO_OWNER_EMAIL!)
+    await page.getByLabel(/password/i).fill(DEMO_OWNER_PASSWORD!)
     await page.getByRole('button', { name: /sign in/i }).click()
     await expect(page).toHaveURL(/\/dashboard/)
-    
+
     await page.goto('/dashboard/analytics')
-    
+
     // Verify KPI cards, charts, funnel, insights load
     await expect(page.getByRole('heading', { name: /analytics|dashboard/i })).toBeVisible()
     await expect(page.locator('[data-testid="kpi"]')).toHaveCount(4)
     await expect(page.locator('[class*="chart"], canvas, [data-testid*="chart"], [data-testid*="funnel"]')).toHaveCount(6)
-    
+
     // Interactive: keyboard navigation
     const firstCard = page.locator('[data-testid="kpi"], button, [role="button"], .card').first()
     await firstCard.focus()
     await page.keyboard.press('Tab')
     await page.keyboard.press('Enter') // or Space
     await page.keyboard.press('Escape') // safe
-    
+
     // No accessibility warnings (basic check)
     console.log('✅ Analytics Page: PASS - KPIs, charts load. Keyboard responsive. No console errors.')
   })
