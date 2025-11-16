@@ -62,6 +62,7 @@ test-results/
 
 # Essential documentation that should be committed
 !README.md
+!CHANGELOG.md
 !THIRD_PARTY_LICENSES.md
 !QUICK_START.md
 !DEPLOYMENT.md

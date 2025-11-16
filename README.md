@@ -27,11 +27,12 @@
 ### **Technical Highlights** 💡
 
 - ⚡ **Performance**: 176.9 KB first-load JS (41% under budget), ~3s builds with Turbopack
-- 🔒 **Security**: Firebase security rules, Stripe webhook verification, RBAC, type-safe APIs
+- 🔒 **Security**: Zero npm vulnerabilities (verified 2025-11-16), Firebase security rules, Stripe webhook verification, RBAC, type-safe APIs
+- 🛡️ **CI/CD**: 6-job automated pipeline (build, lint, test, a11y, smoke tests, security scan), branch protection, conventional commits
 - 🎨 **Modern Stack**: Next.js 15, TypeScript 5.7, Tailwind v4, shadcn/ui
-- 🧪 **Quality**: Zero ESLint errors, TypeScript strict mode, comprehensive testing
-- 📚 **Documentation**: Architecture diagrams, API docs, runbooks, deployment guides
-- 🚀 **Deployed**: Vercel with auto-deployment, CI/CD via GitHub Actions
+- 🧪 **Quality**: Zero ESLint errors, TypeScript strict mode, Playwright E2E tests, accessibility verified
+- 📚 **Documentation**: Architecture diagrams, API docs, runbooks, AI development guide (CLAUDE.md)
+- 🚀 **Deployed**: Vercel with auto-deployment, production smoke tests on every main push
 
 ### **Portfolio Links**
 - 🌟 **[Full Portfolio Showcase →](./docs/PORTFOLIO_SHOWCASE.md)** - Detailed project overview
@@ -127,10 +128,11 @@ Show clients how you reason about hiring performance with the new **Analytics & 
 
 ### Development Tools
 - **Version Control:** Git + GitHub with branch protection
-- **CI/CD:** GitHub Actions (branch/commit validation, accessibility, first-load budget, production smoke tests)
+- **CI/CD:** GitHub Actions (6-job pipeline: branch/commit validation, build & quality checks, accessibility tests, local smoke tests, Snyk security scan, production smoke tests)
 - **Package Manager:** npm
 - **Linting:** ESLint + Prettier
-- **Testing:** Manual E2E + Firebase Emulator
+- **Testing:** Playwright E2E (smoke tests, accessibility), Jest unit tests, Firebase Emulator
+- **Security:** Snyk scanning, npm audit (0 vulnerabilities), FOSSA license compliance
 - **Guardrails:** Branch naming enforced as `type/ID-slug` (`feat|fix|perf|sec|docs|test|refactor|ci|build`); use `ci` for infrastructure changes
 
 ## 🧭 Repository Structure
