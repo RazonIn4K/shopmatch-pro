@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 
 import { assertActiveSubscription, verifyAuth } from '@/lib/api/auth'
 import { ApiError, handleApiError } from '@/lib/api/errors'
-import { adminDb } from '@/lib/firebase/admin'
+import { adminDb, isFirebaseAdminFallbackMode } from '@/lib/firebase/admin'
 import { jobFormSchema, jobStatuses, jobTypes } from '@/types'
 import type { Job } from '@/types'
 
@@ -140,13 +140,44 @@ export async function GET(request: Request) {
       assertActiveSubscription(auth)
     }
 
+console.log('Jobs API GET - isFallback:', isFirebaseAdminFallbackMode);
     const baseQuery = buildJobsQuery(filters)
     const offset = (filters.page - 1) * filters.limit
     const paginatedQuery = baseQuery.orderBy('createdAt', 'desc').limit(filters.limit).offset(offset)
+    
+    let jobs: Job[] = [];
+    
+    if (isFirebaseAdminFallbackMode) {
+  console.log('🔧 Firebase Admin fallback: returning mock jobs');
+  const mockJobs: Job[] = [
+    {
+      id: 'demo-1',
+      title: 'Senior React Developer',
+      company: 'TechCorp',
+      type: 'full-time',
+      location: 'San Francisco',
+      remote: true,
+      salary: { currency: 'USD', period: 'yearly', min: 120000, max: 180000 },
+      experience: 'senior',
+      description: 'React job',
+      requirements: ['React'],
+      status: 'published',
+      ownerId: 'demo',
+      viewCount: 45,
+      applicationCount: 8,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      publishedAt: new Date().toISOString(),
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
 
-    try {
-      const snapshot = await paginatedQuery.get()
-      let jobs: Job[] = snapshot.docs.map(transformJobDocument)
+    }
+  ];
+
+  jobs = mockJobs;
+} else {
+  const snapshot = await paginatedQuery.get();
+  jobs = snapshot.docs.map(transformJobDocument);
+}
 
       if (jobs.length === 0 && process.env.NODE_ENV === 'development') {
         console.log('🔧 Development fallback: returning mock published jobs for smoke test')

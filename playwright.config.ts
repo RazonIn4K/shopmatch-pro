@@ -78,11 +78,10 @@ export default defineConfig({
   ],
 
   // Run your local dev server before starting the tests
-  // Uncomment if you want Playwright to automatically start the dev server
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  //   timeout: 120 * 1000,
-  // },
+  webServer: {
+    command: 'doppler run --project firebase-shopmatch --config dev -- npm run dev',
+    url: 'http://localhost:3000',
+    reuseExistingServer: true,
+    timeout: 120 * 1000,
+  },
 })
