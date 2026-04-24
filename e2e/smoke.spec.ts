@@ -17,6 +17,18 @@ test.describe('Smoke Tests', () => {
     console.warn('   Configure these secrets in GitHub Settings → Secrets → Actions to enable full smoke test coverage')
   }
 
+  const authenticatedSmokeSkipReason = () => {
+    if (test.info().project.name === 'public') {
+      return 'Authenticated smoke tests run in the authenticated chromium project only'
+    }
+
+    if (secretsMissing) {
+      return 'Secrets required: DEMO_OWNER_EMAIL and DEMO_OWNER_PASSWORD'
+    }
+
+    return null
+  }
+
   test.beforeEach(async ({ page }) => {
     // Global console/error capture for all tests
     page.on('console', (msg) => {
@@ -85,7 +97,8 @@ test.describe('Smoke Tests', () => {
   })
 
   test('3b. Dashboard Role-based - Authenticated Owner', async ({ page }) => {
-    test.skip(secretsMissing, 'Secrets required: DEMO_OWNER_EMAIL and DEMO_OWNER_PASSWORD')
+    const skipReason = authenticatedSmokeSkipReason()
+    test.skip(skipReason !== null, skipReason ?? '')
 
     console.log('🔍 Login as owner for dashboard check')
     await page.goto('/login')
@@ -100,7 +113,8 @@ test.describe('Smoke Tests', () => {
   })
 
   test('4. Analytics Page @ /dashboard/analytics', async ({ page }) => {
-    test.skip(secretsMissing, 'Secrets required: DEMO_OWNER_EMAIL and DEMO_OWNER_PASSWORD')
+    const skipReason = authenticatedSmokeSkipReason()
+    test.skip(skipReason !== null, skipReason ?? '')
 
     console.log('🔍 Visiting: /dashboard/analytics (auth required)')
 

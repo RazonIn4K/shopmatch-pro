@@ -7,27 +7,18 @@
  * Features:
  * - Authentication context provider
  * - Toast notification system
- * - Global CSS and font loading
+ * - Global CSS and typography
  * - Meta tags and SEO configuration
  * - Responsive viewport configuration
  */
 
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
 import './globals.css'
 import { AuthProvider } from '@/lib/contexts/AuthContext'
 import { Toaster } from '@/components/ui/sonner'
 import { getMetadataBase } from '@/lib/env'
 import { Footer } from '@/components/footer'
 import { CookieConsent } from '@/components/cookie-consent'
-
-/**
- * Inter font configuration for consistent typography
- *
- * Inter is chosen for its excellent readability and modern appearance.
- * Subset configuration optimizes bundle size by including only necessary characters.
- */
-const inter = Inter({ subsets: ['latin'] })
 
 /**
  * Application metadata for SEO and social sharing
@@ -87,7 +78,7 @@ export const metadata: Metadata = {
  *
  * Provides essential application-wide configuration and providers:
  * - HTML document structure and language
- * - Global CSS styles and font configuration
+ * - Global CSS styles and typography
  * - Authentication context for user state management
  * - Toast notification system for user feedback
  * - Meta tags and SEO configuration
@@ -101,7 +92,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
+      <body>
         <AuthProvider>
           <div className="flex flex-col min-h-screen">
             {children}
