@@ -9,6 +9,7 @@ This document lists all third-party software dependencies used in ShopMatch Pro 
 ShopMatch Pro is licensed under the **MIT License** (see [LICENSE](./LICENSE)). All third-party dependencies have been reviewed for license compatibility with MIT and commercial use.
 
 > **2025-10-17 Update**: Active FOSSA license alerts were reviewed and cleared. Detailed findings are documented in [`docs/FOSSA_LICENSE_REVIEW_2025-10-17.md`](./docs/FOSSA_LICENSE_REVIEW_2025-10-17.md).
+> **2026-04-24 Update**: Dependency versions and FOSSA override locators were refreshed after the audit advisory update.
 
 ### Key Licensing Decisions
 
@@ -20,13 +21,13 @@ ShopMatch Pro is licensed under the **MIT License** (see [LICENSE](./LICENSE)). 
 
 ## Direct Dependencies
 
-**Note**: Versions listed are as of 2025-10-13. See `package.json` for current versions.
+**Note**: Versions listed are as of 2026-04-24. See `package.json` for current versions.
 
 ### Core Framework & Runtime
 
 | Package | Version | License | Purpose |
 |---------|---------|---------|---------|
-| `next` | 15.5.5 | MIT | React framework for production |
+| `next` | 15.5.15 | MIT | React framework for production |
 | `react` | 19.2.0 | MIT | UI library |
 | `react-dom` | 19.2.0 | MIT | React DOM renderer |
 
@@ -34,35 +35,35 @@ ShopMatch Pro is licensed under the **MIT License** (see [LICENSE](./LICENSE)). 
 
 | Package | Version | License | Purpose | Notes |
 |---------|---------|---------|---------|-------|
-| `firebase` | 12.4.0 | Apache-2.0 | Client-side Firebase SDK | Authentication, Firestore |
-| `firebase-admin` | 13.5.0 | Apache-2.0 | Server-side Firebase SDK | Admin operations, token verification |
+| `firebase` | 12.6.0 | Apache-2.0 | Client-side Firebase SDK | Authentication, Firestore |
+| `firebase-admin` | 13.8.0 | Apache-2.0 | Server-side Firebase SDK | Admin operations, token verification |
 
 **Transitive Dependency Note**:
-- `firebase-admin` → `node-forge@1.3.1` (BSD-3-Clause chosen from dual-license)
+- `firebase-admin` → `node-forge@1.4.0` (BSD-3-Clause chosen from dual-license)
 
 ### Payments
 
 | Package | Version | License | Purpose |
 |---------|---------|---------|---------|
-| `stripe` | 19.1.0 | MIT | Server-side Stripe SDK |
-| `@stripe/stripe-js` | 8.0.0 | MIT | Client-side Stripe SDK |
+| `stripe` | 19.3.1 | MIT | Server-side Stripe SDK |
+| `@stripe/stripe-js` | 8.4.0 | MIT | Client-side Stripe SDK |
 
 ### UI Components & Styling
 
 | Package | Version | License | Purpose |
 |---------|---------|---------|---------|
 | `@radix-ui/react-dialog` | 1.1.15 | MIT | Accessible dialog primitives |
-| `@radix-ui/react-label` | 2.1.7 | MIT | Accessible label primitives |
-| `@radix-ui/react-slot` | 1.2.3 | MIT | Composition utility |
+| `@radix-ui/react-label` | 2.1.8 | MIT | Accessible label primitives |
+| `@radix-ui/react-slot` | 1.2.4 | MIT | Composition utility |
 | `@headlessui/react` | 2.2.9 | MIT | Unstyled accessible UI |
-| `lucide-react` | 0.545.0 | ISC | Icon library |
+| `lucide-react` | 0.553.0 | ISC | Icon library |
 | `next-themes` | 0.4.6 | MIT | Theme management |
 
 ### Forms & Validation
 
 | Package | Version | License | Purpose |
 |---------|---------|---------|---------|
-| `react-hook-form` | 7.65.0 | MIT | Form state management |
+| `react-hook-form` | 7.66.0 | MIT | Form state management |
 | `@hookform/resolvers` | 5.2.2 | MIT | Form validation resolvers |
 | `zod` | 4.1.12 | MIT | Schema validation |
 
@@ -133,7 +134,7 @@ The following packages contain LGPL-3.0-or-later licensed code (libvips image pr
 
 **Status**: ✅ **Acceptable for commercial use**
 
-**Package**: `next` (15.5.5)
+**Package**: `next` (15.5.15)
 **License**: Contains some MPL-2.0 licensed code
 **Depth**: Direct dependency
 
@@ -165,7 +166,7 @@ The following packages contain LGPL-3.0-or-later licensed code (libvips image pr
 
 ### node-forge (via firebase-admin)
 
-**Package**: `node-forge@1.3.1`
+**Package**: `node-forge@1.4.0`
 **Declared License**: `(BSD-3-Clause OR GPL-2.0)` (dual-license)
 **Our License Choice**: **BSD-3-Clause**
 **Used By**: `firebase-admin` (for cryptographic operations)
@@ -224,7 +225,7 @@ All development dependencies are used only during development and build processe
 | `@types/react` | ^19 | MIT | React type definitions |
 | `@types/react-dom` | 19.2.2 | MIT | React DOM type definitions |
 | `eslint` | ^9 | MIT | Code linting (development only) |
-| `eslint-config-next` | 15.5.5 | MIT | Next.js ESLint rules |
+| `eslint-config-next` | 15.5.15 | MIT | Next.js ESLint rules |
 | `tailwindcss` | ^4 | MIT | CSS framework (build-time processing) |
 | `@tailwindcss/postcss` | ^4 | MIT | PostCSS integration (build-time) |
 | `@eslint/eslintrc` | ^3 | MIT | ESLint configuration utilities |
@@ -405,8 +406,9 @@ npm ls <package-name>
 | 2025-10-13 | Claude Code | npm ls, manual review | ✅ All licenses compatible |
 | 2025-10-13 | FOSSA | Automated scan | ⚠️ False positives resolved |
 | 2025-10-13 | npm audit | Security scan | ✅ 0 vulnerabilities (648 total packages: 248 prod, 315 dev) |
+| 2026-04-24 | Codex | npm audit, FOSSA locator review | ✅ 0 npm vulnerabilities; locators refreshed |
 
-**Latest Security Audit** (2025-10-13):
+**Latest Security Audit** (2026-04-24):
 ```json
 {
   "vulnerabilities": {
@@ -471,14 +473,14 @@ FOSSA and other scanning tools may flag certain transitive dependencies as "outd
 - "Outdated" warnings: ⚠️ May persist (transitive dependencies locked by parents)
 
 **TL;DR**: "Outdated" warnings are informational, not critical. As long as:
-- ✅ No security vulnerabilities (`npm audit` on 2025-10-13 shows 0 vulnerabilities across 648 packages)
+- ✅ No security vulnerabilities (`npm audit` on 2026-04-24 shows 0 vulnerabilities)
 - ✅ All licenses are compatible (documented: all permissive - MIT, Apache-2.0, BSD, ISC)
-- ✅ Direct dependencies are updated (verified 2025-10-13: Next.js 15.5.5, React 19.2.0, etc.)
+- ✅ Direct dependencies are updated (verified 2026-04-24: Next.js 15.5.15, React 19.2.0, etc.)
 - ✅ Application builds and runs correctly (production build passing)
 
 ...then "outdated" warnings for transitive dependencies are **acceptable** and **safe to ignore**.
 
-**Last Verified**: 2025-10-13 | **Verification Command**: `npm audit` | **Result**: 0 vulnerabilities
+**Last Verified**: 2026-04-24 | **Verification Command**: `npm audit` | **Result**: 0 vulnerabilities
 
 ---
 
@@ -500,6 +502,6 @@ If you have questions about licensing or compliance:
 
 ---
 
-**Last Updated**: 2025-10-13
+**Last Updated**: 2026-04-24
 **Project License**: MIT (see [LICENSE](./LICENSE))
 **Compliance Status**: ✅ **Fully Compliant** with all commercial use requirements
