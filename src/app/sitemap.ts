@@ -1,6 +1,6 @@
 import { MetadataRoute } from 'next'
 
-import { adminDb } from '@/lib/firebase/admin'
+import { adminDb, isFirebaseAdminFallbackMode } from '@/lib/firebase/admin'
 
 /**
  * Generate sitemap for Google Search Console
@@ -75,6 +75,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
  * Fetch all published job IDs and update timestamps from Firestore
  */
 async function getPublishedJobIds(): Promise<Array<{ id: string; updatedAt: Date }>> {
+  if (isFirebaseAdminFallbackMode) {
+    return []
+  }
+
   try {
     const snapshot = await adminDb
       .collection('jobs')

@@ -282,29 +282,7 @@ export function getEnvSummary(): string {
   return lines.join('\n')
 }
 
-/**
- * Validates environment variables at module import time (server-side only)
- *
- * This ensures that missing configuration is detected immediately when the
- * application starts, rather than at runtime when a feature is first used.
- *
- * Only runs on server-side to avoid breaking client-side builds.
- */
-if (typeof window === 'undefined') {
-  try {
-    validateAllEnv()
-    console.log('✅ Environment validation passed')
-  } catch (error) {
-    // In development, log error but don't crash (for better DX)
-    // In production, crash immediately to prevent deployment with missing config
-    if (process.env.NODE_ENV === 'production') {
-      console.error('❌ Environment validation failed (production mode - will exit)')
-      console.error(error instanceof Error ? error.message : String(error))
-      process.exit(1)
-    } else {
-      console.warn('⚠️  Environment validation failed (development mode - continuing anyway)')
-      console.warn(error instanceof Error ? error.message : String(error))
-      console.warn('\nRun `npm run validate-env` to check your .env.local configuration')
-    }
-  }
-}
+// Do not validate at module import time. Next.js imports route modules during
+// production builds, and clean CI/build environments often do not have runtime
+// secrets available. Call validateAllEnv() explicitly from startup scripts,
+// deployment checks, or health diagnostics when validation is required.
