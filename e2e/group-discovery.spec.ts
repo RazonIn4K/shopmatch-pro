@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 
 test('discover photo restoration groups', async ({ page }) => {
   // 1. Login (Assumes state is saved or manual login)
@@ -13,8 +13,8 @@ test('discover photo restoration groups', async ({ page }) => {
   
   // 4. Extract Group URLs
   const groups = await page.evaluate(() => {
-    const links = Array.from(document.querySelectorAll('a[href*="/groups/"]'));
-    return links.map(link => link.href).filter(href => !href.includes('/user/'));
+    const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('a[href*="/groups/"]'));
+    return links.map((link) => link.href).filter((href) => !href.includes('/user/'));
   });
   
   const uniqueGroups = [...new Set(groups)];

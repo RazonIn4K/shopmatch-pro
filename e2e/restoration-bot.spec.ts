@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test } from '@playwright/test';
 import fs from 'fs';
 import path from 'path';
 import groups from './groups.json';
@@ -25,7 +25,7 @@ test.describe('Restoration Bot Scraper', () => {
       // Wait for feed
       try {
         await page.waitForSelector('[role="feed"]', { timeout: 10000 });
-      } catch (e) {
+      } catch {
         console.log(`   ⚠️ Could not load feed for ${group.name}. Skipping.`);
         return;
       }
@@ -73,7 +73,8 @@ test.describe('Restoration Bot Scraper', () => {
                   timestamp: new Date().toISOString()
                 });
               } catch (err) {
-                console.log(`      ❌ Failed to download image: ${err.message}`);
+                const message = err instanceof Error ? err.message : String(err);
+                console.log(`      ❌ Failed to download image: ${message}`);
               }
             }
           }

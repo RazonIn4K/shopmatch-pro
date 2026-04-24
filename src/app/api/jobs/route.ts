@@ -39,9 +39,16 @@ function parseBoolean(value: string | null): boolean | undefined {
   return undefined
 }
 
+function parsePositiveInteger(value: string | null, fallback: number): number {
+  const parsed = Number(value ?? fallback)
+  return Number.isFinite(parsed) ? Math.floor(parsed) : fallback
+}
+
 function parseFilters(request: Request): JobListFilters {
   const url = new URL(request.url)
   const params = url.searchParams
+  const page = parsePositiveInteger(params.get('page'), 1)
+  const limit = parsePositiveInteger(params.get('limit'), 20)
 
   return {
     ownerId: params.get('ownerId') ?? undefined,
@@ -50,8 +57,8 @@ function parseFilters(request: Request): JobListFilters {
     location: params.get('location') ?? undefined,
     remote: parseBoolean(params.get('remote')),
     experience: (params.get('experience') as JobListFilters['experience']) ?? undefined,
-    page: Math.max(1, Number(params.get('page') ?? 1)),
-    limit: Math.min(100, Math.max(1, Number(params.get('limit') ?? 20))),
+    page: Math.max(1, page),
+    limit: Math.min(100, Math.max(1, limit)),
   }
 }
 
@@ -126,6 +133,77 @@ async function handleLocationFiltering(
   return { filteredJobs, filteredTotal: locationMatchCount }
 }
 
+function buildDemoJobs(): Job[] {
+  const now = new Date().toISOString()
+  const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+
+  return [
+    {
+      id: 'demo-job-1',
+      title: 'Senior React Developer',
+      company: 'TechCorp Solutions',
+      type: 'full-time',
+      location: 'San Francisco, CA',
+      remote: true,
+      salary: { currency: 'USD', period: 'yearly', min: 120000, max: 180000 },
+      experience: 'senior',
+      description:
+        'Join our team building cutting-edge web applications with React, TypeScript, and Node.js.',
+      requirements: ['5+ years of React experience', 'Strong TypeScript skills', 'Experience with Node.js'],
+      status: 'published',
+      ownerId: 'demo-owner',
+      viewCount: 45,
+      applicationCount: 8,
+      createdAt: now,
+      updatedAt: now,
+      publishedAt: now,
+      expiresAt,
+    },
+    {
+      id: 'demo-job-2',
+      title: 'Full Stack Engineer',
+      company: 'StartupXYZ',
+      type: 'full-time',
+      location: 'Remote',
+      remote: true,
+      salary: { currency: 'USD', period: 'yearly', min: 90000, max: 140000 },
+      experience: 'mid',
+      description:
+        'Fast-growing startup seeking a versatile full stack engineer to help build our SaaS platform.',
+      requirements: ['3+ years full stack development', 'React and Node.js', 'PostgreSQL or similar'],
+      status: 'published',
+      ownerId: 'demo-owner',
+      viewCount: 67,
+      applicationCount: 12,
+      createdAt: now,
+      updatedAt: now,
+      publishedAt: now,
+      expiresAt,
+    },
+    {
+      id: 'demo-job-3',
+      title: 'Frontend Developer',
+      company: 'Design Studio Pro',
+      type: 'contract',
+      location: 'New York, NY',
+      remote: false,
+      salary: { currency: 'USD', period: 'hourly', min: 80, max: 120 },
+      experience: 'mid',
+      description:
+        'Creative agency looking for a talented frontend developer to join us for a 6-month contract.',
+      requirements: ['Strong HTML/CSS/JavaScript', 'React or Vue.js', 'Eye for design'],
+      status: 'published',
+      ownerId: 'demo-owner',
+      viewCount: 34,
+      applicationCount: 5,
+      createdAt: now,
+      updatedAt: now,
+      publishedAt: now,
+      expiresAt,
+    },
+  ] as Job[]
+}
+
 
 export async function GET(request: Request) {
   try {
@@ -140,121 +218,42 @@ export async function GET(request: Request) {
       assertActiveSubscription(auth)
     }
 
-console.log('Jobs API GET - isFallback:', isFirebaseAdminFallbackMode);
     const baseQuery = buildJobsQuery(filters)
     const offset = (filters.page - 1) * filters.limit
     const paginatedQuery = baseQuery.orderBy('createdAt', 'desc').limit(filters.limit).offset(offset)
-    
-    let jobs: Job[] = [];
-    
-    if (isFirebaseAdminFallbackMode) {
-  console.log('🔧 Firebase Admin fallback: returning mock jobs');
-  const mockJobs: Job[] = [
-    {
-      id: 'demo-1',
-      title: 'Senior React Developer',
-      company: 'TechCorp',
-      type: 'full-time',
-      location: 'San Francisco',
-      remote: true,
-      salary: { currency: 'USD', period: 'yearly', min: 120000, max: 180000 },
-      experience: 'senior',
-      description: 'React job',
-      requirements: ['React'],
-      status: 'published',
-      ownerId: 'demo',
-      viewCount: 45,
-      applicationCount: 8,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      publishedAt: new Date().toISOString(),
-      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
 
-    }
-  ];
+    try {
+      let jobs: Job[]
+      let usingLocalFallback = false
 
-  jobs = mockJobs;
-} else {
-  const snapshot = await paginatedQuery.get();
-  jobs = snapshot.docs.map(transformJobDocument);
-}
+      if (isFirebaseAdminFallbackMode) {
+        jobs = buildDemoJobs()
+        usingLocalFallback = true
+      } else {
+        const snapshot = await paginatedQuery.get()
+        jobs = snapshot.docs.map(transformJobDocument)
+      }
 
       if (jobs.length === 0 && process.env.NODE_ENV === 'development') {
-        console.log('🔧 Development fallback: returning mock published jobs for smoke test')
-
-        jobs = [
-          {
-            id: 'demo-job-1',
-            title: 'Senior React Developer',
-            company: 'TechCorp Solutions',
-            type: 'full-time',
-            location: 'San Francisco, CA',
-            remote: true,
-            salary: { currency: 'USD', period: 'yearly', min: 120000, max: 180000 },
-            experience: 'senior',
-            description: 'Join our team building cutting-edge web applications with React, TypeScript, and Node.js.',
-            requirements: ['5+ years of React experience', 'Strong TypeScript skills', 'Experience with Node.js'],
-            status: 'published',
-            ownerId: 'demo-owner',
-            viewCount: 45,
-            applicationCount: 8,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            publishedAt: new Date().toISOString(),
-            expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          },
-          {
-            id: 'demo-job-2',
-            title: 'Full Stack Engineer',
-            company: 'StartupXYZ',
-            type: 'full-time',
-            location: 'Remote',
-            remote: true,
-            salary: { currency: 'USD', period: 'yearly', min: 90000, max: 140000 },
-            experience: 'mid',
-            description: 'Fast-growing startup seeking a versatile full stack engineer to help build our SaaS platform.',
-            requirements: ['3+ years full stack development', 'React and Node.js', 'PostgreSQL or similar'],
-            status: 'published',
-            ownerId: 'demo-owner',
-            viewCount: 67,
-            applicationCount: 12,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            publishedAt: new Date().toISOString(),
-            expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          },
-          {
-            id: 'demo-job-3',
-            title: 'Frontend Developer',
-            company: 'Design Studio Pro',
-            type: 'contract',
-            location: 'New York, NY',
-            remote: false,
-            salary: { currency: 'USD', period: 'hourly', min: 80, max: 120 },
-            experience: 'mid',
-            description: 'Creative agency looking for a talented frontend developer to join us for a 6-month contract.',
-            requirements: ['Strong HTML/CSS/JavaScript', 'React or Vue.js', 'Eye for design'],
-            status: 'published',
-            ownerId: 'demo-owner',
-            viewCount: 34,
-            applicationCount: 5,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            publishedAt: new Date().toISOString(),
-            expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          },
-        ] as Job[]
+        jobs = buildDemoJobs()
+        usingLocalFallback = true
       }
 
       // Handle location filter and count
       let filteredJobs = jobs
-      let filteredTotal: number
+      let filteredTotal = jobs.length
 
       if (filters.location) {
-        const result = await handleLocationFiltering(jobs, baseQuery, filters.location)
-        filteredJobs = result.filteredJobs
-        filteredTotal = result.filteredTotal
-      } else {
+        if (usingLocalFallback) {
+          const locationLower = filters.location.toLowerCase()
+          filteredJobs = jobs.filter((job) => job.location.toLowerCase().includes(locationLower))
+          filteredTotal = filteredJobs.length
+        } else {
+          const result = await handleLocationFiltering(jobs, baseQuery, filters.location)
+          filteredJobs = result.filteredJobs
+          filteredTotal = result.filteredTotal
+        }
+      } else if (!usingLocalFallback) {
         // No location filter - use standard count query
         const countSnapshot = await baseQuery.count().get()
         filteredTotal = countSnapshot.data().count
@@ -265,8 +264,8 @@ console.log('Jobs API GET - isFallback:', isFirebaseAdminFallbackMode);
         pagination: {
           page: filters.page,
           limit: filters.limit,
-          total: filteredJobs.length > 0 ? filteredTotal : jobs.length,
-          pages: Math.ceil((filteredJobs.length > 0 ? filteredTotal : jobs.length) / filters.limit),
+          total: filteredTotal,
+          pages: Math.ceil(filteredTotal / filters.limit),
         },
       })
     } catch (queryError) {
