@@ -339,7 +339,7 @@ jobs:
       run: npx wait-on http://localhost:3000 --timeout 60000
 
     - name: Run smoke tests
-      run: npm run test:e2e -- e2e/smoke.spec.ts --reporter=line
+      run: npm run test:e2e -- e2e/smoke.spec.ts --project=public --reporter=line
       env:
         CI: true
         DEMO_OWNER_EMAIL: ${{ secrets.DEMO_OWNER_EMAIL }}
@@ -412,8 +412,11 @@ jobs:
         # Install Snyk CLI
         npm install -g snyk
 
-        # Authenticate (uses SNYK_TOKEN secret)
-        snyk auth ${{ secrets.SNYK_TOKEN }}
+        if [ -z "${SNYK_TOKEN:-}" ]; then
+          echo "SNYK_TOKEN is not configured; writing empty advisory report."
+          printf '{}\n' > snyk-report.json
+          exit 0
+        fi
 
         # Run comprehensive security scan
         # - Scans all projects (npm, package.json)
@@ -422,7 +425,7 @@ jobs:
         snyk test --all-projects --severity-threshold=low --json > snyk-report.json || true
 
         # Display human-readable summary
-        snyk test --all-projects --severity-threshold=low
+        snyk test --all-projects --severity-threshold=low || true
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 

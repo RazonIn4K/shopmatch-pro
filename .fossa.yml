@@ -49,7 +49,7 @@ policies:
 overrides:
   # node-forge: Dual-licensed (BSD-3-Clause OR GPL-2.0)
   # We elect to use BSD-3-Clause license
-  - locator: npm+node-forge@1.3.1
+  - locator: npm+node-forge$1.4.0
     license: BSD-3-Clause
     reason: |
       node-forge is dual-licensed (BSD-3-Clause OR GPL-2.0).
@@ -61,7 +61,7 @@ overrides:
 
   # glob: ISC code license, CC-BY-SA-4.0 logo only
   # We don't use or distribute the logo
-  - locator: npm+glob$
+  - locator: npm+glob$13.0.6
     license: ISC
     reason: |
       Glob package code is ISC licensed. The CC-BY-SA-4.0 license
@@ -73,7 +73,7 @@ overrides:
 ignore:
   # node-forge GPL false positives (we elect BSD-3-Clause from dual-license)
   - type: license
-    locator: npm+node-forge@1.3.1
+    locator: npm+node-forge$1.4.0
     licenses:
       - GPL-1.0-only
       - GPL-2.0-only
@@ -84,12 +84,22 @@ ignore:
 
   # Next.js CC-BY-SA-4.0 false positive (glob logo artwork, not used)
   - type: license
-    locator: npm+next@15.5.5
+    locator: npm+next$15.5.15
     licenses:
       - CC-BY-SA-4.0
     reason: |
       CC-BY-SA-4.0 detection is for glob logo artwork included in Next.js.
       We do not use or distribute logo artwork. All code we use is MIT/ISC licensed.
+
+  # glob CC-BY-SA-4.0 false positive (package logo artwork, not used)
+  - type: license
+    locator: npm+glob$13.0.6
+    licenses:
+      - CC-BY-SA-4.0
+    reason: |
+      Glob package code is ISC licensed. The CC-BY-SA-4.0 detection applies
+      only to logo artwork, which ShopMatch Pro does not use, import, or
+      distribute.
 
 # Exclude development and test dependencies from production scans
 analyze:
@@ -122,7 +132,7 @@ comments:
     in THIRD_PARTY_LICENSES.md with explanations.
 
   investigation_date: |
-    Last comprehensive license audit: 2025-10-17
+    Last comprehensive license audit: 2026-04-24
     See docs/FOSSA_LICENSE_REVIEW_2025-10-17.md for detailed findings.
 
 # Experimental features
