@@ -11,7 +11,7 @@
  * - Compatible with Next.js SSR and client-side rendering
  */
 
-import { initializeApp, getApps } from 'firebase/app'
+import { initializeApp, getApps, type FirebaseApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
 
@@ -23,24 +23,46 @@ import { getFirestore } from 'firebase/firestore'
  * - Never exposes sensitive server-side keys to the client bundle
  * - Required for Firebase services to function in browser environment
  */
-const firebaseConfig = {
-  // API key for Firebase services (safe for client-side)
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+function getFirebaseConfig() {
+  const config = {
+    // API key for Firebase services (safe for client-side)
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
 
-  // Authentication domain (safe for client-side)
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+    // Authentication domain (safe for client-side)
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
 
-  // Project identifier (safe for client-side)
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+    // Project identifier (safe for client-side)
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
 
-  // Cloud Storage bucket (safe for client-side)
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+    // Cloud Storage bucket (safe for client-side)
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
 
-  // Cloud Messaging sender ID (safe for client-side)
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+    // Cloud Messaging sender ID (safe for client-side)
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
 
-  // Firebase App ID (safe for client-side)
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+    // Firebase App ID (safe for client-side)
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  }
+
+  const missing = Object.entries(config)
+    .filter(([, value]) => !value)
+    .map(([name]) => name)
+
+  if (missing.length > 0) {
+    throw new Error(
+      `Missing required Firebase client environment variables: ${missing.join(', ')}. ` +
+      'Set NEXT_PUBLIC_FIREBASE_* values before using Firebase client services.'
+    )
+  }
+
+  return config as {
+    apiKey: string
+    authDomain: string
+    projectId: string
+    storageBucket: string
+    messagingSenderId: string
+    appId: string
+  }
 }
 
 /**
@@ -54,7 +76,14 @@ const firebaseConfig = {
  *
  * @returns Firebase app instance (new or existing)
  */
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
+let app: FirebaseApp | null = null
+
+export function getFirebaseClientApp(): FirebaseApp {
+  if (app) return app
+
+  app = getApps().length === 0 ? initializeApp(getFirebaseConfig()) : getApps()[0]!
+  return app
+}
 
 /**
  * Firebase Authentication service instance
@@ -74,7 +103,17 @@ const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0
  * await signInWithEmailAndPassword(auth, email, password)
  * ```
  */
-export const auth = getAuth(app)
+export function getFirebaseAuth() {
+  return getAuth(getFirebaseClientApp())
+}
+
+export const auth = new Proxy({} as ReturnType<typeof getAuth>, {
+  get(_target, prop, receiver) {
+    const firebaseAuth = getFirebaseAuth()
+    const value = Reflect.get(firebaseAuth, prop, receiver)
+    return typeof value === 'function' ? value.bind(firebaseAuth) : value
+  },
+})
 
 /**
  * Cloud Firestore database service instance
@@ -94,7 +133,17 @@ export const auth = getAuth(app)
  * const querySnapshot = await getDocs(jobsRef)
  * ```
  */
-export const db = getFirestore(app)
+export function getFirebaseDb() {
+  return getFirestore(getFirebaseClientApp())
+}
+
+export const db = new Proxy({} as ReturnType<typeof getFirestore>, {
+  get(_target, prop, receiver) {
+    const firestore = getFirebaseDb()
+    const value = Reflect.get(firestore, prop, receiver)
+    return typeof value === 'function' ? value.bind(firestore) : value
+  },
+})
 
 /**
  * Default Firebase app export for advanced use cases
@@ -105,4 +154,12 @@ export const db = getFirestore(app)
  * - Custom Firebase service initialization
  * - Testing and mocking scenarios
  */
-export default app
+const firebaseApp = new Proxy({} as FirebaseApp, {
+  get(_target, prop, receiver) {
+    const clientApp = getFirebaseClientApp()
+    const value = Reflect.get(clientApp, prop, receiver)
+    return typeof value === 'function' ? value.bind(clientApp) : value
+  },
+})
+
+export default firebaseApp

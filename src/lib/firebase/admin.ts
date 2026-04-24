@@ -55,7 +55,6 @@ function validateFirebaseAdminConfig(params: { hasServiceAccount: boolean; allow
   }
 }
 
-const isServerEnvironment = typeof window === 'undefined'
 const rawPrivateKey = process.env.FIREBASE_PRIVATE_KEY ?? ''
 
 // Check for fallback mode FIRST (before validating service account)
@@ -73,12 +72,17 @@ const hasServiceAccount =
   rawPrivateKey.includes('END PRIVATE KEY') &&
   Boolean(process.env.FIREBASE_CLIENT_EMAIL)
 
-// Validate configuration on module import (server-side only)
-if (isServerEnvironment) {
+const configuredProjectId = process.env.FIREBASE_PROJECT_ID ?? 'demo-shopmatch-pro'
+
+let app: App | null = null
+
+export function getFirebaseAdminApp(): App {
+  if (app) return app
+
   validateFirebaseAdminConfig({ hasServiceAccount, allowFallback })
 
-  // SECURITY: Fail closed in production when credentials are missing
-  // Allow fallback mode in CI even during production builds (for build-time checks)
+  // SECURITY: Fail closed in production when credentials are missing.
+  // Allow fallback mode in CI even during production builds.
   if (!hasServiceAccount && process.env.NODE_ENV === 'production' && !allowFallback) {
     throw new Error(
       'CRITICAL: Firebase Admin credentials are missing in production environment. ' +
@@ -94,27 +98,27 @@ if (isServerEnvironment) {
       'Set FIREBASE_PRIVATE_KEY (with BEGIN/END PRIVATE KEY) to enable full functionality.'
     )
   }
-}
 
-const configuredProjectId = process.env.FIREBASE_PROJECT_ID ?? 'demo-shopmatch-pro'
-
-const app: App = getApps().length === 0
-  ? initializeApp(
-      hasServiceAccount
-        ? {
-            credential: cert({
+  app = getApps().length === 0
+    ? initializeApp(
+        hasServiceAccount
+          ? {
+              credential: cert({
+                projectId: configuredProjectId,
+                clientEmail: process.env.FIREBASE_CLIENT_EMAIL!,
+                // Handle both escaped newlines (\n as string) and actual newlines
+                privateKey: rawPrivateKey.replace(/\\n/g, '\n'),
+              }),
               projectId: configuredProjectId,
-              clientEmail: process.env.FIREBASE_CLIENT_EMAIL!,
-              // Handle both escaped newlines (\n as string) and actual newlines
-              privateKey: rawPrivateKey.replace(/\\n/g, '\n'),
-            }),
-            projectId: configuredProjectId,
-          }
-        : {
-            projectId: configuredProjectId,
-          },
-    )
-  : getApps()[0]!
+            }
+          : {
+              projectId: configuredProjectId,
+            },
+      )
+    : getApps()[0]!
+
+  return app
+}
 
 /**
  * Firebase Admin Authentication service instance
@@ -145,7 +149,17 @@ const app: App = getApps().length === 0
  *
  * @see https://firebase.google.com/docs/auth/admin/custom-claims
  */
-export const adminAuth = getAuth(app)
+export function getAdminAuth() {
+  return getAuth(getFirebaseAdminApp())
+}
+
+export const adminAuth = new Proxy({} as ReturnType<typeof getAuth>, {
+  get(_target, prop, receiver) {
+    const auth = getAdminAuth()
+    const value = Reflect.get(auth, prop, receiver)
+    return typeof value === 'function' ? value.bind(auth) : value
+  },
+})
 
 /**
  * Firebase Admin Firestore service instance
@@ -174,7 +188,17 @@ export const adminAuth = getAuth(app)
  *
  * @see https://firebase.google.com/docs/firestore/admin/manage-data
  */
-export const adminDb = getFirestore(app)
+export function getAdminDb() {
+  return getFirestore(getFirebaseAdminApp())
+}
+
+export const adminDb = new Proxy({} as ReturnType<typeof getFirestore>, {
+  get(_target, prop, receiver) {
+    const db = getAdminDb()
+    const value = Reflect.get(db, prop, receiver)
+    return typeof value === 'function' ? value.bind(db) : value
+  },
+})
 
 export const isFirebaseAdminFallbackMode = !hasServiceAccount
 
@@ -188,4 +212,12 @@ export const isFirebaseAdminFallbackMode = !hasServiceAccount
  * - Advanced security rules testing
  * - Integration with other Firebase services
  */
-export default app
+const adminApp = new Proxy({} as App, {
+  get(_target, prop, receiver) {
+    const adminApp = getFirebaseAdminApp()
+    const value = Reflect.get(adminApp, prop, receiver)
+    return typeof value === 'function' ? value.bind(adminApp) : value
+  },
+})
+
+export default adminApp

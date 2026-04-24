@@ -15,36 +15,34 @@
 import { Stripe } from 'stripe'
 
 /**
- * Validate Stripe environment variables
+ * Require a Stripe environment variable at runtime.
  *
- * Ensures all required Stripe configuration is present before initializing.
- * Provides clear error messages for missing configuration.
+ * Next.js imports route modules during production builds, so Stripe
+ * configuration must be validated when payment code runs, not when this module
+ * is imported.
  */
-function validateStripeConfig(): void {
-  const missing: string[] = []
+function requireStripeEnv(name: 'STRIPE_SECRET_KEY' | 'STRIPE_PRICE_ID_PRO' | 'STRIPE_WEBHOOK_SECRET'): string {
+  const value = process.env[name]
 
-  if (!process.env.STRIPE_SECRET_KEY) {
-    missing.push('STRIPE_SECRET_KEY')
-  }
-  if (!process.env.STRIPE_PRICE_ID_PRO) {
-    missing.push('STRIPE_PRICE_ID_PRO')
-  }
-  if (!process.env.STRIPE_WEBHOOK_SECRET) {
-    missing.push('STRIPE_WEBHOOK_SECRET')
-  }
-
-  if (missing.length > 0) {
+  if (!value) {
     throw new Error(
-      `Missing required Stripe environment variables: ${missing.join(', ')}.\n` +
+      `Missing required Stripe environment variable: ${name}.\n` +
       'Please check your .env.local file and ensure all Stripe configuration is set.\n' +
       'Run "npm run validate-env" for detailed validation.'
     )
   }
+
+  return value
 }
 
-// Validate configuration on module import (server-side only)
-if (typeof window === 'undefined') {
-  validateStripeConfig()
+let stripeClient: Stripe | null = null
+
+export function getStripeClient(): Stripe {
+  if (!stripeClient) {
+    stripeClient = new Stripe(requireStripeEnv('STRIPE_SECRET_KEY'))
+  }
+
+  return stripeClient
 }
 
 /**
@@ -72,7 +70,13 @@ if (typeof window === 'undefined') {
  * })
  * ```
  */
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!)
+export const stripe = new Proxy({} as Stripe, {
+  get(_target, prop, receiver) {
+    const client = getStripeClient()
+    const value = Reflect.get(client, prop, receiver)
+    return typeof value === 'function' ? value.bind(client) : value
+  },
+})
 
 /**
  * Stripe configuration constants
@@ -94,9 +98,11 @@ export const STRIPE_CONFIG = {
    * Security: Price IDs are not sensitive and can be safely exposed to the client.
    * Uses NEXT_PUBLIC_ prefix for client-side access, falls back to server-only var.
    */
-  PRO_PRICE_ID: (typeof window === 'undefined'
-    ? process.env.STRIPE_PRICE_ID_PRO
-    : process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO) || process.env.STRIPE_PRICE_ID_PRO!,
+  get PRO_PRICE_ID() {
+    return (typeof window === 'undefined'
+      ? process.env.STRIPE_PRICE_ID_PRO
+      : process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO) || requireStripeEnv('STRIPE_PRICE_ID_PRO')
+  },
 
   /**
    * Webhook endpoint secret for signature verification
@@ -110,7 +116,9 @@ export const STRIPE_CONFIG = {
    *
    * @see https://docs.stripe.com/webhooks
    */
-  WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET!,
+  get WEBHOOK_SECRET() {
+    return requireStripeEnv('STRIPE_WEBHOOK_SECRET')
+  },
 
   /**
    * Stripe API version for compatibility
@@ -157,7 +165,9 @@ export const SUBSCRIPTION_TIERS = {
     id: 'pro',
     name: 'ShopMatch Pro',
     description: 'Post unlimited jobs and manage applications',
-    priceId: STRIPE_CONFIG.PRO_PRICE_ID,
+    get priceId() {
+      return STRIPE_CONFIG.PRO_PRICE_ID
+    },
   },
 } as const
 

@@ -39,6 +39,11 @@ export const metadata: Metadata = {
 async function getPublishedJobs(): Promise<{ jobs: Job[]; total: number }> {
   try {
     // In production, use absolute URL; in development, use localhost
+    const configuredBaseUrl = process.env.VERCEL_URL || process.env.NEXT_PUBLIC_APP_URL
+    if (!configuredBaseUrl && process.env.NODE_ENV === 'production') {
+      return { jobs: [], total: 0 }
+    }
+
     const baseUrl =
       process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
