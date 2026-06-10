@@ -2,63 +2,120 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper functions
+    // ──────────────────────────── Helpers ────────────────────────────
+
     function isAuthenticated() {
       return request.auth != null;
     }
 
-    function isOwner(userId) {
+    function isUser(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
+    // Role and subscription come from JWT custom claims set by
+    // /api/users/initialize-claims and the Stripe webhook. Existing users
+    // must have claims backfilled (scripts/backfill-claims.js) before these
+    // rules are deployed.
+    function hasRole(role) {
+      return isAuthenticated() && request.auth.token.role == role;
+    }
+
     function hasActiveSubscription() {
-      return isAuthenticated() &&
-             request.auth.token.subActive == true;
+      return isAuthenticated() && request.auth.token.subActive == true;
     }
 
-    function getUserRole() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    // Canonical ownership lookup: jobs/{jobId} is the single source of truth
+    // for who owns an application. Never trust a client-supplied ownerId.
+    function jobData(jobId) {
+      return get(/databases/$(database)/documents/jobs/$(jobId)).data;
     }
 
-    // Users collection
+    // Keys whose values actually change in this write.
+    function changedKeys() {
+      return request.resource.data.diff(resource.data).affectedKeys();
+    }
+
+    // ──────────────────────────── users ────────────────────────────
+    // Self-only profiles. Billing/entitlement fields are written exclusively
+    // by the server (Stripe webhook via Admin SDK, which bypasses rules).
+
     match /users/{userId} {
-      allow read: if isAuthenticated();
-      allow write: if isOwner(userId);
+      allow read: if isUser(userId);
+
+      allow create: if isUser(userId)
+        && request.resource.data.uid == userId
+        && request.resource.data.role in ['owner', 'seeker']
+        && request.resource.data.subActive == false
+        && !request.resource.data.keys().hasAny(
+             ['stripeCustomerId', 'subscriptionId', 'subscriptionStatus']);
+
+      allow update: if isUser(userId)
+        && !changedKeys().hasAny(
+             ['uid', 'role', 'subActive',
+              'stripeCustomerId', 'subscriptionId', 'subscriptionStatus']);
+
+      allow delete: if false;
     }
 
-    // Jobs collection
+    // ──────────────────────────── jobs ────────────────────────────
+
     match /jobs/{jobId} {
-      // Anyone can read published jobs
-      allow read: if resource.data.status == 'published' ||
-                     isOwner(resource.data.ownerId);
+      // Published jobs are public; owners can read their own in any status.
+      allow read: if resource.data.status == 'published'
+        || isUser(resource.data.ownerId);
 
-      // Only subscription holders can create jobs
-      allow create: if isAuthenticated() &&
-                       hasActiveSubscription() &&
-                       request.resource.data.ownerId == request.auth.uid;
+      // Counters must start at zero; they are only incremented server-side.
+      allow create: if hasRole('owner')
+        && hasActiveSubscription()
+        && request.resource.data.ownerId == request.auth.uid
+        && request.resource.data.get('applicationCount', 0) == 0
+        && request.resource.data.get('viewCount', 0) == 0;
 
-      // Only job owner can update/delete
-      allow update, delete: if isOwner(resource.data.ownerId);
+      // Identity and system counters never change from the client.
+      allow update: if isUser(resource.data.ownerId)
+        && !changedKeys().hasAny(
+             ['ownerId', 'createdAt', 'applicationCount', 'viewCount']);
+
+      allow delete: if isUser(resource.data.ownerId);
     }
 
-    // Applications collection
+    // ──────────────────────────── applications ────────────────────────────
+
     match /applications/{applicationId} {
-      // Job owner can read all applications for their jobs
-      // Seeker can read their own applications
+      // Seekers read their own. Job owners are verified against the canonical
+      // job document, so a spoofed ownerId on an application grants nothing.
       allow read: if isAuthenticated() && (
-                       isOwner(resource.data.seekerId) || isOwner(get(/databases/$(database)/documents/jobs/$(resource.data.jobId)).data.ownerId)
-                     );
+        resource.data.seekerId == request.auth.uid
+        || jobData(resource.data.jobId).ownerId == request.auth.uid
+      );
 
-      // Seekers can create applications
-      allow create: if isAuthenticated() &&
-                       request.resource.data.seekerId == request.auth.uid &&
-                       getUserRole() == 'seeker';
+      // Create: seekers only, for published jobs, with the canonical ownerId
+      // and a clean review state.
+      allow create: if hasRole('seeker')
+        && request.resource.data.seekerId == request.auth.uid
+        && request.resource.data.status == 'pending'
+        && jobData(request.resource.data.jobId).status == 'published'
+        && request.resource.data.ownerId == jobData(request.resource.data.jobId).ownerId
+        && !request.resource.data.keys().hasAny(['notes', 'reviewedAt']);
 
-      // Only job owner can update application status
-      allow update: if isOwner(resource.data.ownerId);
+      // Update: only the canonical job owner reviews; identity fields are
+      // locked by restricting which keys may change.
+      allow update: if isAuthenticated()
+        && jobData(resource.data.jobId).ownerId == request.auth.uid
+        && changedKeys().hasOnly(['status', 'notes', 'updatedAt', 'reviewedAt'])
+        && request.resource.data.status in ['pending', 'reviewed', 'accepted', 'rejected'];
 
-      // Only seeker can delete their own application
-      allow delete: if isOwner(resource.data.seekerId);
+      // Seekers may withdraw their own applications.
+      allow delete: if isUser(resource.data.seekerId);
+    }
+
+    // ──────────────────────────── events ────────────────────────────
+    // Telemetry is written server-side via /api/events (Admin SDK bypasses
+    // rules). Explicit deny documents that clients never touch this
+    // collection directly. (Unmatched paths are denied by default anyway.)
+
+    match /events/{eventId} {
+      allow read, write: if false;
     }
   }
 }
