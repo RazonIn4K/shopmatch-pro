@@ -52,7 +52,9 @@ export async function GET(request: NextRequest) {
     }
 
     const token = authHeader.substring(7)
-    const decodedToken = await adminAuth.verifyIdToken(token)
+    // checkRevoked=true aligns this route with verifyAuth: revoked or
+    // disabled accounts are rejected instead of passing signature checks
+    const decodedToken = await adminAuth.verifyIdToken(token, true)
     const userId = decodedToken.uid
 
     // 2. Verify user role (owner only)
@@ -159,8 +161,15 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error('CSV export error:', error)
 
-    // Don't expose internal errors to client
-    if (error instanceof Error && error.message.includes('auth')) {
+    // Don't expose internal errors to client. Firebase auth failures carry
+    // an `auth/...` code (e.g. auth/id-token-revoked) whose message does not
+    // always contain "auth", so check both.
+    const errorCode = (error as { code?: unknown }).code
+    const isAuthError =
+      (error instanceof Error && error.message.includes('auth')) ||
+      (typeof errorCode === 'string' && errorCode.startsWith('auth/'))
+
+    if (isAuthError) {
       return NextResponse.json(
         { error: 'Authentication failed', message: 'Please sign in and try again' },
         { status: 401 }
