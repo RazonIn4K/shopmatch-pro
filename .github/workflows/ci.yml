@@ -191,7 +191,7 @@ jobs:
 
     - name: Upload first-load report
       if: matrix.node-version == '20.x' && always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: first-load-report
         path: first-load-report.json
@@ -199,7 +199,7 @@ jobs:
 
     - name: Upload build artifacts
       if: matrix.node-version == '20.x'
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: build-output
         path: .next/
@@ -271,7 +271,7 @@ jobs:
 
     - name: Upload accessibility results
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: accessibility-results
         path: playwright-report/
@@ -349,7 +349,7 @@ jobs:
 
     - name: Upload smoke test results
       if: failure()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: smoke-test-results
         path: playwright-report/
@@ -410,7 +410,7 @@ jobs:
 
     - name: Upload smoke test results
       if: failure()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: production-smoke-test-results
         path: playwright-report/
@@ -459,7 +459,7 @@ jobs:
 
     - name: Upload Snyk report
       if: always()
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: snyk-security-report
         path: snyk-report.json
