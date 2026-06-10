@@ -197,7 +197,6 @@ docs/
 
 **Root-Level**:
 - `CLAUDE.md` — AI-powered development guide (1,023 lines)
-- `MVP_IMPLEMENTATION_PLAN.md` — Phase-by-phase feature breakdown
 - `README.md` — Project overview, quick start
 - `CONTRIBUTING.md` — Contribution workflow
 - `DEPLOYMENT.md` — Production deployment guide
@@ -554,7 +553,6 @@ npm run test:a11y
 ### **Reference Architecture**
 1. `docs/ARCHITECTURE.md` — System design, data flows
 2. `docs/adr/` — Architecture Decision Records (why we chose Stripe, Firebase, Vercel)
-3. `MVP_IMPLEMENTATION_PLAN.md` — Phase-by-phase feature breakdown
 
 ---
 

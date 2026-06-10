@@ -1,5 +1,7 @@
 import { defineConfig, devices } from '@playwright/test'
 
+const baseURL = process.env.BASE_URL || 'http://localhost:3000'
+
 /**
  * Playwright Configuration for ShopMatch Pro
  *
@@ -35,7 +37,7 @@ export default defineConfig({
   // Shared settings for all the projects below
   use: {
     // Base URL to use in actions like `await page.goto('/')`
-    baseURL: process.env.BASE_URL || 'http://localhost:3000',
+    baseURL,
     
     // Collect trace when retrying the failed test
     trace: 'on-first-retry',
@@ -49,28 +51,20 @@ export default defineConfig({
 
   // Configure projects for major browsers
   projects: [
-    { name: 'setup', testMatch: /.*auth-setup\.spec\.ts/ },
-    {
-      name: 'public',
-      use: {
-        ...devices['Desktop Chrome'],
-      },
-    },
     {
       name: 'chromium',
-      use: { 
-        ...devices['Desktop Chrome'],
-        storageState: 'playwright/.auth/user.json',
-      },
-      dependencies: ['setup'],
+      use: { ...devices['Desktop Chrome'] },
     },
   ],
 
-  // Run your local dev server before starting the tests
-  webServer: {
-    command: 'doppler run --project firebase-shopmatch --config dev -- npm run dev',
-    url: 'http://localhost:3000',
-    reuseExistingServer: true,
-    timeout: 120 * 1000,
-  },
+  // Run your local dev server before starting the tests.
+  // Skipped when BASE_URL targets a remote deployment (e.g. production smoke tests).
+  webServer: baseURL.includes('localhost')
+    ? {
+        command: 'npm run dev',
+        url: baseURL,
+        reuseExistingServer: true,
+        timeout: 120 * 1000,
+      }
+    : undefined,
 })

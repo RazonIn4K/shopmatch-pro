@@ -339,7 +339,7 @@ jobs:
       run: npx wait-on http://localhost:3000 --timeout 60000
 
     - name: Run smoke tests
-      run: npm run test:e2e -- e2e/smoke.spec.ts --project=public --reporter=line
+      run: npm run test:e2e -- e2e/smoke.spec.ts --reporter=line
       env:
         CI: true
         DEMO_OWNER_EMAIL: ${{ secrets.DEMO_OWNER_EMAIL }}

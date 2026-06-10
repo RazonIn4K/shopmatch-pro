@@ -62,7 +62,6 @@
 
 ## Root-Level Documentation
 - [../CLAUDE.md](../CLAUDE.md) — AI-powered development guide and architecture reference
-- [../MVP_IMPLEMENTATION_PLAN.md](../MVP_IMPLEMENTATION_PLAN.md) — Phase-by-phase feature breakdown, data models, API specs
 - [../README.md](../README.md) — Project overview, quick start, tech stack
 - [../DEPLOYMENT.md](../DEPLOYMENT.md) — Production deployment guide
 
