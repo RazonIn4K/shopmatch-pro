@@ -76,6 +76,13 @@ jobs:
         echo "Validating commit messages for PR #${{ github.event.pull_request.number }}"
         echo ""
 
+        # Skip validation for Dependabot PRs (auto-generated commit messages
+        # use the "deps" prefix), mirroring the branch name validation job
+        if [[ "${{ github.event.pull_request.head.ref }}" =~ ^dependabot/ ]]; then
+          echo "✅ SKIPPED: Dependabot PR (auto-generated commits)"
+          exit 0
+        fi
+
         # Get all commits in the PR
         BASE_SHA="${{ github.event.pull_request.base.sha }}"
         HEAD_SHA="${{ github.event.pull_request.head.sha }}"
