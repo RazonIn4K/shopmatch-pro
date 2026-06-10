@@ -89,8 +89,27 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       )
     }
 
+    // Idempotency guard: Stripe retries failed deliveries and can also send
+    // duplicates, so skip events that have already been fully processed
+    const eventRef = adminDb.collection('processedStripeEvents').doc(event.id)
+    const processedEvent = await eventRef.get()
+
+    if (processedEvent.exists) {
+      console.log(`Skipping already-processed event ${event.id} (${event.type})`)
+      return NextResponse.json({ received: true })
+    }
+
     // Process the verified event
     await processWebhookEvent(event)
+
+    // Mark the event as processed only after success so failed events are
+    // retried. The small race between check and write is acceptable: the
+    // event handlers set absolute values (not deltas), so reprocessing a
+    // duplicate is harmless.
+    await eventRef.set({
+      type: event.type,
+      processedAt: new Date(),
+    })
 
     // Return success response to Stripe
     return NextResponse.json({ received: true })
@@ -134,11 +153,14 @@ async function processWebhookEvent(event: { type: string; data: { object: unknow
         break
 
       default:
+        // No-op: unhandled event types must not throw, or Stripe would
+        // retry them pointlessly for days
         console.log(`Unhandled event type: ${event.type}`)
     }
   } catch (error: unknown) {
     console.error(`Error processing ${event.type}:`, error)
-    // Don't throw - allow webhook to return success to prevent retries
+    // Rethrow so the POST handler returns 500 and Stripe retries the event
+    throw error
   }
 }
 
