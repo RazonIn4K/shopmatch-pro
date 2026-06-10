@@ -67,28 +67,37 @@ stripe trigger checkout.session.completed
 
 ### Application Structure
 
-This is a **Next.js 15 App Router** application with server-first architecture:
+This is a **Next.js 15 App Router** application. Public surfaces are server-rendered for SEO; dashboards and forms are client components:
 
 ```
 src/app/
- (auth)/              # Auth pages (login, signup) - route group
- dashboard/           # Protected dashboards (owner, seeker, analytics)
- jobs/                # Job listing, detail, create, edit pages
- subscribe/           # Stripe subscription flow
- api/                 # Backend API routes (REST endpoints)
-     auth/           # Custom claims initialization
-     jobs/           # Job CRUD operations
-     applications/   # Application management
-     stripe/         # Stripe checkout + webhooks
-     health/         # Health check endpoint
+   (auth)/              # Auth pages (login, signup) - route group
+   dashboard/           # Protected dashboards (owner, seeker, analytics)
+   jobs/                # Job listing (SSR), detail, create, edit pages
+   legal/               # Privacy + terms pages
+   subscribe/           # Stripe subscription flow
+   sitemap.ts/robots.ts # SEO endpoints (fallback-mode aware)
+   api/                 # Backend API routes (REST endpoints)
+       users/          # Custom claims initialization
+       jobs/           # Job CRUD + apply (delegates to src/lib/server)
+       applications/   # Application management + CSV export
+       stripe/         # Stripe checkout, portal, webhook
+       events/         # Client telemetry ingestion
+       health/         # Health check endpoint
+
+src/lib/
+   api/                 # HTTP guards: verifyAuth/assertRole, ApiError, rate limiters
+   server/              # Server data layer - ALL Firestore access (ADR 0004)
+   firebase/            # client.ts (browser SDK) vs admin.ts (service account)
+   contexts/            # AuthContext (client auth state)
 ```
 
 ### Key Architectural Patterns
 
-**1. Server Components by Default**
-- Most pages are server-rendered for SEO and performance
-- Use `'use client'` only for interactivity (forms, auth, dashboards)
-- Server components can fetch data directly in async functions
+**1. Mixed Rendering (SSR where SEO matters)**
+- Public jobs listing is server-rendered (`/jobs`, since #97) plus `sitemap.ts`/`robots.ts`
+- Dashboards, auth pages, and the job detail page are client components (`'use client'`)
+- Known follow-up: convert the job detail page to SSR reusing the data layer (ADR 0004)
 
 **2. Three-Layer Security Model**
 1. **Client-side route guards**: Redirect unauthenticated users
@@ -106,19 +115,25 @@ src/app/
 - Reduces Firestore reads and preserves historical records
 - Trade-off: Must update if source data changes
 
+**5. Server Data Layer (ADR 0004)**
+- ALL Firestore access for domain data lives in `src/lib/server/` (`jobs.ts`, `applications.ts`, `users.ts`)
+- Route handlers keep HTTP concerns only: parsing, Zod validation, auth guards, response shaping
+- Data functions throw `ApiError`; `handleApiError` maps them to HTTP responses
+- New Firestore queries belong in `src/lib/server/`, never inline in routes
+
 ### Authentication Flow (Critical Path)
 
 ```
 1. User submits signup form
-   �
+   ↓
 2. AuthContext.signup() creates Firebase Auth user
-   �
+   ↓
 3. Create Firestore user document in users/ collection
-   �
-4. POST /api/users/initialize-claims � sets JWT custom claims
-   �
-5. user.getIdToken(true) � forces token refresh
-   �
+   ↓
+4. POST /api/users/initialize-claims → sets JWT custom claims
+   ↓
+5. user.getIdToken(true) → forces token refresh
+   ↓
 6. User now has JWT with role and subActive claims
 ```
 
@@ -130,16 +145,16 @@ src/app/
 1. Client: POST /api/stripe/checkout (creates checkout session)
    - Passes userId as client_reference_id
    - Returns checkout URL
-   �
+   ↓
 2. User completes payment on checkout.stripe.com
-   �
+   ↓
 3. Stripe webhook: POST /api/stripe/webhook
    - Event: checkout.session.completed
    - Verifies signature (raw body required)
    - Links Stripe customer ID to user
    - Sets custom claim: subActive = true
    - Updates Firestore user document
-   �
+   ↓
 4. User gains instant access to Pro features
 ```
 
@@ -148,82 +163,83 @@ src/app/
 - Signature verification prevents webhook spoofing
 - Custom claims provide instant access (no DB query needed)
 - Idempotency keys prevent duplicate checkout sessions
+- Webhook events are deduplicated and processing failures rethrow so Stripe retries (#191)
 
 ### Data Flow Patterns
 
 **Job Posting (Owner)**:
 ```typescript
 Client: job-form.tsx (react-hook-form + Zod)
-  � POST /api/jobs with Authorization header
+  → POST /api/jobs with Authorization header
 API: verifyAuth() + assertActiveSubscription()
-  � Firebase Admin SDK
+  → Firebase Admin SDK
 Firestore: Create job document with ownerId, timestamps, counters
-  � Response: Created job
+  → Response: Created job
 Client: router.push(`/jobs/${jobId}`)
 ```
 
 **Job Application (Seeker)**:
 ```typescript
 Client: Apply button on job detail page
-  � POST /api/jobs/[id]/apply
-API: verifyAuth() + assertRole('seeker')
-  � Check: Job exists, is published, no duplicate application
-Firestore: Create application + increment job.applicationCount
-  � Response: Created application with denormalized data
+  → POST /api/jobs/[id]/apply
+API: verifyAuth() + assertRole('seeker') + applicationSubmitLimiter (20/hour)
+  → submitApplication() in src/lib/server/applications.ts
+Firestore TRANSACTION: job exists + published, duplicate checks
+  (deterministic `${jobId}_${uid}` doc ID + legacy jobId/seekerId query),
+  create application + increment job.applicationCount atomically (#190)
+  → Response: Created application with denormalized data
 ```
 
 ### Important Firestore Collections
 
 **users/** - User profiles
-- Fields: `email`, `displayName`, `role` (owner/seeker), `subscriptionActive`, `stripeCustomerId`
-- Rules: Anyone can read, only owner can write own document
+- Fields: `email`, `displayName`, `role` (owner/seeker), `subActive`, `stripeCustomerId`
+- Rules (v2, #188): self-only read/write; billing/entitlement fields (`subActive`) locked from client writes (Stripe webhook sets them via Admin SDK)
 - Indexed: None required (queries by UID only)
 
 **jobs/** - Job postings
-- Fields: `title`, `company`, `location`, `type`, `salary`, `requirements[]`, `skills[]`, `status`, `ownerId`, `applicationCount`, `timestamps`
-- Rules: Anyone reads published jobs, owner reads/writes own jobs
-- Creation requires: `isAuthenticated() && hasActiveSubscription()`
+- Fields: `title`, `company`, `location`, `type`, `salary`, `requirements[]`, `skills[]`, `status`, `ownerId`, `applicationCount`, `viewCount`, `timestamps`
+- Rules (v2): anyone reads published jobs, owner reads/writes own; creation gated on JWT claims
 - Indexed: Composite index on `status + createdAt` for published jobs
 
 **applications/** - Job applications
-- Fields: `jobId`, `seekerId`, `coverLetter`, `status`, denormalized job/seeker data
-- Rules: Seeker reads own, job owner reads applications for their jobs
-- Prevents: Duplicate applications (check in API before creation)
+- Fields: `jobId`, `seekerId`, `ownerId`, `coverLetter`, `status`, denormalized job/seeker data
+- Rules (v2): canonical ownership - `ownerId` is verified against `jobs/{jobId}` (spoofed values rejected); immutable fields locked on update; applications only creatable against published jobs; seekers cannot change status
+- Prevents duplicates: deterministic `${jobId}_${uid}` doc ID + legacy query, inside the submit transaction
 - Updates: Only job owner can change status
+
+**IMPORTANT (ops)**: the v2 rules authorize through JWT custom claims. Existing users must be backfilled (`node scripts/backfill-claims.js`) BEFORE deploying rules to production. There is deliberately no automated rules deploy in CI.
 
 ## Critical Code Patterns
 
 ### API Route Structure
 ```typescript
 // src/app/api/example/route.ts
-import { verifyAuth } from '@/lib/auth/verify-auth'
 import { NextResponse } from 'next/server'
+
+import { assertActiveSubscription, verifyAuth } from '@/lib/api/auth'
+import { ApiError, handleApiError } from '@/lib/api/errors'
+import { createExample } from '@/lib/server/examples'
+import { exampleSchema } from '@/types'
 
 export async function POST(request: Request) {
   try {
-    // 1. Verify authentication
-    const { uid, token } = await verifyAuth(request)
+    // 1. Verify authentication (returns { uid, token, claims })
+    const auth = await verifyAuth(request)
 
-    // 2. Parse and validate input
-    const body = await request.json()
-    const validatedData = ExampleSchema.parse(body)
+    // 2. Check authorization via JWT custom claims
+    assertActiveSubscription(auth) // throws ApiError(403) if !claims.subActive
 
-    // 3. Check authorization (custom claims)
-    if (!token.subActive) {
-      return NextResponse.json(
-        { error: 'Active subscription required' },
-        { status: 403 }
-      )
+    // 3. Parse and validate input
+    const parsed = exampleSchema.safeParse(await request.json())
+    if (!parsed.success) {
+      throw new ApiError('Validation failed', 422, { issues: parsed.error.issues })
     }
 
-    // 4. Business logic with Firebase Admin
-    const result = await adminDb.collection('examples').add({
-      ...validatedData,
-      userId: uid,
-      createdAt: Timestamp.now()
-    })
+    // 4. Delegate ALL Firestore work to the data layer (src/lib/server)
+    const example = await createExample(parsed.data, auth.uid)
 
-    return NextResponse.json({ id: result.id })
+    return NextResponse.json({ example }, { status: 201 })
   } catch (error) {
     return handleApiError(error)
   }
@@ -330,22 +346,27 @@ const onSubmit = async (data: JobFormValues) => {
 - **Location**: `e2e/` directory
 - **Run**: `npm run test:e2e`
 - **Key tests**:
-  - `smoke.spec.ts`: Production smoke tests (runs in CI on every push to main)
-  - `verify-demo-login.spec.ts`: Demo account login validation
-  - `accessibility.spec.ts`: Axe-core a11y tests (zero violations enforced)
-  - `login.spec.ts`: Full authentication flows
+  - `smoke.spec.ts`: Local smoke suite (CI runs it against a mock-config build; authenticated cases skip without demo secrets)
+  - `verify-demo-login.spec.ts`: Production smoke - runs in CI on every push to main against the live deployment
+  - `accessibility.spec.ts`: Axe-core page scans (CI job currently advisory via continue-on-error)
+  - `login.spec.ts`: Login/reset form flows (form behavior only, no real auth assertions)
 - **Test accounts**: owner@test.com / seeker@test.com (password: testtest123)
 
 ### Unit Tests (Jest)
 - **Location**: `__tests__/` or colocated `*.test.ts`
 - **Run**: `npm run test:unit`
-- **Coverage**: Business logic, utilities, custom hooks
-- **Current status**: Minimal - relies on TypeScript for type safety
+- **Current coverage**: login/reset hooks, JobForm interactions + axe, server data-layer helpers (`src/lib/server/__tests__/`)
+- **Gotcha**: `src/lib/csv/__tests__/to-csv.test.ts` uses a custom runner and is EXCLUDED from Jest - run it manually if you touch the CSV utility
+
+### Firestore Rules Tests (emulator)
+- **Run**: `npm run test:rules` (needs Java locally for the emulator)
+- **CI**: dedicated `rules-tests` job runs on every push and PR
+- **Covers**: canonical ownership, immutable field locks, billing-field locks, published-job gating
 
 ### Manual Testing Checklist
-1. Sign up as owner � Subscribe � Create job
-2. Sign up as seeker � Browse jobs � Apply
-3. Owner reviews application � Update status
+1. Sign up as owner → Subscribe → Create job
+2. Sign up as seeker → Browse jobs → Apply
+3. Owner reviews application → Update status
 4. Verify Firestore rules prevent unauthorized access
 5. Test webhook flow with Stripe CLI
 
@@ -365,6 +386,9 @@ const onSubmit = async (data: JobFormValues) => {
 - Next.js production build
 - Bundle size budget (300KB first-load JS limit)
 - Unit tests (Jest)
+
+**Firestore Rules Tests** (all PRs & pushes):
+- `rules-tests` job: `npm run test:rules` against the Firestore emulator (Temurin Java 21)
 
 **Accessibility Tests** (all PRs & pushes):
 - Automated axe-core tests on all pages
@@ -469,10 +493,10 @@ NEXT_PUBLIC_APP_URL=          # e.g., http://localhost:3000 or production URL
 - **Authorization**: Check custom claims (`role`, `subActive`) in API + rules
 - **No secrets in code**: Use environment variables
 - **Webhook signature verification**: Required for Stripe webhooks
-- **Rate limiting**: Future enhancement (not currently implemented)
+- **Rate limiting**: in-memory sliding window in `src/lib/api/rate-limit.ts` - CSV export 5/hour, application submit 20/hour. Per-serverless-instance (best-effort); durable store tracked in ADR 0004 follow-ups
 
 ### Performance
-- **First-load JS budget**: d300KB (enforced in CI)
+- **First-load JS budget**: <=300KB (enforced in CI)
 - **Code splitting**: Use `next/dynamic` for heavy components
 - **Image optimization**: Use `next/image` for all images
 - **ISR caching**: `/jobs` page uses 1-hour revalidation
@@ -504,7 +528,7 @@ createdAt: doc.data().createdAt?.toDate() || new Date()
 **Problem**: API route returns 500 error
 **Solution**: Always return `NextResponse.json()`, not plain objects:
 ```typescript
-// L Wrong
+// WRONG
 return { data: 'value' }
 
 //  Correct
@@ -517,24 +541,14 @@ return NextResponse.json({ data: 'value' })
 
 ### 6. Duplicate Applications Not Prevented
 **Problem**: User can apply to same job multiple times
-**Solution**: API checks for existing application before creation:
-```typescript
-const existing = await adminDb.collection('applications')
-  .where('jobId', '==', jobId)
-  .where('seekerId', '==', uid)
-  .limit(1)
-  .get()
-
-if (!existing.empty) {
-  return NextResponse.json({ error: 'Already applied' }, { status: 400 })
-}
-```
+**Solution**: `submitApplication()` in `src/lib/server/applications.ts` runs a Firestore transaction (#190): deterministic `${jobId}_${uid}` document ID makes duplicates a same-document conflict, a legacy jobId/seekerId query catches old auto-ID applications, and the create + applicationCount increment commit atomically. Do not reintroduce non-transactional duplicate checks.
 
 ## Important Conventions
 
 ### Branch Naming
-- Format: `type/ID-slug` (e.g., `feat/123-stripe-checkout`)
-- Enforced in CI via branch validation job
+- Format: `type/ID-slug` (e.g., `feat/SMP-123-stripe-checkout`)
+- ID requires uppercase letters + 3 or more digits; slug is lowercase-hyphenated
+- Enforced in CI via branch validation job (`feat|fix|perf|sec|docs|test|refactor|ci|build`)
 
 ### Commit Messages
 - Format: `type(scope): description` (Conventional Commits)
@@ -546,8 +560,8 @@ if (!existing.empty) {
 - API routes: `route.ts` in feature directory
 
 ### Import Aliases
-- `@/` � `src/` directory
-- Example: `import { useAuth } from '@/lib/contexts/auth-context'`
+- `@/` → `src/` directory
+- Example: `import { useAuth } from '@/lib/contexts/AuthContext'`
 
 ## Key Documentation
 
@@ -572,12 +586,11 @@ if (!existing.empty) {
 
 ## Architecture Decision Records (ADRs)
 
-Located in `docs/adr/`, these explain key technical choices:
-- Why Next.js App Router over Pages Router
-- Why Firebase over Supabase
-- Why Stripe over other payment processors
-- Why custom claims for subscription status
-- Why denormalization in applications collection
+Located in `docs/adr/`:
+- `0001-payments-stripe.md` - Stripe Checkout + Customer Portal, webhook signature verification
+- `0002-auth-firestore.md` - Firebase Auth + Firestore
+- `0003-hosting-vercel.md` - Vercel hosting
+- `0004-server-data-layer.md` - `src/lib/server` data layer: boundaries, error model, follow-ups
 
 ## Contact & Support
 
@@ -588,6 +601,6 @@ Located in `docs/adr/`, these explain key technical choices:
 
 ---
 
-**Last Updated**: 2025-11-15
-**Next.js Version**: 15.5.6
-**Node.js Version**: e18.x required
+**Last Updated**: 2026-06-10
+**Next.js Version**: 15.5.19
+**Node.js Version**: 20.x in CI; 18.x minimum
