@@ -322,7 +322,14 @@ export async function updateJob(jobId: string, ownerId: string, jobData: JobForm
   return transformJobDocument(updatedDoc)
 }
 
-/** Deletes a job after verifying ownership. */
+/**
+ * Deletes a job after verifying ownership, cascading the delete to its
+ * applications so none are orphaned.
+ *
+ * Applications are deleted first: if a batch fails the job remains and the
+ * delete can simply be retried. Batches are capped at Firestore's 500-write
+ * limit, so the cascade is best-effort cleanup rather than a transaction.
+ */
 export async function deleteJob(jobId: string, ownerId: string): Promise<void> {
   const jobRef = adminDb.collection('jobs').doc(jobId)
   const doc = await jobRef.get()
@@ -336,13 +343,22 @@ export async function deleteJob(jobId: string, ownerId: string): Promise<void> {
     throw new ApiError('You do not have permission to delete this job', 403)
   }
 
+  // Delete associated applications first (no orphans on partial failure)
+  const applicationsSnapshot = await adminDb
+    .collection('applications')
+    .where('jobId', '==', jobId)
+    .select()
+    .get()
+
+  const applicationRefs = applicationsSnapshot.docs.map((appDoc) => appDoc.ref)
+  for (let i = 0; i < applicationRefs.length; i += 500) {
+    const batch = adminDb.batch()
+    for (const ref of applicationRefs.slice(i, i + 500)) {
+      batch.delete(ref)
+    }
+    await batch.commit()
+  }
+
   // Delete the job document
   await jobRef.delete()
-
-  // Optional: Delete associated applications (consider this for production)
-  // const applicationsRef = adminDb.collection('applications')
-  // const applicationsSnapshot = await applicationsRef.where('jobId', '==', id).get()
-  // const batch = adminDb.batch()
-  // applicationsSnapshot.docs.forEach(doc => batch.delete(doc.ref))
-  // await batch.commit()
 }
