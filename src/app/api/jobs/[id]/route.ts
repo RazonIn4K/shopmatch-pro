@@ -1,3 +1,4 @@
+import { FieldValue } from 'firebase-admin/firestore'
 import { NextResponse } from 'next/server'
 
 import { assertActiveSubscription, verifyAuth } from '@/lib/api/auth'
@@ -53,7 +54,7 @@ export async function GET(request: Request, context: RouteContext) {
     // Increment view count for published jobs
     if (jobData.status === 'published') {
       await jobRef.update({
-        viewCount: (jobData.viewCount ?? 0) + 1,
+        viewCount: FieldValue.increment(1),
       })
     }
 
