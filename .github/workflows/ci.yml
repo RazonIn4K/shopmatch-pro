@@ -338,12 +338,14 @@ jobs:
     - name: Wait for server
       run: npx wait-on http://localhost:3000 --timeout 60000
 
+    # Demo credentials are intentionally NOT passed here: this job's server runs
+    # with mock Firebase config, so authenticated flows cannot sign in. The
+    # authenticated smoke tests skip without credentials and run against the real
+    # deployment in the production smoke job instead.
     - name: Run smoke tests
       run: npm run test:e2e -- e2e/smoke.spec.ts --reporter=line
       env:
         CI: true
-        DEMO_OWNER_EMAIL: ${{ secrets.DEMO_OWNER_EMAIL }}
-        DEMO_OWNER_PASSWORD: ${{ secrets.DEMO_OWNER_PASSWORD }}
 
     - name: Upload smoke test results
       if: failure()

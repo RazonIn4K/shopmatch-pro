@@ -18,10 +18,6 @@ test.describe('Smoke Tests', () => {
   }
 
   const authenticatedSmokeSkipReason = () => {
-    if (test.info().project.name === 'public') {
-      return 'Authenticated smoke tests run in the authenticated chromium project only'
-    }
-
     if (secretsMissing) {
       return 'Secrets required: DEMO_OWNER_EMAIL and DEMO_OWNER_PASSWORD'
     }
