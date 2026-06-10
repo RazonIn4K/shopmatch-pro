@@ -1,11 +1,9 @@
-import { FieldValue } from 'firebase-admin/firestore'
 import { NextResponse } from 'next/server'
 
 import { assertActiveSubscription, verifyAuth } from '@/lib/api/auth'
 import { ApiError, handleApiError } from '@/lib/api/errors'
-import { adminDb } from '@/lib/firebase/admin'
+import { deleteJob, getJob, updateJob } from '@/lib/server/jobs'
 import { jobFormSchema } from '@/types'
-import type { Job } from '@/types'
 
 type RouteContext = {
   params: Promise<{
@@ -36,36 +34,7 @@ export async function GET(request: Request, context: RouteContext) {
       }
     }
 
-    // Fetch job from Firestore
-    const jobRef = adminDb.collection('jobs').doc(id)
-    const doc = await jobRef.get()
-
-    if (!doc.exists) {
-      throw new ApiError('Job not found', 404)
-    }
-
-    const jobData = doc.data()!
-
-    // Enforce draft visibility: only owner can view draft jobs
-    if (jobData.status === 'draft' && jobData.ownerId !== authUid) {
-      throw new ApiError('Job not found', 404)
-    }
-
-    // Increment view count for published jobs
-    if (jobData.status === 'published') {
-      await jobRef.update({
-        viewCount: FieldValue.increment(1),
-      })
-    }
-
-    const job: Job = {
-      id: doc.id,
-      ...jobData,
-      createdAt: jobData.createdAt?.toDate?.() ?? jobData.createdAt,
-      updatedAt: jobData.updatedAt?.toDate?.() ?? jobData.updatedAt,
-      publishedAt: jobData.publishedAt?.toDate?.() ?? jobData.publishedAt,
-      expiresAt: jobData.expiresAt?.toDate?.() ?? jobData.expiresAt,
-    } as Job
+    const job = await getJob(id, authUid)
 
     return NextResponse.json({ job })
   } catch (error) {
@@ -93,42 +62,7 @@ export async function PUT(request: Request, context: RouteContext) {
       throw new ApiError('Validation failed', 422, parsed.error.format())
     }
 
-    // Verify job exists and user is owner
-    const jobRef = adminDb.collection('jobs').doc(id)
-    const doc = await jobRef.get()
-
-    if (!doc.exists) {
-      throw new ApiError('Job not found', 404)
-    }
-
-    const existingJob = doc.data()!
-    if (existingJob.ownerId !== auth.uid) {
-      throw new ApiError('You do not have permission to update this job', 403)
-    }
-
-    const now = new Date()
-    const wasPublished = existingJob.status === 'published'
-    const isNowPublished = parsed.data.status === 'published'
-
-    const updates = {
-      ...parsed.data,
-      updatedAt: now,
-      // Set publishedAt only if transitioning from draft to published
-      ...((!wasPublished && isNowPublished) && { publishedAt: now }),
-    }
-
-    await jobRef.update(updates)
-
-    // Retrieve updated document
-    const updatedDoc = await jobRef.get()
-    const job: Job = {
-      id: updatedDoc.id,
-      ...updatedDoc.data(),
-      createdAt: updatedDoc.data()?.createdAt?.toDate?.() ?? updatedDoc.data()?.createdAt,
-      updatedAt: updatedDoc.data()?.updatedAt?.toDate?.() ?? updatedDoc.data()?.updatedAt,
-      publishedAt: updatedDoc.data()?.publishedAt?.toDate?.() ?? updatedDoc.data()?.publishedAt,
-      expiresAt: updatedDoc.data()?.expiresAt?.toDate?.() ?? updatedDoc.data()?.expiresAt,
-    } as Job
+    const job = await updateJob(id, auth.uid, parsed.data)
 
     return NextResponse.json({
       message: 'Job updated successfully',
@@ -147,28 +81,7 @@ export async function DELETE(request: Request, context: RouteContext) {
     const auth = await verifyAuth(request)
     assertActiveSubscription(auth)
 
-    // Verify job exists and user is owner
-    const jobRef = adminDb.collection('jobs').doc(id)
-    const doc = await jobRef.get()
-
-    if (!doc.exists) {
-      throw new ApiError('Job not found', 404)
-    }
-
-    const job = doc.data()!
-    if (job.ownerId !== auth.uid) {
-      throw new ApiError('You do not have permission to delete this job', 403)
-    }
-
-    // Delete the job document
-    await jobRef.delete()
-
-    // Optional: Delete associated applications (consider this for production)
-    // const applicationsRef = adminDb.collection('applications')
-    // const applicationsSnapshot = await applicationsRef.where('jobId', '==', id).get()
-    // const batch = adminDb.batch()
-    // applicationsSnapshot.docs.forEach(doc => batch.delete(doc.ref))
-    // await batch.commit()
+    await deleteJob(id, auth.uid)
 
     return NextResponse.json({
       message: 'Job deleted successfully',

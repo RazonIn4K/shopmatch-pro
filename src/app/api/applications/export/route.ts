@@ -27,9 +27,11 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-import { adminAuth, adminDb } from '@/lib/firebase/admin'
+import { adminAuth } from '@/lib/firebase/admin'
 import { csvExportLimiter } from '@/lib/api/rate-limit'
 import { toCSV, commonTransforms } from '@/lib/csv/to-csv'
+import { getOwnerApplicationsExportData } from '@/lib/server/applications'
+import { getUserRecordSummary } from '@/lib/server/users'
 
 export const runtime = 'nodejs' // Required for Firebase Admin SDK
 
@@ -54,16 +56,15 @@ export async function GET(request: NextRequest) {
     const userId = decodedToken.uid
 
     // 2. Verify user role (owner only)
-    const userDoc = await adminDb.collection('users').doc(userId).get()
-    if (!userDoc.exists) {
+    const user = await getUserRecordSummary(userId)
+    if (!user.exists) {
       return NextResponse.json(
         { error: 'User not found' },
         { status: 404 }
       )
     }
 
-    const userData = userDoc.data()
-    if (userData?.role !== 'owner') {
+    if (user.role !== 'owner') {
       return NextResponse.json(
         { error: 'Only job owners can export applications' },
         { status: 403 }
@@ -96,79 +97,34 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // 4. Fetch all jobs owned by user
-    const jobsSnapshot = await adminDb
-      .collection('jobs')
-      .where('ownerId', '==', userId)
-      .get()
+    // 4. Fetch applications, job titles, and seeker emails via the data layer
+    const exportData = await getOwnerApplicationsExportData(userId)
 
-    if (jobsSnapshot.empty) {
+    if (exportData.kind === 'no-jobs') {
       return NextResponse.json(
         { error: 'No jobs found', message: 'You have not posted any jobs yet' },
         { status: 404 }
       )
     }
 
-    const jobIds = jobsSnapshot.docs.map((doc) => doc.id)
-    const jobTitles = new Map(
-      jobsSnapshot.docs.map((doc) => [doc.id, doc.data().title])
-    )
-
-    // 5. Fetch all applications for these jobs
-    // Note: Firestore 'in' queries support up to 10 items, so batch if needed
-    const applicationsBatches: FirebaseFirestore.DocumentData[] = []
-
-    for (let i = 0; i < jobIds.length; i += 10) {
-      const batch = jobIds.slice(i, i + 10)
-      const applicationsSnapshot = await adminDb
-        .collection('applications')
-        .where('jobId', 'in', batch)
-        .orderBy('createdAt', 'desc')
-        .get()
-
-      applicationsBatches.push(...applicationsSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })))
-    }
-
-    if (applicationsBatches.length === 0) {
+    if (exportData.kind === 'no-applications') {
       return NextResponse.json(
         { error: 'No applications found', message: 'No applications have been submitted to your jobs' },
         { status: 404 }
       )
     }
 
-    // 6. Fetch seeker details (email) for each application
-    const seekerIds = [...new Set(applicationsBatches.map((app) => app.seekerId))]
-    const seekersMap = new Map<string, { email: string }>()
-
-    for (const seekerId of seekerIds) {
-      try {
-        const seekerDoc = await adminDb.collection('users').doc(seekerId).get()
-        if (seekerDoc.exists) {
-          const seekerData = seekerDoc.data()
-          seekersMap.set(seekerId, {
-            email: seekerData?.email || 'N/A',
-          })
-        }
-      } catch (error) {
-        console.error(`Failed to fetch seeker ${seekerId}:`, error)
-        seekersMap.set(seekerId, { email: 'N/A' })
-      }
-    }
-
-    // 7. Map applications to CSV-friendly format
-    const csvData = applicationsBatches.map((app) => ({
-      jobTitle: jobTitles.get(app.jobId) || 'Unknown Job',
-      seekerEmail: seekersMap.get(app.seekerId)?.email || 'N/A',
+    // 5. Map applications to CSV-friendly format
+    const csvData = exportData.applications.map((app) => ({
+      jobTitle: exportData.jobTitles.get(app.jobId) || 'Unknown Job',
+      seekerEmail: exportData.seekers.get(app.seekerId)?.email || 'N/A',
       status: app.status,
       coverLetter: app.coverLetter || '',
       appliedAt: app.createdAt,
       lastUpdated: app.updatedAt,
     }))
 
-    // 8. Generate CSV
+    // 6. Generate CSV
     const csv = toCSV(csvData, {
       columns: {
         jobTitle: 'Job Title',
@@ -187,7 +143,7 @@ export async function GET(request: NextRequest) {
       addBOM: true,
     })
 
-    // 9. Return CSV file
+    // 7. Return CSV file
     const filename = `applications-export-${new Date().toISOString().split('T')[0]}.csv`
 
     return new NextResponse(csv, {

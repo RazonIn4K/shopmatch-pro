@@ -2,18 +2,7 @@ import { NextResponse } from 'next/server'
 
 import { verifyAuth } from '@/lib/api/auth'
 import { ApiError, handleApiError } from '@/lib/api/errors'
-import { adminDb } from '@/lib/firebase/admin'
-import { applicationStatuses } from '@/types'
-import type { Application } from '@/types'
-
-type ApplicationListFilters = {
-  jobId?: string
-  seekerId?: string
-  ownerId?: string
-  status?: (typeof applicationStatuses)[number]
-  page: number
-  limit: number
-}
+import { listApplications, type ApplicationListFilters } from '@/lib/server/applications'
 
 function parseFilters(request: Request, userId: string): ApplicationListFilters {
   const url = new URL(request.url)
@@ -49,49 +38,7 @@ export async function GET(request: Request) {
     const auth = await verifyAuth(request)
     const filters = parseFilters(request, auth.uid)
 
-    const applicationsRef = adminDb.collection('applications')
-    let query: FirebaseFirestore.Query = applicationsRef
-
-    // Apply filters
-    if (filters.jobId) {
-      query = query.where('jobId', '==', filters.jobId)
-    }
-    if (filters.seekerId) {
-      query = query.where('seekerId', '==', filters.seekerId)
-    }
-    if (filters.ownerId) {
-      query = query.where('ownerId', '==', filters.ownerId)
-    }
-    if (filters.status) {
-      query = query.where('status', '==', filters.status)
-    }
-
-    // Order by creation date (descending)
-    query = query.orderBy('createdAt', 'desc')
-
-    // Pagination
-    const offset = (filters.page - 1) * filters.limit
-    query = query.limit(filters.limit).offset(offset)
-
-    const snapshot = await query.get()
-
-    // Get total count for pagination
-    let countQuery: FirebaseFirestore.Query = applicationsRef
-    if (filters.jobId) countQuery = countQuery.where('jobId', '==', filters.jobId)
-    if (filters.seekerId) countQuery = countQuery.where('seekerId', '==', filters.seekerId)
-    if (filters.ownerId) countQuery = countQuery.where('ownerId', '==', filters.ownerId)
-    if (filters.status) countQuery = countQuery.where('status', '==', filters.status)
-
-    const countSnapshot = await countQuery.count().get()
-    const total = countSnapshot.data().count
-
-    const applications: Application[] = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-      createdAt: doc.data().createdAt?.toDate?.() ?? doc.data().createdAt,
-      updatedAt: doc.data().updatedAt?.toDate?.() ?? doc.data().updatedAt,
-      reviewedAt: doc.data().reviewedAt?.toDate?.() ?? doc.data().reviewedAt,
-    })) as Application[]
+    const { applications, total } = await listApplications(filters)
 
     return NextResponse.json({
       applications,
