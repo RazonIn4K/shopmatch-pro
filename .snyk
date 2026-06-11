@@ -4,8 +4,8 @@
 ignore:
   'SNYK-JS-SHOPMATCHPRO-*':
     - 'src/lib/config/env-validator.ts':
-        reason: 'Documentation strings for environment variable validation, not actual secrets'
-        expires: '2026-01-01T00:00:00.000Z'
+        reason: 'Documentation strings for environment variable validation, not actual secrets. Re-verified 2026-06-11.'
+        expires: '2027-01-01T00:00:00.000Z'
 
 # Safe to ignore - test/demo credentials only
   'SNYK-JS-SHOPMATCHPRO-HARDCODED-PASSWORD':
@@ -17,14 +17,14 @@ ignore:
 # Already mitigated - domain validation implemented
   'SNYK-JS-SHOPMATCHPRO-OPEN-REDIRECT':
     - 'src/app/subscribe/page.tsx':
-        reason: 'URL validated against stripe.com domain and HTTPS protocol before redirect'
-        expires: '2026-01-01T00:00:00.000Z'
+        reason: 'URL validated against checkout.stripe.com hostname whitelist and HTTPS protocol before redirect. Re-verified 2026-06-11.'
+        expires: '2027-01-01T00:00:00.000Z'
 
 # Safe to ignore - false positive (blob URL, not user input)
   'SNYK-JS-SHOPMATCHPRO-DOM-XSS':
     - 'src/components/applications-export-button.tsx':
-        reason: 'Creates download link with blob URL from CSV data, not unsanitized user input. Uses createElement, not innerHTML.'
-        expires: '2026-01-01T00:00:00.000Z'
+        reason: 'Creates download link with blob URL from CSV data, not unsanitized user input. Uses createElement, not innerHTML. Re-verified 2026-06-11.'
+        expires: '2027-01-01T00:00:00.000Z'
 
 # Safe to ignore - server-side logging only
   'SNYK-JS-SHOPMATCHPRO-FORMAT-STRING':
