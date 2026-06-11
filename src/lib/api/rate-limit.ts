@@ -218,3 +218,17 @@ export const csvExportLimiter = rateLimiter({
   windowMs: 60 * 60 * 1000, // 1 hour
   maxKeys: 1000, // Track up to 1000 unique users
 })
+
+/**
+ * Pre-configured rate limiter for job application submissions
+ * Limit: 20 submissions per hour per seeker
+ *
+ * Note: the store is in-memory and therefore per-serverless-instance on
+ * Vercel. Treat this as best-effort abuse damping, not a hard guarantee;
+ * a durable store is tracked in ADR 0004 follow-ups.
+ */
+export const applicationSubmitLimiter = rateLimiter({
+  maxRequests: 20,
+  windowMs: 60 * 60 * 1000, // 1 hour
+  maxKeys: 5000, // Track up to 5000 unique seekers
+})

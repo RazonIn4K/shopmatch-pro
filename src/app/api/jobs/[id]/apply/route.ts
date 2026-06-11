@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 
 import { assertRole, verifyAuth } from '@/lib/api/auth'
 import { ApiError, handleApiError } from '@/lib/api/errors'
+import { applicationSubmitLimiter } from '@/lib/api/rate-limit'
 import { submitApplication } from '@/lib/server/applications'
 import { applicationSubmissionSchema } from '@/types'
 
@@ -20,6 +21,32 @@ export async function POST(request: Request, context: RouteContext) {
 
     const auth = await verifyAuth(request)
     assertRole(auth, 'seeker')
+
+    // Rate limit submissions per seeker (best-effort, in-memory per instance)
+    const rateLimitResult = await applicationSubmitLimiter.check(auth.uid)
+    if (!rateLimitResult.allowed) {
+      const retryAfter = Math.ceil((rateLimitResult.reset - Date.now()) / 1000)
+
+      return NextResponse.json(
+        {
+          error: 'Rate limit exceeded',
+          message: `You can submit up to 20 applications per hour. Please try again in ${Math.ceil(retryAfter / 60)} minutes.`,
+          retryAfter,
+          limit: 20,
+          remaining: 0,
+          reset: rateLimitResult.reset,
+        },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(retryAfter),
+            'X-RateLimit-Limit': '20',
+            'X-RateLimit-Remaining': '0',
+            'X-RateLimit-Reset': String(rateLimitResult.reset),
+          },
+        }
+      )
+    }
 
     let payload: unknown
     try {
