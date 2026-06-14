@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-import { assertActiveSubscription, verifyAuth } from '@/lib/api/auth'
+import { assertActiveSubscription, assertRole, verifyAuth } from '@/lib/api/auth'
 import { ApiError, handleApiError } from '@/lib/api/errors'
 import { isMissingIndexError } from '@/lib/server/firestore'
 import { createJob, listJobs, type JobListFilters } from '@/lib/server/jobs'
@@ -111,6 +111,9 @@ async function parseAndValidateJobPayload(request: Request) {
 export async function POST(request: Request) {
   try {
     const auth = await verifyAuth(request)
+    // Only owners may post jobs. The data layer uses the Admin SDK (bypassing
+    // firestore.rules), so this role gate must be enforced here too.
+    assertRole(auth, 'owner')
     assertActiveSubscription(auth)
 
     const jobPayload = await parseAndValidateJobPayload(request)
