@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-import { assertActiveSubscription, verifyAuth } from '@/lib/api/auth'
+import { assertActiveSubscription, assertRole, verifyAuth } from '@/lib/api/auth'
 import { ApiError, handleApiError } from '@/lib/api/errors'
 import { deleteJob, getJob, updateJob } from '@/lib/server/jobs'
 import { jobFormSchema } from '@/types'
@@ -48,6 +48,7 @@ export async function PUT(request: Request, context: RouteContext) {
     assertJobId(id)
 
     const auth = await verifyAuth(request)
+    assertRole(auth, 'owner')
     assertActiveSubscription(auth)
 
     let payload: unknown
@@ -79,6 +80,7 @@ export async function DELETE(request: Request, context: RouteContext) {
     assertJobId(id)
 
     const auth = await verifyAuth(request)
+    assertRole(auth, 'owner')
     assertActiveSubscription(auth)
 
     await deleteJob(id, auth.uid)
