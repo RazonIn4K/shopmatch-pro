@@ -43,15 +43,22 @@ function formatSalary(job: Job) {
 }
 
 function formatDate(value: Job['createdAt']) {
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    month: 'numeric',
+    day: 'numeric',
+    year: 'numeric',
+    timeZone: 'UTC',
+  })
+
   if (!value) return 'Just now'
   if (value instanceof Date) {
-    return value.toLocaleDateString()
+    return formatter.format(value)
   }
   // Firestore Timestamp compatibility.
   if (typeof value === 'object' && value !== null && 'toDate' in value && typeof value.toDate === 'function') {
-    return value.toDate().toLocaleDateString()
+    return formatter.format(value.toDate())
   }
-  return new Date(value as string).toLocaleDateString()
+  return formatter.format(new Date(value as string))
 }
 
 function statusLabel(status: JobStatus) {
