@@ -1,6 +1,6 @@
 # Demo Setup Guide
 
-This guide will help you set up a fully functional demo for https://shopmatch-pro.vercel.app/
+This guide will help you set up a fully functional demo for https://shopmatch.highencodelearning.com/
 
 ## Quick Start (5 minutes)
 
@@ -12,7 +12,7 @@ npm run create-demo-users
 npm run seed-demo-data
 
 # 3. Verify everything works
-BASE_URL=https://shopmatch-pro.vercel.app npm run test:e2e
+BASE_URL=https://shopmatch.highencodelearning.com npm run test:e2e
 ```
 
 ## Prerequisites
@@ -115,10 +115,10 @@ Run the E2E test suite to verify everything works:
 
 ```bash
 # Test against production
-BASE_URL=https://shopmatch-pro.vercel.app npm run test:e2e
+BASE_URL=https://shopmatch.highencodelearning.com npm run test:e2e
 
 # Or test specific flows
-BASE_URL=https://shopmatch-pro.vercel.app npx playwright test demo-flows.spec.ts
+BASE_URL=https://shopmatch.highencodelearning.com npx playwright test demo-flows.spec.ts
 ```
 
 **All tests should pass:**
@@ -189,10 +189,10 @@ npm run create-demo-users
 
 ## Verifying on Production
 
-After setup, manually test these flows on https://shopmatch-pro.vercel.app/:
+After setup, manually test these flows on https://shopmatch.highencodelearning.com/:
 
 ### Test Employer Account
-1. Go to https://shopmatch-pro.vercel.app/login
+1. Go to https://shopmatch.highencodelearning.com/login
 2. Login with `owner@test.com` / `testtest123`
 3. Should redirect to dashboard
 4. Should see posted jobs
@@ -209,7 +209,7 @@ After setup, manually test these flows on https://shopmatch-pro.vercel.app/:
 
 ### Test Public Browsing
 1. Logout (if logged in)
-2. Go to https://shopmatch-pro.vercel.app/jobs
+2. Go to https://shopmatch.highencodelearning.com/jobs
 3. Should see 6 sample jobs (no login required)
 4. Click on a job to view details
 
@@ -227,7 +227,7 @@ npm run seed-demo-data
 ## Maintenance
 
 ### Weekly Checks
-- Run E2E tests: `BASE_URL=https://shopmatch-pro.vercel.app npm run test:e2e`
+- Run E2E tests: `BASE_URL=https://shopmatch.highencodelearning.com npm run test:e2e`
 - Verify demo credentials still work
 - Check that jobs are visible
 
@@ -239,7 +239,7 @@ npm run seed-demo-data
 ### When Deploying Changes
 1. Run local tests: `npm run test:e2e`
 2. Deploy to Vercel
-3. Run production tests: `BASE_URL=https://shopmatch-pro.vercel.app npm run test:e2e`
+3. Run production tests: `BASE_URL=https://shopmatch.highencodelearning.com npm run test:e2e`
 4. Manually verify key flows
 
 ## Scripts Reference

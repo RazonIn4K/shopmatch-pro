@@ -89,16 +89,16 @@ After enabling both dashboards, generate sample traffic:
 # Run these commands from your terminal:
 
 # Test API routes (server-side tracing)
-curl https://shopmatch-pro.vercel.app/api/health
-curl https://shopmatch-pro.vercel.app/api/health
-curl https://shopmatch-pro.vercel.app/api/health
+curl https://shopmatch.highencodelearning.com/api/health
+curl https://shopmatch.highencodelearning.com/api/health
+curl https://shopmatch.highencodelearning.com/api/health
 
 # Open pages in browser (client-side tracing + analytics)
 # Visit these URLs in your browser:
-# 1. https://shopmatch-pro.vercel.app/
-# 2. https://shopmatch-pro.vercel.app/jobs
-# 3. https://shopmatch-pro.vercel.app/login
-# 4. https://shopmatch-pro.vercel.app/dashboard
+# 1. https://shopmatch.highencodelearning.com/
+# 2. https://shopmatch.highencodelearning.com/jobs
+# 3. https://shopmatch.highencodelearning.com/login
+# 4. https://shopmatch.highencodelearning.com/dashboard
 
 # Total: Generate ~10-15 page views across different routes
 ```
@@ -234,7 +234,7 @@ vercel env add NEXT_PUBLIC_SENTRY_DSN production
 
 **Checks**:
 1. Verify you're viewing the **Production** deployment (not Preview)
-2. Check you visited the production URL (shopmatch-pro.vercel.app)
+2. Check you visited the production URL (shopmatch.highencodelearning.com)
 3. Wait 10-15 minutes for initial data processing
 4. Disable ad blockers when testing (they may block analytics)
 
@@ -356,8 +356,8 @@ Add to your calendar (every Monday):
 - Analytics: https://vercel.com/razs-projects-29d4f2e6/shopmatch-pro/analytics
 
 **Production Site**:
-- Homepage: https://shopmatch-pro.vercel.app/
-- Health Check: https://shopmatch-pro.vercel.app/api/health
+- Homepage: https://shopmatch.highencodelearning.com/
+- Health Check: https://shopmatch.highencodelearning.com/api/health
 
 ---
 

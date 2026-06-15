@@ -163,7 +163,7 @@ Based on the Pre-Launch Checklist from CLAUDE.md, here's the current state:
 
 ### Current Production State
 
-**Production URL**: https://shopmatch-pro.vercel.app (or custom domain if configured)
+**Production URL**: https://shopmatch.highencodelearning.com
 
 **Environment Variables** (Verified in Vercel Production):
 - ✅ `NEXT_PUBLIC_SENTRY_DSN` (configured 6 days ago)
@@ -261,7 +261,7 @@ robots: {
 2. **Production Environment Verification**
    ```bash
    # Test production deployment
-   curl https://shopmatch-pro.vercel.app/api/health
+   curl https://shopmatch.highencodelearning.com/api/health
 
    # Verify Sentry is receiving events
    # Visit: https://sentry.io/organizations/davidortizhighencodelearningco/projects/

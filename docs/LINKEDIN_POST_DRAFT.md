@@ -31,7 +31,7 @@ Next.js 15 • TypeScript • Firebase (Auth + Firestore) • Stripe • Tailwin
 💡 Key Achievement:
 Built a sophisticated security scanning pipeline that caught and fixed a moderate-severity prototype pollution vulnerability, achieving and maintaining zero dependencies vulnerabilities.
 
-🔗 Live Demo: https://shopmatch-pro.vercel.app
+🔗 Live Demo: https://shopmatch.highencodelearning.com
 📂 GitHub: https://github.com/RazonIn4K/shopmatch-pro
 🎬 Walkthrough: [Your Loom Link]
 
@@ -90,7 +90,7 @@ Here's how I built ShopMatch Pro - a SaaS job board showcasing modern full-stack
 
 The full CI/CD pipeline, documentation, and source code are available on GitHub.
 
-🔗 Live: https://shopmatch-pro.vercel.app
+🔗 Live: https://shopmatch.highencodelearning.com
 📂 Code: https://github.com/RazonIn4K/shopmatch-pro
 
 What security or CI/CD practices have you found most valuable in your projects?
@@ -140,7 +140,7 @@ The result? A production-ready SaaS platform with:
 ✅ Analytics dashboard
 ✅ Comprehensive testing and monitoring
 
-🔗 Check it out: https://shopmatch-pro.vercel.app
+🔗 Check it out: https://shopmatch.highencodelearning.com
 📂 Source: https://github.com/RazonIn4K/shopmatch-pro
 
 What's been your biggest learning from building production applications?
@@ -185,7 +185,7 @@ My automated security pipeline caught a moderate-severity prototype pollution vu
 🚀 The stack:
 Next.js 15, TypeScript, Firebase (Auth + Firestore), Stripe, Tailwind CSS v4, Playwright, Snyk
 
-🔗 Try it live: https://shopmatch-pro.vercel.app
+🔗 Try it live: https://shopmatch.highencodelearning.com
 📂 Code + docs: https://github.com/RazonIn4K/shopmatch-pro
 
 If you're building production apps, what's been your most valuable lesson?
@@ -231,7 +231,7 @@ Perfect for:
 • Anyone interested in modern web architecture
 
 🎥 Watch the demo: [Your Loom Link]
-💻 Try it live: https://shopmatch-pro.vercel.app
+💻 Try it live: https://shopmatch.highencodelearning.com
 📂 View source: https://github.com/RazonIn4K/shopmatch-pro
 
 Questions about any part of the architecture? Drop them in the comments!
@@ -279,7 +279,7 @@ The platform now features:
 • Analytics dashboard
 • Zero security vulnerabilities
 
-🔗 Live demo: https://shopmatch-pro.vercel.app
+🔗 Live demo: https://shopmatch.highencodelearning.com
 📂 Full source + docs: https://github.com/RazonIn4K/shopmatch-pro
 
 What's the best engineering decision you've made recently?

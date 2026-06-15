@@ -12,7 +12,7 @@ Run this daily for the first week:
 
 ```bash
 # 1. Check production health endpoint
-curl -s https://shopmatch-pro.vercel.app/api/health | jq '.'
+curl -s https://shopmatch.highencodelearning.com/api/health | jq '.'
 
 # Expected: status: "ok", all checks: true, missingCount: 0
 
@@ -22,7 +22,7 @@ vercel ls --prod
 # Expected: Latest deployment is "READY"
 
 # 3. View recent logs for errors
-vercel logs https://shopmatch-pro.vercel.app --since 24h | grep -i "error"
+vercel logs https://shopmatch.highencodelearning.com --since 24h | grep -i "error"
 
 # Expected: No critical errors
 
@@ -102,7 +102,7 @@ stripe events list --limit 10
 **Health Endpoint**
 ```bash
 # Run daily
-curl -s https://shopmatch-pro.vercel.app/api/health | jq '{
+curl -s https://shopmatch.highencodelearning.com/api/health | jq '{
   status: .status,
   firebase: .checks.firebase,
   stripe: .checks.stripe,
@@ -151,10 +151,10 @@ vercel ls --prod | head -5
 **Check Application Errors**
 ```bash
 # Errors in last 24 hours
-vercel logs https://shopmatch-pro.vercel.app --since 24h | grep -i "error" | wc -l
+vercel logs https://shopmatch.highencodelearning.com --since 24h | grep -i "error" | wc -l
 
 # Critical errors
-vercel logs https://shopmatch-pro.vercel.app --since 24h | grep -i "critical"
+vercel logs https://shopmatch.highencodelearning.com --since 24h | grep -i "critical"
 ```
 
 **Expected:**
@@ -369,8 +369,8 @@ stripe events list --limit 50 | jq '.data[] | select(.pending_webhooks > 0)'
 ## 📞 **Contacts & Resources**
 
 ### **Key URLs**
-- Production: https://shopmatch-pro.vercel.app
-- Health Check: https://shopmatch-pro.vercel.app/api/health
+- Production: https://shopmatch.highencodelearning.com
+- Health Check: https://shopmatch.highencodelearning.com/api/health
 - Vercel Dashboard: https://vercel.com/your-account/shopmatch-pro
 - Stripe Dashboard: https://dashboard.stripe.com/test/dashboard
 - Firebase Console: https://console.firebase.google.com/project/shopmatch-pro

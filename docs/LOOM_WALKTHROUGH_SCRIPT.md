@@ -8,7 +8,7 @@
 
 ## 🎬 Pre-Recording Checklist
 
-- [ ] Open https://shopmatch-pro.vercel.app in browser
+- [ ] Open https://shopmatch.highencodelearning.com in browser
 - [ ] Have Stripe test card ready: `4242 4242 4242 4242`
 - [ ] Close unnecessary tabs/notifications
 - [ ] Test audio levels
@@ -239,7 +239,7 @@
 > - Comprehensive CI/CD automation
 > - Production deployment and monitoring
 
-> The live application is deployed at shopmatch-pro.vercel.app, and all the code is available on GitHub with detailed documentation.
+> The live application is deployed at shopmatch.highencodelearning.com, and all the code is available on GitHub with detailed documentation.
 
 > Thank you for watching! If you'd like to discuss this project or explore working together, feel free to reach out."
 

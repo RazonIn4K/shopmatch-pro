@@ -39,11 +39,11 @@ Before starting, verify these are complete:
    - Go to https://vercel.com/your-account/shopmatch-pro
    - Click on "Deployments" tab
    - Look for the production deployment (marked with ⭐)
-   - Copy the URL (e.g., `https://shopmatch-pro.vercel.app`)
+   - Copy the URL (e.g., `https://shopmatch.highencodelearning.com`)
 
 2. **Set environment variable** (recommended):
    ```bash
-   export PROD_URL="https://shopmatch-pro.vercel.app"  # Replace with your URL
+   export PROD_URL="https://shopmatch.highencodelearning.com"  # Replace with your URL
    ```
 
 ---
@@ -92,7 +92,7 @@ curl -sS "$PROD_URL/api/health" | jq .
 
 2. **Add Endpoint**:
    - Click "Add endpoint"
-   - URL: `https://shopmatch-pro.vercel.app/api/stripe/webhook` (your production URL)
+   - URL: `https://shopmatch.highencodelearning.com/api/stripe/webhook` (your production URL)
    - Description: "ShopMatch Pro - Production Subscriptions"
 
 3. **Select Events**:

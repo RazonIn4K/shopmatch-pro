@@ -6,7 +6,7 @@
 
 > **Portfolio Project**: A production-grade SaaS job board platform demonstrating full-stack development capabilities, modern authentication & payment systems, and professional development practices.
 
-**Live Demo:** [shopmatch-pro-razs-projects-29d4f2e6.vercel.app](https://shopmatch-pro-razs-projects-29d4f2e6.vercel.app) | **Portfolio:** [View Showcase →](./docs/PORTFOLIO_SHOWCASE.md)
+**Live Demo:** [shopmatch.highencodelearning.com](https://shopmatch.highencodelearning.com) | **Portfolio:** [View Showcase →](./docs/PORTFOLIO_SHOWCASE.md)
 
 ## 🎯 Project Purpose
 
@@ -441,7 +441,7 @@ curl http://localhost:3000/api/stripe/checkout
 
 ## 🚀 Live Deployment
 
-**Production Site:** [shopmatch-pro.vercel.app](https://shopmatch-pro.vercel.app)
+**Production Site:** [shopmatch.highencodelearning.com](https://shopmatch.highencodelearning.com)
 
 **Test Accounts:**
 ```
@@ -525,7 +525,7 @@ See [FUTURE_ROADMAP.md](./docs/FUTURE_ROADMAP.md) for complete feature roadmap.
 **Interested in working together?**
 - Review the [Portfolio Showcase](./docs/PORTFOLIO_SHOWCASE.md) for detailed technical achievements
 - Explore the [Architecture Documentation](./docs/ARCHITECTURE.md) to see system design
-- Check out the [live demo](https://shopmatch-pro.vercel.app) to see it in action
+- Check out the [live demo](https://shopmatch.highencodelearning.com) to see it in action
 
 **For Employers:** This project demonstrates my ability to build production-grade applications from concept to deployment.
 

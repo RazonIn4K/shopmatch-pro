@@ -2,8 +2,8 @@
 
 > **Demonstrating Full-Stack SaaS Development Capabilities with Modern AI-Assisted Workflow**
 
-**Live Demo:** https://shopmatch-pro.vercel.app  
-**GitHub:** https://github.com/RazonIn4K/shopmatch-pro  
+**Live Demo:** https://shopmatch.highencodelearning.com
+**GitHub:** https://github.com/RazonIn4K/shopmatch-pro
 **Status:** ✅ Production-Ready MVP (Test Mode)
 
 ---
@@ -462,35 +462,35 @@ export async function POST(request: NextRequest) {
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
+
     // Helper functions
     function isAuthenticated() {
       return request.auth != null;
     }
-    
+
     function isOwner() {
       return request.auth.token.role == 'owner';
     }
-    
+
     function hasValidSubscription() {
       return request.auth.token.subscriptionStatus == 'pro';
     }
-    
+
     // Job postings
     match /jobs/{jobId} {
       allow read: if true; // Public access
-      allow create: if isAuthenticated() 
-                    && isOwner() 
+      allow create: if isAuthenticated()
+                    && isOwner()
                     && hasValidSubscription();
-      allow update, delete: if isAuthenticated() 
+      allow update, delete: if isAuthenticated()
                             && isOwner()
                             && resource.data.ownerId == request.auth.uid;
     }
-    
+
     // Applications
     match /applications/{applicationId} {
       allow create: if isAuthenticated();
-      allow read: if isAuthenticated() 
+      allow read: if isAuthenticated()
                   && (request.auth.uid == resource.data.applicantId
                       || request.auth.uid == resource.data.ownerId);
       allow update: if isAuthenticated()
@@ -575,7 +575,7 @@ Showcases effective use of modern AI development tools:
 
 ## 📞 Project Links
 
-- **Live Demo:** https://shopmatch-pro.vercel.app
+- **Live Demo:** https://shopmatch.highencodelearning.com
 - **GitHub Repository:** https://github.com/RazonIn4K/shopmatch-pro
 - **Documentation:** See `/docs` folder in repository
 
@@ -657,20 +657,20 @@ ZIP: Any 5 digits
 
 **ShopMatch Pro demonstrates my ability to:**
 
-✅ **Build Complete Applications** - From concept to production deployment  
-✅ **Integrate Complex Systems** - Auth, payments, real-time data, webhooks  
-✅ **Write Production-Grade Code** - Security, performance, type safety, error handling  
-✅ **Follow Best Practices** - Modern patterns, clean architecture, comprehensive docs  
-✅ **Solve Real Problems** - Authentication flows, payment processing, data security  
-✅ **Work Independently** - Self-directed project management and execution  
-✅ **Leverage Modern Tools** - AI-assisted development without sacrificing quality  
+✅ **Build Complete Applications** - From concept to production deployment
+✅ **Integrate Complex Systems** - Auth, payments, real-time data, webhooks
+✅ **Write Production-Grade Code** - Security, performance, type safety, error handling
+✅ **Follow Best Practices** - Modern patterns, clean architecture, comprehensive docs
+✅ **Solve Real Problems** - Authentication flows, payment processing, data security
+✅ **Work Independently** - Self-directed project management and execution
+✅ **Leverage Modern Tools** - AI-assisted development without sacrificing quality
 
 **This project proves I can deliver professional-quality software that's ready for real users.**
 
 ---
 
-**Built by:** David Ortiz  
-**Technologies:** Next.js 15, TypeScript, Firebase, Stripe, Vercel, Tailwind CSS  
-**Status:** ✅ Production-Ready (Test Mode)  
-**Purpose:** Portfolio demonstration of full-stack SaaS development capabilities  
+**Built by:** David Ortiz
+**Technologies:** Next.js 15, TypeScript, Firebase, Stripe, Vercel, Tailwind CSS
+**Status:** ✅ Production-Ready (Test Mode)
+**Purpose:** Portfolio demonstration of full-stack SaaS development capabilities
 **Last Updated:** October 2025

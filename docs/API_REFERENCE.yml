@@ -24,7 +24,7 @@ info:
 servers:
   - url: http://localhost:3000
     description: Local development server
-  - url: https://shopmatch-pro.vercel.app
+  - url: https://shopmatch.highencodelearning.com
     description: Production server (example - replace with actual domain)
 
 tags:

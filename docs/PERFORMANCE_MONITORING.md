@@ -142,7 +142,7 @@ Bundle budget is enforced in CI:
 4. Check transaction sample rate (should be 0.1 in production)
 5. Force a transaction:
    ```bash
-   curl https://shopmatch-pro.vercel.app/api/health
+   curl https://shopmatch.highencodelearning.com/api/health
    ```
 
 **Debug Mode** (development only):

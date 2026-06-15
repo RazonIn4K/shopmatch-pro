@@ -141,7 +141,7 @@ After deploying to production:
 
 1. **Trigger a test error on production**:
    ```bash
-   curl "https://shopmatch-pro.vercel.app/api/sentry-test?error=true"
+   curl "https://shopmatch.highencodelearning.com/api/sentry-test?error=true"
    ```
 
 2. **Verify in Sentry**:
@@ -207,13 +207,13 @@ Look for Sentry initialization in Vercel deployment logs:
 
 ```bash
 # Health check
-curl https://shopmatch-pro.vercel.app/api/health | jq .
+curl https://shopmatch.highencodelearning.com/api/health | jq .
 
 # Sentry test endpoint
-curl https://shopmatch-pro.vercel.app/api/sentry-test | jq .
+curl https://shopmatch.highencodelearning.com/api/sentry-test | jq .
 
 # Trigger test error
-curl "https://shopmatch-pro.vercel.app/api/sentry-test?error=true" | jq .
+curl "https://shopmatch.highencodelearning.com/api/sentry-test?error=true" | jq .
 ```
 
 ### 3. Monitor Real Errors

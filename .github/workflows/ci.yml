@@ -411,7 +411,7 @@ jobs:
       run: npx playwright install --with-deps chromium
 
     - name: Run production smoke tests
-      run: BASE_URL=https://shopmatch-pro.vercel.app npx playwright test e2e/verify-demo-login.spec.ts --reporter=line
+      run: BASE_URL=https://shopmatch.highencodelearning.com npx playwright test e2e/verify-demo-login.spec.ts --reporter=line
       env:
         CI: true
 

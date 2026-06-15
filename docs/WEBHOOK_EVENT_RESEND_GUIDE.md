@@ -84,7 +84,7 @@ if (!userDocRef) {
 3. **Resend the Event:**
    - Click on the event row
    - Scroll to the **"Webhooks"** section
-   - Find the webhook endpoint: `https://shopmatch-pro.vercel.app/api/stripe/webhook`
+   - Find the webhook endpoint: `https://shopmatch.highencodelearning.com/api/stripe/webhook`
    - Click the **"Resend"** button next to the endpoint
    - Confirm the resend
 
@@ -131,7 +131,7 @@ After resending the event, verify the fix worked:
 ### **1. Check Vercel Logs**
 ```bash
 # View recent logs
-vercel logs https://shopmatch-pro.vercel.app --follow
+vercel logs https://shopmatch.highencodelearning.com --follow
 
 # Look for this success message:
 # "✅ Activated subscription access for user z1yTp5jKIHZMVi3i4auU92uot4c2"
@@ -210,14 +210,14 @@ grep "z1yTp5jKIHZMVi3i4auU92uot4c2" users.json
 
 **Login as the user:**
 ```
-URL: https://shopmatch-pro.vercel.app/login
+URL: https://shopmatch.highencodelearning.com/login
 Email: playwright.final.test@example.com
 Password: TestPassword123!
 ```
 
 **Navigate to job creation:**
 ```
-https://shopmatch-pro.vercel.app/jobs/new
+https://shopmatch.highencodelearning.com/jobs/new
 ```
 
 **Expected Result:**
@@ -248,7 +248,7 @@ https://shopmatch-pro.vercel.app/jobs/new
 **Debug Steps:**
 ```bash
 # Check Vercel logs for detailed error
-vercel logs https://shopmatch-pro.vercel.app --since 10m
+vercel logs https://shopmatch.highencodelearning.com --since 10m
 
 # Verify environment variables
 vercel env ls production | grep -E "(FIREBASE|STRIPE)"
@@ -334,7 +334,7 @@ If resending doesn't work, create a fresh test:
 
 2. **Sign up as new user:**
    ```
-   https://shopmatch-pro.vercel.app/signup
+   https://shopmatch.highencodelearning.com/signup
    ```
 
 3. **Complete subscription:**
