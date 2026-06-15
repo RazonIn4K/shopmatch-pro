@@ -1,10 +1,13 @@
 import { Metadata } from 'next'
 
 import { JobCard } from '@/components/job-card'
+import { getAppBaseUrl } from '@/lib/env'
 import { listJobs } from '@/lib/server/jobs'
 import type { Job } from '@/types'
 
 export const revalidate = 3600
+
+const jobsUrl = `${getAppBaseUrl()}/jobs`
 
 // Generate SEO-optimized metadata for the jobs page
 export const metadata: Metadata = {
@@ -16,7 +19,7 @@ export const metadata: Metadata = {
     description:
       'Explore thousands of job opportunities in tech, design, marketing, and more. Find your dream job with ShopMatch Pro.',
     type: 'website',
-    url: 'https://shopmatch-pro.vercel.app/jobs',
+    url: jobsUrl,
     images: [
       {
         url: '/og-image-jobs.png',
@@ -34,7 +37,7 @@ export const metadata: Metadata = {
     images: ['/og-image-jobs.png'],
   },
   alternates: {
-    canonical: 'https://shopmatch-pro.vercel.app/jobs',
+    canonical: jobsUrl,
   },
 }
 

@@ -16,13 +16,25 @@ const APP_ID = 'app-001';
 
 let testEnv;
 
+function getFirestoreEmulatorHost() {
+  const hostPort = process.env.FIRESTORE_EMULATOR_HOST || '';
+  const [host, port] = hostPort.split(':');
+
+  return {
+    host: host || 'localhost',
+    port: Number(port || process.env.FIRESTORE_EMULATOR_PORT || 8085),
+  };
+}
+
 async function setup() {
+  const emulator = getFirestoreEmulatorHost();
+
   testEnv = await initializeTestEnvironment({
     projectId: 'shopmatch-pro-test',
     firestore: {
       rules: require('fs').readFileSync('firestore.rules', 'utf8'),
-      host: 'localhost',
-      port: 8080
+      host: emulator.host,
+      port: emulator.port
     }
   });
 }

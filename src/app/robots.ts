@@ -1,5 +1,7 @@
 import { MetadataRoute } from 'next'
 
+import { getAppBaseUrl } from '@/lib/env'
+
 /**
  * Generate robots.txt for search engine crawlers
  * Allows all crawlers and points to sitemap
@@ -7,7 +9,7 @@ import { MetadataRoute } from 'next'
  * @see https://nextjs.org/docs/app/api-reference/file-conventions/metadata/robots
  */
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://shopmatch-pro.vercel.app'
+  const baseUrl = getAppBaseUrl()
 
   return {
     rules: {

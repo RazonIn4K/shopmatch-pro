@@ -28,7 +28,7 @@
     "test:unit": "jest",
     "test:unit:watch": "jest --watch",
     "test:unit:coverage": "jest --coverage",
-    "test:rules": "firebase emulators:exec --only firestore --project shopmatch-pro-test \"node test-firestore-rules.js\""
+    "test:rules": "node scripts/run-firestore-rules-tests.js"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.10",

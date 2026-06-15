@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 
+import { getAppBaseUrl } from '@/lib/env'
 import { adminDb, isFirebaseAdminFallbackMode } from '@/lib/firebase/admin'
 
 /**
@@ -9,7 +10,7 @@ import { adminDb, isFirebaseAdminFallbackMode } from '@/lib/firebase/admin'
  * @see https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://shopmatch-pro.vercel.app'
+  const baseUrl = getAppBaseUrl()
 
   // Fetch all published jobs for dynamic URLs
   const publishedJobs = await getPublishedJobIds()
