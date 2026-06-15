@@ -1,7 +1,10 @@
 import { Metadata } from 'next'
 
 import { JobCard } from '@/components/job-card'
+import { listJobs } from '@/lib/server/jobs'
 import type { Job } from '@/types'
+
+export const revalidate = 3600
 
 // Generate SEO-optimized metadata for the jobs page
 export const metadata: Metadata = {
@@ -38,37 +41,13 @@ export const metadata: Metadata = {
 // Server-side data fetching
 async function getPublishedJobs(): Promise<{ jobs: Job[]; total: number }> {
   try {
-    // In production, use absolute URL; in development, use localhost
-    const configuredBaseUrl = process.env.VERCEL_URL || process.env.NEXT_PUBLIC_APP_URL
-    if (!configuredBaseUrl && process.env.NODE_ENV === 'production') {
-      return { jobs: [], total: 0 }
-    }
-
-    const baseUrl =
-      process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-
-    // Fetch jobs with a 1-hour revalidation period.
-    // This serves static pages from the cache for performance and re-fetches
-    // in the background if data is older than 1 hour.
-    const response = await fetch(`${baseUrl}/api/jobs?status=published&limit=100`, {
-      next: { revalidate: 3600 }, // Revalidate every hour
-      headers: {
-        'Content-Type': 'application/json',
-      },
+    const { jobs, total } = await listJobs({
+      status: 'published',
+      page: 1,
+      limit: 100,
     })
 
-    if (!response.ok) {
-      console.error(`Failed to fetch jobs: ${response.status} ${response.statusText}`)
-      return { jobs: [], total: 0 }
-    }
-
-    const data = await response.json()
-    return {
-      jobs: data.jobs || [],
-      total: data.pagination?.total || 0,
-    }
+    return { jobs, total }
   } catch (error) {
     console.error('Error fetching jobs:', error)
     return { jobs: [], total: 0 }
