@@ -6,7 +6,7 @@
 
 > **Portfolio Project**: A production-grade SaaS job board platform demonstrating full-stack development capabilities, modern authentication & payment systems, and professional development practices.
 
-**Live Demo:** [shopmatch-pro.vercel.app](https://shopmatch-pro.vercel.app) | **Portfolio:** [View Showcase →](./docs/PORTFOLIO_SHOWCASE.md)
+**Live Demo:** [shopmatch-pro-razs-projects-29d4f2e6.vercel.app](https://shopmatch-pro-razs-projects-29d4f2e6.vercel.app) | **Portfolio:** [View Showcase →](./docs/PORTFOLIO_SHOWCASE.md)
 
 ## 🎯 Project Purpose
 
@@ -27,7 +27,7 @@
 ### **Technical Highlights** 💡
 
 - ⚡ **Performance**: 176.9 KB first-load JS (41% under budget), ~3s builds with Turbopack
-- 🔒 **Security**: Zero npm vulnerabilities (verified 2025-11-16), Firebase security rules, Stripe webhook verification, RBAC, type-safe APIs
+- 🔒 **Security**: No high/critical npm advisories; Firebase/Google transitive advisories tracked in [Security Documentation](./docs/SECURITY.md), plus Firestore rules, Stripe webhook verification, RBAC, and type-safe APIs
 - 🛡️ **CI/CD**: 6-job automated pipeline (build, lint, test, a11y, smoke tests, security scan), branch protection, conventional commits
 - 🎨 **Modern Stack**: Next.js 15, TypeScript 5.7, Tailwind v4, shadcn/ui
 - 🧪 **Quality**: Zero ESLint errors, TypeScript strict mode, Playwright E2E tests, accessibility verified

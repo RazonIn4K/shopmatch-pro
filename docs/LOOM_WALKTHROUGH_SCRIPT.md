@@ -197,7 +197,7 @@
 
 > **[Show GitHub repo or README]**
 
-> **Security**: This project has **zero npm vulnerabilities**, verified through automated npm audit and Snyk scanning in the CI pipeline. I fixed a moderate-severity prototype pollution vulnerability in a transitive dependency using npm overrides.
+> **Security**: This project has automated npm audit and Snyk scanning in the CI pipeline. There are no high or critical npm advisories; the remaining moderate findings are tracked Firebase/Google transitive advisories, not app-code findings.
 
 > **CI/CD Pipeline**: Every pull request runs through a 6-job automated pipeline that includes:
 > - Branch and commit validation enforcing naming conventions

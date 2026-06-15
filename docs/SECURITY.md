@@ -22,14 +22,28 @@
 - Pre-merge Security Checklist (see TESTING.md & PR template)
 - Quarterly landscape & dependency review (SBOM/license)
 
-## Dependency Backlog (last triaged: 2026-06-09)
+## Dependency Backlog (last triaged: 2026-06-15)
 
-Status after the 2026-06 dependency sweep (`npm audit`: 0 vulnerabilities):
+Status after the 2026-06-15 dependency sweep (`npm audit`: 7 moderate, 0 high, 0 critical):
 
 **Fixed**
 - `next` 15.5.19 — cleared all App Router/middleware advisories (`<=15.5.16` range)
-- `fast-uri`, `fast-xml-builder`, `protobufjs`, `ws` — transitive bumps via `npm audit fix`
+- `fast-uri`, `fast-xml-builder`, `protobufjs`, `ws` — transitive bumps via the earlier June sweep
+- `js-yaml`, `joi`, `form-data`, Babel packages, and Google client transitive packages — refreshed via `npm audit fix`
+- `firebase-admin` 13.10.0 -> 14.0.0 — current Admin SDK line for Node 22+ runtimes
 - `actions/upload-artifact` v4 → v7 — Node 24 Actions runtime cutover (2026-06-16)
+
+**Tracked residuals**
+- `firebase-admin` -> `@google-cloud/storage` -> `retry-request` / `teeny-request` -> `uuid`
+  - Current npm remediation suggests downgrading `firebase-admin` to 10.3.0, which would move the app off the current Admin SDK line and is not an acceptable production fix.
+  - ShopMatch server code imports Admin App/Auth/Firestore only; Admin Storage is not used by the current runtime paths.
+- `firebase-tools` -> `gaxios` -> `uuid`
+  - Current npm remediation suggests downgrading `firebase-tools` to 13.13.3. The local CLI is intentionally kept current because rules testing and emulator commands depend on it.
+  - `firebase-tools` is a development dependency and is not part of the Vercel runtime bundle.
+
+**Next action**
+- Keep Dependabot/Snyk enabled and take the upstream Firebase/Google client updates when they resolve these chains without SDK downgrades.
+- Do not add broad `uuid` overrides for Firebase internals; a previous override was removed because it affected Firebase Admin runtime compatibility.
 
 **Superseded (safe to close/delete)**
 - Dependabot PRs #172, #173, #177, #185, #189 — covered by the bumps above

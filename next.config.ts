@@ -1,8 +1,12 @@
 import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
+import path from "node:path";
 
 const nextConfig: NextConfig = {
   // TypeScript checking enabled - all type errors must be fixed
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
 };
 
 const sentryAuthToken = process.env.SENTRY_AUTH_TOKEN;
