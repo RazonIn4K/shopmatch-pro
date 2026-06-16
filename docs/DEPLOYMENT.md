@@ -93,7 +93,7 @@ These are **sensitive** and only used server-side:
 |----------|--------------|-------|
 | `FIREBASE_PROJECT_ID` | Firebase Console | Same as client project ID |
 | `FIREBASE_CLIENT_EMAIL` | Service Account JSON | Format: `firebase-adminsdk-xxxxx@project-id.iam.gserviceaccount.com` |
-| `FIREBASE_PRIVATE_KEY` | Service Account JSON | **Important**: Paste entire key including `-----BEGIN PRIVATE KEY-----` |
+| `FIREBASE_PRIVATE_KEY` | Service Account JSON | **Important**: Paste the complete PEM private key value |
 
 **How to Get Service Account**:
 1. Firebase Console → Project Settings → Service Accounts
@@ -430,7 +430,7 @@ curl https://your-domain.com/api/health | jq .
    - `FIREBASE_CLIENT_EMAIL`
    - `FIREBASE_PRIVATE_KEY`
 2. For `FIREBASE_PRIVATE_KEY`, ensure:
-   - Includes `-----BEGIN PRIVATE KEY-----`
+   - Includes the complete PEM header and footer
    - Includes `-----END PRIVATE KEY-----`
    - Contains `\n` characters (don't replace with actual newlines)
 3. Redeploy after adding/fixing variables

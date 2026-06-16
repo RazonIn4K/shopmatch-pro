@@ -41,7 +41,7 @@ Use these claims on camera:
 - "GitHub Dependabot has zero open alerts, and the production dependency audit is clean."
 - "The full audit still tracks three dev-only Firebase Tools/OpenTelemetry moderate advisories, documented in `docs/SECURITY.md`; they are not in the Vercel runtime bundle."
 - "Latest CI is green for build, typecheck, unit tests, Firestore rules, local smoke, production smoke, accessibility, Snyk, and CodeQL."
-- "GitLab is configured as a secondary security-scanning mirror. The local GitLab remote has been manually verified; automatic GitHub-to-GitLab mirroring still needs the `GITLAB_MIRROR_TOKEN` repository secret."
+- "GitLab is configured as a secondary security-scanning mirror. The local GitLab remote is manually synced to the latest reviewed commit; automatic GitHub-to-GitLab mirroring still needs the `GITLAB_MIRROR_TOKEN` repository secret."
 - "The deployed public pages and auth pages were browser-checked at desktop and mobile widths with no horizontal overflow; the authenticated dashboard checks pass in the production build."
 - "The demo has a refreshed favicon, app icon, web manifest, and social preview card that match the current ShopMatch palette."
 - "Legacy application rows degrade cleanly in the dashboard instead of exposing incomplete Firestore snapshot fields."
@@ -149,7 +149,7 @@ Key points:
 - Production smoke tests run against `shopmatch.highencodelearning.com`.
 - Dependabot has zero open alerts.
 - Production audit is clean; remaining full-audit advisories are dev-only Firebase Tools/OpenTelemetry and documented.
-- The GitLab mirror workflow is green but intentionally skips until the `GITLAB_MIRROR_TOKEN` secret is added.
+- GitLab `main` is manually synced to the latest reviewed commit; automatic mirroring now fails loudly until the `GITLAB_MIRROR_TOKEN` secret is added.
 
 ### 4:30-5:00 - Close
 

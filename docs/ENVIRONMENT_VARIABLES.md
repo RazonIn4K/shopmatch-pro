@@ -125,11 +125,11 @@ Uses `gcloud` CLI authentication. Not portable across environments. See [src/lib
 |----------|---------|-------------|
 | `FIREBASE_PROJECT_ID` | `my-project-id` | Must match Client SDK project ID |
 | `FIREBASE_CLIENT_EMAIL` | `firebase-adminsdk-xxxxx@my-project.iam.gserviceaccount.com` | Service account email |
-| `FIREBASE_PRIVATE_KEY` | `"-----BEGIN PRIVATE KEY-----\n..."` | Private key with escaped newlines |
+| `FIREBASE_PRIVATE_KEY` | `"<escaped Firebase private key>"` | Private key with escaped newlines |
 
 **Critical**: The private key must include `\n` characters for newlines. It should look like:
 ```bash
-FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQ...\n-----END PRIVATE KEY-----\n"
+FIREBASE_PRIVATE_KEY="<paste escaped private key from service account JSON>"
 ```
 
 ### Firebase Security Configuration
@@ -185,7 +185,7 @@ Stripe integration requires API keys and webhook secrets for subscription manage
 | Variable | Example | Description |
 |----------|---------|-------------|
 | `STRIPE_SECRET_KEY` | `sk_test_51Abc...` | Stripe API secret key (server-side) |
-| `STRIPE_WEBHOOK_SECRET` | `whsec_abc123...` | Webhook signing secret for verification |
+| `STRIPE_WEBHOOK_SECRET` | `<Stripe webhook signing secret>` | Webhook signing secret for verification |
 | `STRIPE_PRICE_ID_PRO` | `price_1Abc...` | Price ID for Pro subscription tier |
 
 ### Getting Webhook Secret
@@ -370,24 +370,22 @@ npm start          # Start production server
 
 **Fix**:
 1. Ensure private key includes `\n` characters (not literal newlines)
-2. Key should start with `"-----BEGIN PRIVATE KEY-----\n`
-3. Key should end with `\n-----END PRIVATE KEY-----\n"`
+2. Key should preserve the PEM header from the JSON value.
+3. Key should preserve the PEM footer from the JSON value.
 4. Entire key should be wrapped in double quotes
 
 **Example (correct)**:
 ```bash
-FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQ...\n-----END PRIVATE KEY-----\n"
+FIREBASE_PRIVATE_KEY="<paste escaped private key from service account JSON>"
 ```
 
 **Example (incorrect)**:
 ```bash
 # Missing quotes
-FIREBASE_PRIVATE_KEY=-----BEGIN PRIVATE KEY-----\n...
+FIREBASE_PRIVATE_KEY=<unquoted escaped private key>
 
 # Missing \n escapes
-FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----
-MIIEvQIBADANBgkqhkiG9w0BAQ...
------END PRIVATE KEY-----"
+FIREBASE_PRIVATE_KEY="<private key value with literal line breaks>"
 ```
 
 #### "Firebase Admin SDK not initialized"

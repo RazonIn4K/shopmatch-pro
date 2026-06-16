@@ -155,7 +155,7 @@ gcloud auth application-default login --project=shopmatch-pro
 Or add service account credentials to `.env.local`:
 ```
 FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxxx@shopmatch-pro.iam.gserviceaccount.com
-FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
+FIREBASE_PRIVATE_KEY="<paste escaped private key from service account JSON>"
 ```
 
 ### Issue: "Demo owner account not found"

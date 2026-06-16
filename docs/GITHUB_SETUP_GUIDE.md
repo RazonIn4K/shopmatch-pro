@@ -128,7 +128,7 @@ Enable GitHub's built-in security scanning and dependency management.
 **Test push protection** (optional):
 ```bash
 # This should be blocked
-echo "STRIPE_SECRET_KEY=sk_live_51A1B2C3D4E5" > test-secret.txt
+echo "STRIPE_SECRET_KEY=<temporary_real_test_secret>" > test-secret.txt
 git add test-secret.txt
 git commit -m "test: Secret detection"
 git push

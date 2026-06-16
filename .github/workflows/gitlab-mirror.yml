@@ -19,12 +19,14 @@ jobs:
         run: |
           if [ -z "${GITLAB_TOKEN}" ]; then
             echo "available=false" >> "$GITHUB_OUTPUT"
-            echo "::warning::GITLAB_MIRROR_TOKEN is not configured; skipping GitLab mirror."
+            echo "::error::GITLAB_MIRROR_TOKEN is required for GitLab mirroring on main."
             {
-              echo "## GitLab mirror skipped"
+              echo "## GitLab mirror failed"
               echo ""
               echo "Set the GitHub Actions secret \`GITLAB_MIRROR_TOKEN\` to enable mirroring to \`gitlab.com/razonin4k/shopmatch-pro-ci\`."
+              echo "Until then, use the documented manual SSH sync fallback and verify both remotes point at the same commit."
             } >> "$GITHUB_STEP_SUMMARY"
+            exit 1
           else
             echo "available=true" >> "$GITHUB_OUTPUT"
           fi

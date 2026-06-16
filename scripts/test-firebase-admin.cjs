@@ -91,7 +91,7 @@ try {
     console.error('\n🔧 PRIVATE KEY ISSUE DETECTED!')
     console.error('   Your FIREBASE_PRIVATE_KEY may have formatting issues.')
     console.error('\n   Expected format in .env.local:')
-    console.error('   FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\\nMIIE...\\n-----END PRIVATE KEY-----\\n"')
+    console.error('   FIREBASE_PRIVATE_KEY="<paste escaped private key from service account JSON>"')
     console.error('\n   Make sure:')
     console.error('   1. The key is wrapped in double quotes')
     console.error('   2. Newlines are represented as \\n (backslash-n)')

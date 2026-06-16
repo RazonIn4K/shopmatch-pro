@@ -111,7 +111,7 @@ stripe listen --forward-to localhost:3000/api/stripe/webhook
 **Option B: Use a placeholder** (webhook won't work, but app will run):
 ```bash
 # Use this temporary value in .env.local:
-# STRIPE_WEBHOOK_SECRET=whsec_placeholder_for_testing
+# STRIPE_WEBHOOK_SECRET=whsec_
 ```
 
 ---
@@ -140,11 +140,11 @@ NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789:web:abcdef
 # ===== Firebase Admin (Server-Side, from service account JSON) =====
 FIREBASE_PROJECT_ID=your-project-id
 FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxxx@your-project.iam.gserviceaccount.com
-FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_KEY_HERE\n-----END PRIVATE KEY-----\n"
+FIREBASE_PRIVATE_KEY="<paste escaped private key from service account JSON>"
 
 # ===== Stripe (Test Mode) =====
 STRIPE_SECRET_KEY=sk_test_your_secret_key
-STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
+STRIPE_WEBHOOK_SECRET=<your_stripe_webhook_secret>
 STRIPE_PRICE_ID_PRO=price_your_price_id
 
 # ===== App Configuration =====
@@ -269,7 +269,7 @@ stripe trigger checkout.session.completed
 
 **Fix**:
 - If using Stripe CLI: Copy the secret from `stripe listen` output
-- If testing without webhooks: Use placeholder `whsec_placeholder`
+- If testing without webhooks: Use placeholder `whsec_`
 - **Note**: Webhooks won't work with placeholder, but app will run
 
 ### Error: "Port 3000 already in use"

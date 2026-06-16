@@ -8,11 +8,12 @@ The mirror is driven by `.github/workflows/gitlab-mirror.yml` on every push to `
 
 Current behavior:
 - If the GitHub Actions secret `GITLAB_MIRROR_TOKEN` is configured, the workflow pushes `main` and tags to `gitlab.com/razonin4k/shopmatch-pro-ci`.
-- If `GITLAB_MIRROR_TOKEN` is missing, the workflow exits successfully with a warning and records `GitLab mirror skipped` in the step summary. This keeps GitHub CI green while making it clear that GitLab scanning did not receive a new commit.
+- If `GITLAB_MIRROR_TOKEN` is missing, the workflow fails and records `GitLab mirror failed` in the step summary. A skipped mirror must not look like a successful GitLab sync.
 
 Operational status as of 2026-06-16:
-- `GITLAB_MIRROR_TOKEN` is not present in the GitHub repository secret list, so automatic mirroring currently skips.
+- `GITLAB_MIRROR_TOKEN` is not present in the GitHub repository secret list, so automatic mirroring is blocked until the secret is added.
 - The local SSH remote named `gitlab` is reachable and can push `main` directly.
+- Manual SSH sync verified GitLab `main` at `7207ce9bccff7833390485b8432500cae9442335`.
 - After any local manual sync, verify the GitHub and GitLab heads match before treating GitLab scanners as current.
 
 To enable real mirroring:
@@ -21,7 +22,7 @@ To enable real mirroring:
 2. In GitHub, go to `RazonIn4K/shopmatch-pro` -> Settings -> Secrets and variables -> Actions.
 3. Add a repository secret named `GITLAB_MIRROR_TOKEN`.
 4. Re-run the `Mirror to GitLab` workflow or push a new commit to `main`.
-5. Verify the workflow log contains the `git push gitlab main --follow-tags` step and no skip warning.
+5. Verify the workflow log contains the `git push gitlab main --follow-tags` step and no missing-secret failure.
 
 Local verification commands:
 

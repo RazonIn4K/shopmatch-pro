@@ -648,7 +648,7 @@ ZIP: Any 5 digits
 
 ### Technical Debt
 - [ ] Implement caching strategy
-- [ ] Promote GitLab mirroring from skipped to active by adding `GITLAB_MIRROR_TOKEN`
+- [ ] Add `GITLAB_MIRROR_TOKEN` so GitLab mirroring runs automatically instead of relying on manual SSH sync
 - [ ] Recheck Firebase Tools/OpenTelemetry dev-only advisories when upstream releases a non-downgrade fix
 - [ ] Expand authenticated Playwright coverage with stable local demo secrets
 

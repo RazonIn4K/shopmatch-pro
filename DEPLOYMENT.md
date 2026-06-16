@@ -447,11 +447,11 @@ NEXT_PUBLIC_FIREBASE_APP_ID=1:123456789:web:abcdef
 # ===== Firebase Admin (Server-Side) =====
 FIREBASE_PROJECT_ID=shopmatch-pro-prod
 FIREBASE_CLIENT_EMAIL=firebase-adminsdk-xxxxx@shopmatch-pro-prod.iam.gserviceaccount.com
-FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nYOUR_PRODUCTION_KEY\n-----END PRIVATE KEY-----\n"
+FIREBASE_PRIVATE_KEY="<paste escaped private key from production service account JSON>"
 
 # ===== Stripe (Production Mode) =====
-STRIPE_SECRET_KEY=sk_live_your_production_secret_key
-STRIPE_WEBHOOK_SECRET=whsec_your_production_webhook_secret
+STRIPE_SECRET_KEY=<your_live_stripe_secret_key>
+STRIPE_WEBHOOK_SECRET=<your_stripe_webhook_secret>
 STRIPE_PRICE_ID_PRO=price_your_production_price_id
 
 # ===== Application Configuration =====
@@ -845,7 +845,7 @@ npm run build
 **Solution**:
 - Ensure private key has escaped newlines (`\n` not actual newlines)
 - In Vercel, paste the entire key including quotes
-- Example: `"-----BEGIN PRIVATE KEY-----\nMIIE..."`
+- Example: `"<paste escaped private key from service account JSON>"`
 
 ### Environment Variables Not Working
 

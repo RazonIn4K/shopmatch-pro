@@ -34,7 +34,7 @@ Based on the Pre-Launch Checklist from CLAUDE.md, here's the current state:
 | **SEO Meta Tags** | ✅ Implemented | Comprehensive meta tags in `layout.tsx` (OG, Twitter, canonical) |
 | **Accessibility Audit** | ✅ Passing | Zero violations on 4 tested pages (homepage, dashboard, subscribe, login) |
 | **Bundle Budget** | ✅ Compliant | ≤ 300 KB first-load JS enforced via CI |
-| **Security Scanning** | ✅ Active | CodeQL + Snyk + Dependabot active; FOSSA configured with license rescan pending |
+| **Security Scanning** | ✅ Active | CodeQL + Snyk + Dependabot active; FOSSA analysis wired in CI with dashboard policy mediation pending |
 | **CI/CD Pipeline** | ✅ Green | Latest main commit passing all checks |
 
 ### 🔄 Recommended Enhancements (Optional)
