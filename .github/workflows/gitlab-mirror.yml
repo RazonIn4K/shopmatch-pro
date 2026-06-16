@@ -8,14 +8,31 @@ on:
 jobs:
   mirror:
     runs-on: ubuntu-latest
+    env:
+      GITLAB_TOKEN: ${{ secrets.GITLAB_MIRROR_TOKEN }}
     steps:
+      - name: Check mirror credentials
+        id: mirror-token
+        run: |
+          if [ -z "${GITLAB_TOKEN}" ]; then
+            echo "available=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::GITLAB_MIRROR_TOKEN is not configured; skipping GitLab mirror."
+            {
+              echo "## GitLab mirror skipped"
+              echo ""
+              echo "Set the GitHub Actions secret \`GITLAB_MIRROR_TOKEN\` to enable mirroring to \`gitlab.com/razonin4k/shopmatch-pro-ci\`."
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "available=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@v5
+        if: steps.mirror-token.outputs.available == 'true'
         with:
           fetch-depth: 0
 
       - name: Push to GitLab
-        env:
-          GITLAB_TOKEN: ${{ secrets.GITLAB_MIRROR_TOKEN }}
+        if: steps.mirror-token.outputs.available == 'true'
         run: |
           git remote add gitlab "https://oauth2:${GITLAB_TOKEN}@gitlab.com/razonin4k/shopmatch-pro-ci.git"
           git push gitlab main --follow-tags
