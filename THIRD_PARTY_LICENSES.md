@@ -8,35 +8,35 @@ This document lists all third-party software dependencies used in ShopMatch Pro 
 
 ShopMatch Pro is licensed under the **MIT License** (see [LICENSE](./LICENSE)). All third-party dependencies have been reviewed for license compatibility with MIT and commercial use.
 
-> **2025-10-17 Update**: Active FOSSA license alerts were reviewed and cleared. Detailed findings are documented in [`docs/FOSSA_LICENSE_REVIEW_2025-10-17.md`](./docs/FOSSA_LICENSE_REVIEW_2025-10-17.md).
+> **2026-06-16 Update**: Active FOSSA license alerts were reviewed and mediated in [docs/FOSSA_LICENSE_REVIEW_2026-06-16.md](./docs/FOSSA_LICENSE_REVIEW_2026-06-16.md).
 > **2026-04-24 Update**: Dependency versions and FOSSA override locators were refreshed after the audit advisory update.
 
 ### Key Licensing Decisions
 
 1. **node-forge**: This library is dual-licensed `(BSD-3-Clause OR GPL-2.0)`. **We elect to use it under the BSD-3-Clause license**, which is fully compatible with commercial and proprietary software.
 
-2. **glob (logo only)**: The glob package code is ISC licensed. Only the glob logo artwork is CC-BY-SA-4.0. Since ShopMatch Pro does not use or distribute the glob logo, this does not affect our licensing.
+2. **glob/highlight.js artwork only**: The relevant package code is permissively licensed. FOSSA's CC-BY-SA-4.0 detections are for non-code artwork/assets. ShopMatch Pro does not use or distribute those assets, so this does not affect application licensing.
 
 ---
 
 ## Direct Dependencies
 
-**Note**: Versions listed are as of 2026-04-24. See `package.json` for current versions.
+**Note**: Versions listed are as of 2026-06-16. See `package.json` for current versions.
 
 ### Core Framework & Runtime
 
 | Package | Version | License | Purpose |
 |---------|---------|---------|---------|
-| `next` | 15.5.15 | MIT | React framework for production |
-| `react` | 19.2.0 | MIT | UI library |
-| `react-dom` | 19.2.0 | MIT | React DOM renderer |
+| `next` | 15.5.19 | MIT | React framework for production |
+| `react` | 19.2.7 | MIT | UI library |
+| `react-dom` | 19.2.7 | MIT | React DOM renderer |
 
 ### Authentication & Database
 
 | Package | Version | License | Purpose | Notes |
 |---------|---------|---------|---------|-------|
-| `firebase` | 12.6.0 | Apache-2.0 | Client-side Firebase SDK | Authentication, Firestore |
-| `firebase-admin` | 13.8.0 | Apache-2.0 | Server-side Firebase SDK | Admin operations, token verification |
+| `firebase` | 12.14.0 | Apache-2.0 | Client-side Firebase SDK | Authentication, Firestore |
+| `firebase-admin` | 13.10.0 | Apache-2.0 | Server-side Firebase SDK | Admin operations, token verification |
 
 **Transitive Dependency Note**:
 - `firebase-admin` → `node-forge@1.4.0` (BSD-3-Clause chosen from dual-license)
@@ -45,36 +45,36 @@ ShopMatch Pro is licensed under the **MIT License** (see [LICENSE](./LICENSE)). 
 
 | Package | Version | License | Purpose |
 |---------|---------|---------|---------|
-| `stripe` | 19.3.1 | MIT | Server-side Stripe SDK |
-| `@stripe/stripe-js` | 8.4.0 | MIT | Client-side Stripe SDK |
+| `stripe` | 22.2.1 | MIT | Server-side Stripe SDK |
+| `@stripe/stripe-js` | 9.8.0 | MIT | Client-side Stripe SDK |
 
 ### UI Components & Styling
 
 | Package | Version | License | Purpose |
 |---------|---------|---------|---------|
-| `@radix-ui/react-dialog` | 1.1.15 | MIT | Accessible dialog primitives |
-| `@radix-ui/react-label` | 2.1.8 | MIT | Accessible label primitives |
-| `@radix-ui/react-slot` | 1.2.4 | MIT | Composition utility |
-| `@headlessui/react` | 2.2.9 | MIT | Unstyled accessible UI |
-| `lucide-react` | 0.553.0 | ISC | Icon library |
+| `@radix-ui/react-dialog` | 1.1.17 | MIT | Accessible dialog primitives |
+| `@radix-ui/react-label` | 2.1.10 | MIT | Accessible label primitives |
+| `@radix-ui/react-slot` | 1.2.5 | MIT | Composition utility |
+| `@headlessui/react` | 2.2.10 | MIT | Unstyled accessible UI |
+| `lucide-react` | 0.577.0 | ISC | Icon library |
 | `next-themes` | 0.4.6 | MIT | Theme management |
 
 ### Forms & Validation
 
 | Package | Version | License | Purpose |
 |---------|---------|---------|---------|
-| `react-hook-form` | 7.66.0 | MIT | Form state management |
-| `@hookform/resolvers` | 5.2.2 | MIT | Form validation resolvers |
-| `zod` | 4.1.12 | MIT | Schema validation |
+| `react-hook-form` | 7.79.0 | MIT | Form state management |
+| `@hookform/resolvers` | 5.4.0 | MIT | Form validation resolvers |
+| `zod` | 4.4.3 | MIT | Schema validation |
 
 ### Utilities
 
 | Package | Version | License | Purpose |
 |---------|---------|---------|---------|
 | `clsx` | 2.1.1 | MIT | Conditional classNames |
-| `tailwind-merge` | 3.3.1 | MIT | Merge Tailwind classes |
+| `tailwind-merge` | 3.6.0 | MIT | Merge Tailwind classes |
 | `class-variance-authority` | 0.7.1 | Apache-2.0 | Component variants |
-| `dotenv` | 17.2.3 | BSD-2-Clause | Environment variables |
+| `dotenv` | 17.4.2 | BSD-2-Clause | Environment variables |
 | `react-hot-toast` | 2.6.0 | MIT | Toast notifications |
 | `sonner` | 2.0.7 | MIT | Toast notifications |
 
@@ -134,7 +134,7 @@ The following packages contain LGPL-3.0-or-later licensed code (libvips image pr
 
 **Status**: ✅ **Acceptable for commercial use**
 
-**Package**: `next` (15.5.15)
+**Package**: `next` (15.5.19)
 **License**: Contains some MPL-2.0 licensed code
 **Depth**: Direct dependency
 
@@ -212,6 +212,13 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **Logo License**: CC-BY-SA-4.0 (artwork only)
 **Why This Is Safe**: ShopMatch Pro uses the glob **code** (ISC licensed, permissive), not the glob logo artwork. The CC-BY-SA-4.0 license applies only to the visual artwork (logo image), which is not used, imported, or distributed in this application. The ISC license is fully compatible with commercial use.
 
+### highlight.js (via firebase-tools)
+
+**Package**: `highlight.js@10.7.3`
+**Code License**: BSD-3-Clause
+**FOSSA Finding**: CC-BY-SA-4.0
+**Why This Is Safe**: `highlight.js` code is BSD-3-Clause licensed. The CC-BY-SA-4.0 detection is for non-code artwork/assets in the dependency chain. ShopMatch Pro does not import `highlight.js` directly and does not use or distribute the flagged artwork.
+
 ---
 
 ## Development Dependencies
@@ -221,17 +228,17 @@ All development dependencies are used only during development and build processe
 | Package | Version | License | Purpose |
 |---------|---------|---------|---------|
 | `typescript` | ^5 | Apache-2.0 | Type checking (build-time only) |
-| `@types/node` | 24.7.2 | MIT | Node.js type definitions |
-| `@types/react` | ^19 | MIT | React type definitions |
-| `@types/react-dom` | 19.2.2 | MIT | React DOM type definitions |
+| `@types/node` | 24.13.2 | MIT | Node.js type definitions |
+| `@types/react` | 19.2.17 | MIT | React type definitions |
+| `@types/react-dom` | 19.2.3 | MIT | React DOM type definitions |
 | `eslint` | ^9 | MIT | Code linting (development only) |
-| `eslint-config-next` | 15.5.15 | MIT | Next.js ESLint rules |
+| `eslint-config-next` | 15.5.19 | MIT | Next.js ESLint rules |
 | `tailwindcss` | ^4 | MIT | CSS framework (build-time processing) |
-| `@tailwindcss/postcss` | ^4 | MIT | PostCSS integration (build-time) |
-| `@eslint/eslintrc` | ^3 | MIT | ESLint configuration utilities |
-| `@playwright/test` | ^1.48.0 | Apache-2.0 | E2E testing framework (test-time only) |
-| `@axe-core/playwright` | 4.10.2 | MPL-2.0 | Accessibility testing (test-time only) |
-| `wait-on` | ^8.0.1 | MIT | Test server wait utility (test-time only) |
+| `@tailwindcss/postcss` | 4.3.1 | MIT | PostCSS integration (build-time) |
+| `@eslint/eslintrc` | 3.3.5 | MIT | ESLint configuration utilities |
+| `@playwright/test` | 1.61.0 | Apache-2.0 | E2E testing framework (test-time only) |
+| `@axe-core/playwright` | 4.11.3 | MPL-2.0 | Accessibility testing (test-time only) |
+| `wait-on` | 8.0.5 | MIT | Test server wait utility (test-time only) |
 
 **Note**: CSS from Tailwind is compiled at build-time and included in the production bundle as regular CSS, not as a runtime dependency.
 
@@ -239,7 +246,7 @@ All development dependencies are used only during development and build processe
 
 **Status**: ✅ **Acceptable for test-only usage**
 
-**Package**: `@axe-core/playwright` (4.10.2)
+**Package**: `@axe-core/playwright` (4.11.3)
 **License**: MPL-2.0
 **Depth**: Direct dev dependency
 **Usage**: Accessibility testing in CI/CD pipeline (test-time only)
@@ -279,7 +286,7 @@ All development dependencies are used only during development and build processe
 | BSD-3-Clause | 1 | node-forge (chosen from dual-license) | ✅ Yes | Permissive with attribution |
 | BSD-2-Clause | 1 | dotenv | ✅ Yes | Permissive |
 | LGPL-3.0-or-later | 13 | Sharp/libvips (image processing) | ✅ Yes | Library exception applies |
-| MPL-2.0 | 1 | Next.js (some components) | ✅ Yes | Weak copyleft (file-level) |
+| MPL-2.0 | 2 | Next.js review item, @axe-core/playwright dev tool | ✅ Yes | Weak copyleft (file-level) |
 
 **Total**: All dependencies are compatible with commercial and proprietary software use.
 
@@ -407,25 +414,11 @@ npm ls <package-name>
 | 2025-10-13 | FOSSA | Automated scan | ⚠️ False positives resolved |
 | 2025-10-13 | npm audit | Security scan | ✅ 0 vulnerabilities (648 total packages: 248 prod, 315 dev) |
 | 2026-04-24 | Codex | npm audit, FOSSA locator review | ✅ 0 npm vulnerabilities; locators refreshed |
+| 2026-06-16 | Codex | npm audit, FOSSA config review | ✅ Production audit clean; FOSSA license mediation refreshed |
 
-**Latest Security Audit** (2026-04-24):
-```json
-{
-  "vulnerabilities": {
-    "info": 0,
-    "low": 0,
-    "moderate": 0,
-    "high": 0,
-    "critical": 0,
-    "total": 0
-  },
-  "dependencies": {
-    "prod": 248,
-    "dev": 315,
-    "total": 648
-  }
-}
-```
+**Latest Security Audit** (2026-06-16):
+- `npm audit --omit=dev`: 0 vulnerabilities
+- `npm audit`: 3 moderate dev-only residuals through `firebase-tools -> @google-cloud/pubsub -> @opentelemetry/core@1.30.1`
 
 **Verification**: Run `npm audit` in the project directory to verify current security status.
 
@@ -455,32 +448,31 @@ FOSSA and other scanning tools may flag certain transitive dependencies as "outd
 - **Commercial use**: ✅ Still safe - license terms don't change with age
 
 **Common "outdated" packages in this project**:
-- `brace-expansion@1.1.12` - locked by `minimatch` (Next.js dependency)
-- `minimatch@3.1.2` - locked by Next.js build tools
-- `uuid@8.3.2` / `uuid@9.0.1` - locked by firebase-admin
-- `find-up@5.0.0`, `p-limit@3.1.0` - locked by various tools
-- `react-is@16.13.1` - locked by React ecosystem packages
+- `path-to-regexp@0.1.13` - locked by `firebase-tools -> express`
+- `path-to-regexp@1.9.0` - locked by `firebase-tools -> superstatic`
+- `marked@13.0.3` and `highlight.js@10.7.3` - locked by Firebase CLI terminal output tooling
+- `configstore`, `boxen`, `ora`, `open`, and related CLI utilities - locked by Firebase CLI dependency chains
 
 **What can solo developers do?**
 1. ✅ **Keep direct dependencies updated** (we do this regularly)
-2. ✅ **Monitor security advisories** (`npm audit` shows zero vulnerabilities)
+2. ✅ **Monitor security advisories** (`npm audit --omit=dev` shows zero production vulnerabilities)
 3. ✅ **Wait for parent packages to update** (firebase-admin, Next.js will eventually update)
 4. ❌ **Don't force-update transitive dependencies** - breaks compatibility and introduces bugs
 
 **FOSSA Badge Status**:
-- License compliance: ✅ All licenses permissive and documented
-- Security scan: ✅ Zero known vulnerabilities
+- License compliance: ⚠️ Mediation rules refreshed; dashboard rescan required
+- Security scan: ✅ FOSSA security scan passing; local production audit clean
 - "Outdated" warnings: ⚠️ May persist (transitive dependencies locked by parents)
 
 **TL;DR**: "Outdated" warnings are informational, not critical. As long as:
-- ✅ No security vulnerabilities (`npm audit` on 2026-04-24 shows 0 vulnerabilities)
+- ✅ No production security vulnerabilities (`npm audit --omit=dev` on 2026-06-16 shows 0 vulnerabilities)
 - ✅ All licenses are compatible (documented: all permissive - MIT, Apache-2.0, BSD, ISC)
-- ✅ Direct dependencies are updated (verified 2026-04-24: Next.js 15.5.15, React 19.2.0, etc.)
+- ✅ Direct dependencies are updated (verified 2026-06-16: Next.js 15.5.19, React 19.2.7, etc.)
 - ✅ Application builds and runs correctly (production build passing)
 
 ...then "outdated" warnings for transitive dependencies are **acceptable** and **safe to ignore**.
 
-**Last Verified**: 2026-04-24 | **Verification Command**: `npm audit` | **Result**: 0 vulnerabilities
+**Last Verified**: 2026-06-16 | **Verification Command**: `npm audit --omit=dev` | **Result**: 0 production vulnerabilities
 
 ---
 
@@ -502,6 +494,6 @@ If you have questions about licensing or compliance:
 
 ---
 
-**Last Updated**: 2026-04-24
+**Last Updated**: 2026-06-16
 **Project License**: MIT (see [LICENSE](./LICENSE))
 **Compliance Status**: ✅ **Fully Compliant** with all commercial use requirements

@@ -133,7 +133,7 @@ Show clients how you reason about hiring performance with the new **Analytics & 
 - **Package Manager:** npm
 - **Linting:** ESLint + Prettier
 - **Testing:** Playwright E2E (smoke tests, accessibility), Jest unit tests, Firebase Emulator
-- **Security:** Snyk scanning, production dependency audit clean, full audit residuals documented in [SECURITY.md](./docs/SECURITY.md), FOSSA license compliance
+- **Security:** Snyk scanning, production dependency audit clean, full audit residuals documented in [SECURITY.md](./docs/SECURITY.md), FOSSA license findings mediated with dashboard rescan pending
 - **Guardrails:** Branch naming enforced as `type/ID-slug` (`feat|fix|perf|sec|docs|test|refactor|ci|build`); use `ci` for infrastructure changes
 
 ## 🧭 Repository Structure
@@ -537,13 +537,13 @@ ShopMatch Pro is licensed under the **MIT License**. See [LICENSE](./LICENSE) fo
 
 ### Third-Party Licenses
 
-This project uses various open-source packages. All dependencies have been reviewed for license compatibility with commercial use. See [THIRD_PARTY_LICENSES.md](./THIRD_PARTY_LICENSES.md) for complete licensing information.
+This project uses various open-source packages. Dependencies have been reviewed for license compatibility with commercial use. See [THIRD_PARTY_LICENSES.md](./THIRD_PARTY_LICENSES.md) for complete licensing information.
 
 **Key Points**:
-- ✅ All dependencies are permissively licensed (MIT, Apache-2.0, BSD, ISC)
-- ✅ Compatible with commercial and proprietary software
+- ✅ Dependencies are commercial-compatible, including reviewed LGPL/MPL library and dev-tool usage
 - ✅ Dual-licensed packages use BSD option (node-forge)
 - ✅ No strong copyleft licenses (GPL, AGPL) in distribution
+- ✅ FOSSA false positives and review findings are documented in [docs/FOSSA_LICENSE_REVIEW_2026-06-16.md](./docs/FOSSA_LICENSE_REVIEW_2026-06-16.md)
 
 **FOSSA Configuration**: License scanning policy is configured in [.fossa.yml](./.fossa.yml).
 

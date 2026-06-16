@@ -63,5 +63,6 @@ Status after the 2026-06-16 dependency sweep:
 
 **Tracked, advisory-only (FOSSA dashboard)**
 - Dependency Quality: deprecated transitive packages (no runtime risk identified)
-- License Compliance: 1 finding introduced via the `firebase-tools` dev-dependency
-  tree — needs dashboard triage; dev-only, not shipped to clients
+- License Compliance: 2 denied CC-BY-SA-4.0 false positives and 2 MPL-2.0
+  review findings documented in `docs/FOSSA_LICENSE_REVIEW_2026-06-16.md`
+  and mediated in `.fossa.yml`; dashboard rescan still required

@@ -16,6 +16,14 @@ targets:
     - type: npm
       path: .
 
+paths:
+  exclude:
+    - .next
+    - .vercel
+    - node_modules
+    - playwright-report
+    - test-results
+
 # Custom license policy
 policies:
   - id: default
@@ -69,6 +77,15 @@ overrides:
       import, or distribute. We only use the ISC-licensed code.
       Documentation: THIRD_PARTY_LICENSES.md
 
+  # @axe-core/playwright: MPL-2.0, devDependency only
+  - locator: npm+@axe-core/playwright$4.11.3
+    license: MPL-2.0
+    reason: |
+      @axe-core/playwright is used only for automated accessibility tests.
+      It is a devDependency, is not bundled into the production application,
+      and is used as-is without local source modifications.
+      Documentation: THIRD_PARTY_LICENSES.md
+
 # Ignore rules for false positives
 ignore:
   # node-forge GPL false positives (we elect BSD-3-Clause from dual-license)
@@ -84,12 +101,42 @@ ignore:
 
   # Next.js CC-BY-SA-4.0 false positive (glob logo artwork, not used)
   - type: license
-    locator: npm+next$15.5.15
+    locator: npm+next$15.5.19
     licenses:
       - CC-BY-SA-4.0
     reason: |
       CC-BY-SA-4.0 detection is for glob logo artwork included in Next.js.
       We do not use or distribute logo artwork. All code we use is MIT/ISC licensed.
+
+  # highlight.js CC-BY-SA-4.0 false positive (artwork in dependency chain)
+  - type: license
+    locator: npm+highlight.js$10.7.3
+    licenses:
+      - CC-BY-SA-4.0
+    reason: |
+      highlight.js code is BSD-3-Clause licensed. The CC-BY-SA-4.0
+      detection is for non-code artwork/assets in the dependency chain.
+      ShopMatch Pro does not use or distribute that artwork.
+
+  # Next.js MPL-2.0 reviewed acceptable for unmodified library usage
+  - type: license
+    locator: npm+next$15.5.19
+    licenses:
+      - MPL-2.0
+    reason: |
+      MPL-2.0 detection is from dependency files within Next.js, not from
+      ShopMatch Pro source. We use Next.js as-is and do not modify MPL
+      licensed source files.
+
+  # @axe-core/playwright MPL-2.0 reviewed acceptable for test-only usage
+  - type: license
+    locator: npm+@axe-core/playwright$4.11.3
+    licenses:
+      - MPL-2.0
+    reason: |
+      @axe-core/playwright is a devDependency used only for accessibility
+      tests. It is not bundled or distributed with the production app, and
+      we do not modify the MPL-licensed source.
 
   # glob CC-BY-SA-4.0 false positive (package logo artwork, not used)
   - type: license
@@ -132,8 +179,8 @@ comments:
     in THIRD_PARTY_LICENSES.md with explanations.
 
   investigation_date: |
-    Last comprehensive license audit: 2026-04-24
-    See docs/FOSSA_LICENSE_REVIEW_2025-10-17.md for detailed findings.
+    Last comprehensive license audit: 2026-06-16
+    See docs/FOSSA_LICENSE_REVIEW_2026-06-16.md for detailed findings.
 
 # Experimental features
 experimental:
