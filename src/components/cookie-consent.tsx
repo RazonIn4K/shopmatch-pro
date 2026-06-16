@@ -37,9 +37,9 @@ export function CookieConsent() {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-[#d9ded4] bg-white shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4" role="region" aria-label="Cookie consent">
+    <div className="fixed inset-x-0 bottom-0 z-50 p-3 sm:bottom-4 sm:left-auto sm:right-4 sm:max-w-xl">
+      <div className="rounded-lg border border-[#d9ded4] bg-white shadow-xl">
+        <div className="flex flex-col gap-4 p-4" role="region" aria-label="Cookie consent">
           <div className="flex-1">
             <div className="mb-1 text-sm font-semibold text-[#171a16]">
               We use cookies

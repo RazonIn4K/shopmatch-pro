@@ -162,10 +162,6 @@ function InsightList({ data }: { data: Insight[] }): ReactElement {
 
 export function AnalyticsDashboard({ dataset }: AnalyticsDashboardProps): ReactElement {
   useEffect(() => {
-    console.log('AnalyticsDashboard dataset received:', dataset)
-  }, [dataset])
-
-  useEffect(() => {
     void trackEvent('analytics_page_viewed', { dataset: dataset.label })
   }, [dataset.label])
 

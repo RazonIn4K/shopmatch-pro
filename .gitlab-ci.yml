@@ -13,7 +13,7 @@ include:
   - template: DAST.gitlab-ci.yml
 
 variables:
-  DAST_WEBSITE: "https://shopmatch-pro-git-main-razs-projects-29d4f2e6.vercel.app"
+  DAST_WEBSITE: "https://shopmatch.highencodelearning.com"
 
 dast:
   stage: dast

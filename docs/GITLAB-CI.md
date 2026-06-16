@@ -10,6 +10,11 @@ Current behavior:
 - If the GitHub Actions secret `GITLAB_MIRROR_TOKEN` is configured, the workflow pushes `main` and tags to `gitlab.com/razonin4k/shopmatch-pro-ci`.
 - If `GITLAB_MIRROR_TOKEN` is missing, the workflow exits successfully with a warning and records `GitLab mirror skipped` in the step summary. This keeps GitHub CI green while making it clear that GitLab scanning did not receive a new commit.
 
+Operational status as of 2026-06-16:
+- `GITLAB_MIRROR_TOKEN` is not present in the GitHub repository secret list, so automatic mirroring currently skips.
+- The local SSH remote named `gitlab` is reachable and can push `main` directly.
+- After any local manual sync, verify the GitHub and GitLab heads match before treating GitLab scanners as current.
+
 To enable real mirroring:
 
 1. In GitLab, create a token with write access to `razonin4k/shopmatch-pro-ci`.
@@ -23,6 +28,15 @@ Local verification commands:
 ```bash
 gh secret list --repo RazonIn4K/shopmatch-pro | grep GITLAB_MIRROR_TOKEN
 gh run list --repo RazonIn4K/shopmatch-pro --workflow "Mirror to GitLab" --limit 3
+git ls-remote origin refs/heads/main
+git ls-remote gitlab refs/heads/main
+```
+
+Manual sync fallback while the GitHub secret is missing:
+
+```bash
+git push gitlab main --follow-tags
+git ls-remote gitlab refs/heads/main HEAD
 ```
 
 ## Pipeline Scoping
@@ -43,7 +57,7 @@ To optimize runner usage and prevent scanner noise on feature branches, the pipe
 - **Template:** `Jobs/Dependency-Scanning.v2.gitlab-ci.yml`
 
 ### 4. DAST (Dynamic Application Security Testing)
-- **Purpose:** Runs dynamic vulnerability scans against the deployed application's staging/preview URL to check for live runtime vulnerabilities (such as XSS, SQLi, and configuration flaws).
+- **Purpose:** Runs dynamic vulnerability scans against the deployed application's public URL to check for live runtime vulnerabilities (such as XSS, SQLi, and configuration flaws).
 - **Target URL:** `https://shopmatch.highencodelearning.com`
 - **Trigger Rule:** **Manual Only**. For safety, the `dast` job must be manually triggered from the GitLab pipeline interface to prevent automated active scans on every push.
 - **Template:** `DAST.gitlab-ci.yml`

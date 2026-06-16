@@ -18,6 +18,7 @@
 - Open `https://shopmatch.highencodelearning.com` in a clean browser tab.
 - Open `https://shopmatch.highencodelearning.com/jobs` in a second tab.
 - Accept or decline the cookie banner before recording so it does not cover the demo surface.
+- If the cookie notice appears during a dry run, it is now a compact bottom-right panel on desktop; still clear it before the real take.
 - On `/jobs`, show the top several polished roles. Do not linger on the older lower-page seed rows named "Demo job" or "Test Developer Position"; they are QA data, not the strongest portfolio surface.
 - If you show auth, use `/login` and `/signup` after the refreshed light palette deploy is live; the cards should use a warm off-white page background, white form surfaces, and teal primary actions.
 - After signing in, wait 2-3 seconds for the success toast to clear before you start explaining the dashboard.
@@ -40,6 +41,7 @@ Use these claims on camera:
 - "GitHub Dependabot has zero open alerts, and the production dependency audit is clean."
 - "The full audit still tracks three dev-only Firebase Tools/OpenTelemetry moderate advisories, documented in `docs/SECURITY.md`; they are not in the Vercel runtime bundle."
 - "Latest CI is green for build, typecheck, unit tests, Firestore rules, local smoke, production smoke, accessibility, Snyk, and CodeQL."
+- "GitLab is configured as a secondary security-scanning mirror. The local GitLab remote has been manually verified; automatic GitHub-to-GitLab mirroring still needs the `GITLAB_MIRROR_TOKEN` repository secret."
 - "The deployed public pages and auth pages were browser-checked at desktop and mobile widths with no horizontal overflow; the authenticated dashboard checks pass in the production build."
 - "The demo has a refreshed favicon, app icon, web manifest, and social preview card that match the current ShopMatch palette."
 - "Legacy application rows degrade cleanly in the dashboard instead of exposing incomplete Firestore snapshot fields."
@@ -49,7 +51,7 @@ Avoid these claims:
 
 - Do not say "zero vulnerabilities" without qualifying it as production/deployed dependencies.
 - Do not imply real payments are processed. Stripe is test mode.
-- Do not say the GitLab mirror is actively mirroring until `GITLAB_MIRROR_TOKEN` is configured.
+- Do not say GitHub Actions is automatically mirroring to GitLab until `GITLAB_MIRROR_TOKEN` is configured.
 - Do not create new accounts or real-looking customer data on camera unless you plan to clean it up.
 
 ## 90-Second Loom Script

@@ -129,6 +129,7 @@ Show clients how you reason about hiring performance with the new **Analytics & 
 ### Development Tools
 - **Version Control:** Git + GitHub with branch protection
 - **CI/CD:** GitHub Actions (branch/commit validation, build & quality checks, accessibility tests, local smoke tests, Snyk security scan, production smoke tests)
+- **GitLab Security Mirror:** `gitlab.com/razonin4k/shopmatch-pro-ci` is available as a secondary scanner target; manual SSH sync is verified, and automatic GitHub-to-GitLab mirroring requires the `GITLAB_MIRROR_TOKEN` repository secret.
 - **Package Manager:** npm
 - **Linting:** ESLint + Prettier
 - **Testing:** Playwright E2E (smoke tests, accessibility), Jest unit tests, Firebase Emulator
@@ -513,7 +514,7 @@ npm run dev
 - [ ] Advanced search/filtering
 - [ ] Resume parsing
 - [ ] Persist rate limits outside in-memory serverless instances
-- [ ] Enable real GitLab mirroring by adding `GITLAB_MIRROR_TOKEN`
+- [ ] Add the GitHub Actions `GITLAB_MIRROR_TOKEN` secret so GitLab sync does not rely on manual SSH push
 
 See [FUTURE_ROADMAP.md](./docs/FUTURE_ROADMAP.md) for complete feature roadmap.
 
