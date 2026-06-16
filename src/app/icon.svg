@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="ShopMatch Pro">
+  <rect width="512" height="512" rx="112" fill="#f4f6f3"/>
+  <path d="M180 182v-31c0-31 25-56 56-56h40c31 0 56 25 56 56v31h-48v-27c0-8-6-14-14-14h-28c-8 0-14 6-14 14v27h-48z" fill="#111812"/>
+  <rect x="101" y="178" width="310" height="229" rx="54" fill="#111812"/>
+  <path d="M101 221c0-24 19-43 43-43h224c24 0 43 19 43 43v66c-38 32-96 52-155 52s-117-20-155-52v-66z" fill="#0f766e"/>
+  <rect x="219" y="260" width="41" height="65" rx="19" fill="#e7a83b"/>
+  <rect x="373" y="347" width="38" height="105" rx="19" transform="rotate(-45 392 399.5)" fill="#e7a83b"/>
+  <circle cx="324" cy="310" r="76" fill="#f4f6f3"/>
+  <circle cx="324" cy="310" r="47" fill="#0f766e"/>
+  <circle cx="324" cy="310" r="20" fill="#e7a83b"/>
+</svg>

@@ -12,6 +12,7 @@
 - Open `https://shopmatch.highencodelearning.com/jobs` in a second tab.
 - Accept or decline the cookie banner before recording so it does not cover the demo surface.
 - If you show auth, use `/login` and `/signup` after the refreshed light palette deploy is live; the cards should use a warm off-white page background, white form surfaces, and teal primary actions.
+- The browser tab, app icon, and social preview should use the refreshed briefcase/search mark; if they do not, hard-refresh once before recording.
 - Keep the GitHub Actions page ready if you want to show CI proof.
 - Close unrelated tabs and notifications.
 - Use the seeded demo accounts shown on the homepage:
@@ -30,6 +31,7 @@ Use these claims on camera:
 - "The full audit still tracks three dev-only Firebase Tools/OpenTelemetry moderate advisories, documented in `docs/SECURITY.md`; they are not in the Vercel runtime bundle."
 - "Latest CI is green for build, typecheck, unit tests, Firestore rules, local smoke, production smoke, accessibility, Snyk, and CodeQL."
 - "The deployed public pages and auth pages were browser-checked at desktop and mobile widths with no horizontal overflow or console errors."
+- "The demo has a refreshed favicon, app icon, web manifest, and social preview card that match the current ShopMatch palette."
 - "This is a portfolio demo in test mode, not a live hiring marketplace."
 
 Avoid these claims:

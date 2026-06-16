@@ -12,7 +12,7 @@
  * - Responsive viewport configuration
  */
 
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { AuthProvider } from '@/lib/contexts/AuthContext'
 import { Toaster } from '@/components/ui/sonner'
@@ -33,6 +33,7 @@ export const metadata: Metadata = {
   authors: [{ name: 'David Ortiz' }],
   creator: 'David Ortiz',
   publisher: 'David Ortiz',
+  manifest: '/manifest.webmanifest',
   formatDetection: {
     email: false,
     address: false,
@@ -42,6 +43,15 @@ export const metadata: Metadata = {
   alternates: {
     canonical: '/',
   },
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    apple: [
+      { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  },
   openGraph: {
     title: 'ShopMatch Pro - Portfolio Demo Project',
     description: 'Portfolio demonstration of a production-grade SaaS platform. Test mode only - no real transactions.',
@@ -49,12 +59,21 @@ export const metadata: Metadata = {
     siteName: 'ShopMatch Pro Demo',
     locale: 'en_US',
     type: 'website',
+    images: [
+      {
+        url: '/opengraph-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'ShopMatch Pro portfolio SaaS demo preview',
+      },
+    ],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'ShopMatch Pro - Portfolio Demo',
     description: 'Portfolio demonstration project showcasing full-stack SaaS development. Test mode only.',
     creator: '@shopmatchpro',
+    images: ['/twitter-image.png'],
   },
   robots: {
     index: false,
@@ -71,6 +90,11 @@ export const metadata: Metadata = {
     'demo-project': 'true',
     'test-mode': 'true',
   },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#0f766e',
+  colorScheme: 'light',
 }
 
 /**
