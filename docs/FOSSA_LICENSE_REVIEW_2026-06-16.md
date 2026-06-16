@@ -2,11 +2,17 @@
 
 ## Summary
 
-FOSSA reported 40 total issues:
+The latest GitHub Actions FOSSA CLI run for commit
+`44b65516132ba45573c5391223d27a1343039ba5` successfully uploaded analysis, then
+`fossa test --timeout 1200` reported 38 active policy issues:
 
-- 2 denied license issues: CC-BY-SA-4.0 on `next@15.5.19` and `highlight.js@10.7.3`
-- 2 flagged license review issues: MPL-2.0 on `next@15.5.19` and `@axe-core/playwright@4.11.3`
-- 36 outdated dependency quality issues, all transitive
+- 1 denied license issue: CC-BY-SA-4.0 on `next@15.5.19`
+- 14 flagged license review issues: 13 Sharp/libvips LGPL packages and MPL-2.0 on `next@15.5.19`
+- 23 outdated dependency quality issues, all transitive
+
+Earlier dashboard results also listed `highlight.js@10.7.3` and
+`@axe-core/playwright@4.11.3`; those two findings were not present in the latest
+CLI policy output.
 
 The security scan was passing in FOSSA. Local npm verification shows production dependencies are clean:
 
@@ -22,15 +28,27 @@ firebase-tools -> @google-cloud/pubsub -> @opentelemetry/core@1.30.1
 
 `firebase-tools` is a devDependency and is not part of the Vercel runtime bundle.
 
-## Mediation Applied
+## Repository Changes Applied
 
 Updated `.fossa.yml` to:
 
-- Refresh the stale `next` CC-BY-SA-4.0 ignore locator from `15.5.15` to `15.5.19`.
-- Add a `highlight.js@10.7.3` CC-BY-SA-4.0 ignore for non-code artwork/assets detected in the dependency chain.
-- Add MPL-2.0 review mediation for `next@15.5.19`.
-- Add MPL-2.0 review mediation for `@axe-core/playwright@4.11.3`.
+- Use only supported FOSSA CLI configuration fields.
+- Remove stale project team assignment that caused CI analysis failure.
+- Remove local policy/ignore sections that the FOSSA CLI does not apply.
 - Add path exclusions for generated/local directories: `.next`, `.vercel`, `node_modules`, `playwright-report`, and `test-results`.
+- Disable FOSSA CLI telemetry for CI runs.
+
+Updated GitHub Actions to:
+
+- Install the FOSSA CLI directly.
+- Run `fossa analyze` before `fossa test`, so the current revision exists in FOSSA.
+- Keep the policy test advisory until the dashboard policy/ignore inbox is mediated.
+- Upload `fossa-policy-test.log` as a CI artifact for review.
+
+Important boundary: `.fossa.yml` controls scan settings such as project metadata,
+targets, and path filters. It does not create local license policies or issue
+auto-ignore rules. FOSSA policy and auto-ignore decisions must be made in the
+FOSSA dashboard or with FOSSA API workflows that have the correct permissions.
 
 ## License Rationale
 
@@ -50,17 +68,47 @@ The MPL-2.0 detection is acceptable for unmodified dependency usage. ShopMatch P
 
 ## Outdated Dependency Quality Findings
 
-The 36 outdated dependency findings are transitive. The notable stale packages called out by FOSSA are under dev tooling, especially `firebase-tools`, including:
+The latest FOSSA run reported 23 outdated dependency quality findings:
 
-- `path-to-regexp@0.1.13` through `firebase-tools -> express`
-- `path-to-regexp@1.9.0` through `firebase-tools -> superstatic`
-- `marked@13.0.3` and `highlight.js@10.7.3` through Firebase CLI terminal output tooling
+- `@types/eslint-scope@3.7.7`
+- `agent-base@6.0.2`
+- `balanced-match@1.0.2`
+- `brace-expansion@1.1.14`
+- `commander@2.20.3`
+- `data-uri-to-buffer@4.0.1`
+- `eslint-scope@5.1.1`
+- `find-up@5.0.0`
+- `http-proxy-agent@5.0.0`
+- `https-proxy-agent@5.0.1`
+- `jest-worker@27.5.1`
+- `js-tokens@4.0.0`
+- `lru-cache@5.1.1`
+- `lru-cache@6.0.0`
+- `p-limit@3.1.0`
+- `string-width@4.2.3`
+- `tr46@0.0.3`
+- `type-fest@0.7.1`
+- `uuid@11.1.1`
+- `webidl-conversions@3.0.1`
+- `whatwg-url@5.0.0`
+- `which@2.0.2`
+- `wrap-ansi@7.0.0`
 
 Do not force major-version npm overrides for these chains without retesting Firebase emulator, deploy, and rules workflows. Prefer upstream `firebase-tools` updates when they become available.
 
+## Dashboard Actions Required
+
+These findings cannot be cleared by `.fossa.yml` alone:
+
+1. Accept or auto-ignore CC-BY-SA-4.0 on `next@15.5.19` for this project and selected version. Rationale: non-code artwork/license text detection; ShopMatch Pro does not use or distribute the artwork.
+2. Accept MPL-2.0 on `next@15.5.19` for unmodified dependency usage.
+3. Allow or auto-ignore LGPL-3.0-or-later for the Sharp/libvips platform packages listed in `THIRD_PARTY_LICENSES.md`. Rationale: unmodified library usage with source available upstream.
+4. Decide whether FOSSA outdated dependency quality findings should remain a hard gate. If they are advisory for this project, adjust the FOSSA quality policy or add scoped ignore rules for the current transitive findings.
+5. After dashboard mediation, change the CI policy test from advisory back to a hard gate by making the `Run FOSSA policy test` step exit non-zero on `fossa test` failure.
+
 ## Follow-Up
 
-1. Push the CI update so the `FOSSA_API_KEY` GitHub Actions secret runs the FOSSA analysis and policy test job.
-2. Re-run the FOSSA dashboard scan with rebuild/mediate dependencies enabled if the badge does not refresh after CI uploads the new analysis.
-3. If MPL-2.0 is still flagged by the org-level Standard Bundle Distribution policy, either approve MPL-2.0 in the FOSSA UI policy or manually mark these two reviewed findings as acceptable.
-4. Keep Dependabot/Snyk enabled and accept upstream Firebase CLI fixes when they resolve the dev-only OpenTelemetry and stale transitive chains without a downgrade.
+1. Complete the FOSSA dashboard actions above for the latest uploaded revision.
+2. Re-run the FOSSA dashboard policy scan after mediation.
+3. Keep Dependabot/Snyk enabled and accept upstream Firebase CLI fixes when they resolve the dev-only OpenTelemetry and stale transitive chains without a downgrade.
+4. Re-enable hard CI failure for `fossa test` after the dashboard issue count is clean.

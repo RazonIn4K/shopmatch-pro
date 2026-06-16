@@ -133,7 +133,7 @@ Show clients how you reason about hiring performance with the new **Analytics & 
 - **Package Manager:** npm
 - **Linting:** ESLint + Prettier
 - **Testing:** Playwright E2E (smoke tests, accessibility), Jest unit tests, Firebase Emulator
-- **Security:** Snyk scanning, production dependency audit clean, full audit residuals documented in [SECURITY.md](./docs/SECURITY.md), FOSSA license findings mediated with dashboard rescan pending
+- **Security:** Snyk scanning, production dependency audit clean, full audit residuals documented in [SECURITY.md](./docs/SECURITY.md), FOSSA analysis wired in CI with dashboard policy mediation pending
 - **Guardrails:** Branch naming enforced as `type/ID-slug` (`feat|fix|perf|sec|docs|test|refactor|ci|build`); use `ci` for infrastructure changes
 
 ## 🧭 Repository Structure
@@ -545,7 +545,7 @@ This project uses various open-source packages. Dependencies have been reviewed 
 - ✅ No strong copyleft licenses (GPL, AGPL) in distribution
 - ✅ FOSSA false positives and review findings are documented in [docs/FOSSA_LICENSE_REVIEW_2026-06-16.md](./docs/FOSSA_LICENSE_REVIEW_2026-06-16.md)
 
-**FOSSA Configuration**: License scanning policy is configured in [.fossa.yml](./.fossa.yml).
+**FOSSA Configuration**: Scan targets and path filters are configured in [.fossa.yml](./.fossa.yml). License policy and auto-ignore decisions are managed in the FOSSA dashboard.
 
 ---
 

@@ -8,7 +8,7 @@ This document lists all third-party software dependencies used in ShopMatch Pro 
 
 ShopMatch Pro is licensed under the **MIT License** (see [LICENSE](./LICENSE)). All third-party dependencies have been reviewed for license compatibility with MIT and commercial use.
 
-> **2026-06-16 Update**: Active FOSSA license alerts were reviewed and mediated in [docs/FOSSA_LICENSE_REVIEW_2026-06-16.md](./docs/FOSSA_LICENSE_REVIEW_2026-06-16.md).
+> **2026-06-16 Update**: Active FOSSA license alerts were reviewed in [docs/FOSSA_LICENSE_REVIEW_2026-06-16.md](./docs/FOSSA_LICENSE_REVIEW_2026-06-16.md). GitHub Actions now uploads FOSSA analysis; dashboard policy or auto-ignore mediation is still required.
 > **2026-04-24 Update**: Dependency versions and FOSSA override locators were refreshed after the audit advisory update.
 
 ### Key Licensing Decisions
@@ -414,7 +414,7 @@ npm ls <package-name>
 | 2025-10-13 | FOSSA | Automated scan | ⚠️ False positives resolved |
 | 2025-10-13 | npm audit | Security scan | ✅ 0 vulnerabilities (648 total packages: 248 prod, 315 dev) |
 | 2026-04-24 | Codex | npm audit, FOSSA locator review | ✅ 0 npm vulnerabilities; locators refreshed |
-| 2026-06-16 | Codex | npm audit, FOSSA config review | ✅ Production audit clean; FOSSA license mediation refreshed |
+| 2026-06-16 | Codex | npm audit, FOSSA config review | ✅ Production audit clean; FOSSA analysis wired in CI; dashboard mediation pending |
 
 **Latest Security Audit** (2026-06-16):
 - `npm audit --omit=dev`: 0 vulnerabilities
@@ -460,7 +460,7 @@ FOSSA and other scanning tools may flag certain transitive dependencies as "outd
 4. ❌ **Don't force-update transitive dependencies** - breaks compatibility and introduces bugs
 
 **FOSSA Badge Status**:
-- License compliance: ⚠️ Mediation rules refreshed; dashboard rescan required
+- License compliance: ⚠️ Analysis uploads from CI; dashboard policy/auto-ignore mediation required
 - Security scan: ✅ FOSSA security scan passing; local production audit clean
 - "Outdated" warnings: ⚠️ May persist (transitive dependencies locked by parents)
 

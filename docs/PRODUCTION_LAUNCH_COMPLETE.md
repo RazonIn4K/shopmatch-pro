@@ -135,7 +135,7 @@ Deployment: Vercel Production (Auto-deployed)
 - ✅ No secrets in git repository
 
 ### **License Compliance**
-- ⚠️ FOSSA license findings mediated locally; dashboard rescan pending
+- ⚠️ FOSSA policy findings documented; dashboard mediation pending
 - ✅ All dependencies properly licensed
 - ✅ No unresolved code-license violation identified in repo review
 
@@ -377,7 +377,7 @@ Deployment: Vercel Production (Auto-deployed)
 - ✅ CI/CD pipeline passing
 - ✅ Production health checks passing
 - ✅ SSL certificate active
-- ✅ CodeQL, Snyk, production audit, and local quality gates passing
+- ✅ CodeQL, Snyk, production audit, and local quality gates passing; FOSSA analysis wired in CI with advisory policy output
 
 ### **Feature Requirements**
 - ✅ User signup/login flow
@@ -469,7 +469,7 @@ ShopMatch Pro has successfully completed its MVP phase and is **fully operationa
 - ✅ **Seamless user experience** - From signup to job posting in minutes
 - ✅ **Reliable subscription flow** - Stripe integration with automatic activation
 - ✅ **Robust architecture** - Next.js 15, Firebase, TypeScript, TailwindCSS
-- ✅ **Production-grade security** - Runtime scans and quality gates passing; FOSSA dashboard rescan pending for documented license false positives
+- ✅ **Production-grade security** - Runtime scans and quality gates passing; FOSSA dashboard mediation pending for documented policy findings
 - ✅ **Comprehensive documentation** - Complete guides for deployment and maintenance
 
 **The platform is stable, secure, and ready to onboard real users.** 🚀

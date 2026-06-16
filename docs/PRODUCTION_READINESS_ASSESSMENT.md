@@ -108,7 +108,7 @@ Based on the Pre-Launch Checklist from CLAUDE.md, here's the current state:
 **Automated Security Scanning**:
 - ✅ CodeQL (GitHub native - JavaScript/TypeScript analysis)
 - ✅ Snyk (dependency vulnerabilities, code analysis, license compliance)
-- ⚠️ FOSSA (dependency quality and licensing; local mediation applied, dashboard rescan pending)
+- ⚠️ FOSSA (analysis wired in CI; dependency quality and licensing policy mediation pending in dashboard)
 - ✅ Dependabot (automated security updates + version updates)
 
 **Security Controls**:
@@ -238,7 +238,7 @@ robots: {
 
 1. **Demo/Portfolio Mode**: Robots meta set to `noindex` (intentional for demo project)
 2. **Snyk Code Test Quota**: Exceeded on some PRs (expected with free plan)
-3. **FOSSA False Positives**: License and dependency quality findings documented; dashboard rescan pending after local mediation
+3. **FOSSA False Positives**: License and dependency quality findings documented; dashboard policy/auto-ignore mediation still required
 
 ---
 
