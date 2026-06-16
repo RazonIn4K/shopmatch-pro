@@ -5,6 +5,13 @@ import * as React from 'react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import {
+  displayApplicationJobSubtitle,
+  displayApplicationJobTitle,
+  displayApplicationSeekerEmail,
+  displayApplicationSeekerName,
+  displayApplicationStatus,
+} from '@/lib/application-display'
 import { cn } from '@/lib/utils'
 import type { Application, ApplicationStatus } from '@/types'
 
@@ -42,21 +49,27 @@ function statusVariant(status: ApplicationStatus) {
 }
 
 export function ApplicationCard({ application, mode, onStatusChange, onViewDetails }: ApplicationCardProps) {
+  const status = displayApplicationStatus(application)
+  const title = mode === 'owner'
+    ? displayApplicationSeekerName(application)
+    : displayApplicationJobTitle(application)
+  const subtitle = mode === 'owner'
+    ? displayApplicationSeekerEmail(application)
+    : displayApplicationJobSubtitle(application)
+
   return (
     <Card className="h-full transition-shadow hover:shadow-lg">
       <CardHeader className="flex flex-row items-start justify-between gap-4">
         <div>
           <CardTitle className="text-lg leading-tight">
-            {mode === 'owner' ? application.seekerName : application.jobTitle}
+            {title}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            {mode === 'owner'
-              ? application.seekerEmail
-              : `${application.company} • ${application.jobType ?? ''}`}
+            {subtitle}
           </p>
         </div>
-        <Badge className={cn('capitalize', statusVariant(application.status))}>
-          {application.status}
+        <Badge className={cn('capitalize', statusVariant(status))}>
+          {status}
         </Badge>
       </CardHeader>
 

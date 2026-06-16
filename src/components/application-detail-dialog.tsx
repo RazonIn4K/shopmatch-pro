@@ -16,6 +16,14 @@ import {
 } from '@/components/ui/dialog'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import {
+  displayApplicationCompany,
+  displayApplicationJobSubtitle,
+  displayApplicationJobTitle,
+  displayApplicationSeekerEmail,
+  displayApplicationSeekerName,
+  displayApplicationStatus,
+} from '@/lib/application-display'
 import { cn } from '@/lib/utils'
 import type { Application, ApplicationStatus } from '@/types'
 
@@ -159,6 +167,12 @@ export function ApplicationDetailDialog({
 
   if (!application) return null
 
+  const status = displayApplicationStatus(application)
+  const jobTitle = displayApplicationJobTitle(application)
+  const company = displayApplicationCompany(application)
+  const seekerName = displayApplicationSeekerName(application)
+  const seekerEmail = displayApplicationSeekerEmail(application)
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
@@ -166,16 +180,16 @@ export function ApplicationDetailDialog({
           <div className="flex items-start justify-between gap-4">
             <div className="flex-1">
               <DialogTitle className="text-xl">
-                {mode === 'owner' ? application.seekerName : application.jobTitle}
+                {mode === 'owner' ? seekerName : jobTitle}
               </DialogTitle>
               <DialogDescription>
                 {mode === 'owner'
-                  ? `Application for ${application.jobTitle}`
-                  : `${application.company} • ${application.jobType ?? ''}`}
+                  ? `Application for ${jobTitle}`
+                  : displayApplicationJobSubtitle(application)}
               </DialogDescription>
             </div>
-            <Badge className={cn('capitalize', statusVariant(application.status))}>
-              {application.status}
+            <Badge className={cn('capitalize', statusVariant(status))}>
+              {status}
             </Badge>
           </div>
         </DialogHeader>
@@ -191,11 +205,11 @@ export function ApplicationDetailDialog({
                 <Label className="text-xs text-muted-foreground">
                   {mode === 'owner' ? 'Name' : 'Your Name'}
                 </Label>
-                <p className="text-sm font-medium">{application.seekerName}</p>
+                <p className="text-sm font-medium">{seekerName}</p>
               </div>
               <div>
                 <Label className="text-xs text-muted-foreground">Email</Label>
-                <p className="text-sm font-medium">{application.seekerEmail}</p>
+                <p className="text-sm font-medium">{seekerEmail}</p>
               </div>
               {application.phone && (
                 <div>
@@ -215,11 +229,11 @@ export function ApplicationDetailDialog({
               <div className="grid gap-3 sm:grid-cols-2">
                 <div>
                   <Label className="text-xs text-muted-foreground">Position</Label>
-                  <p className="text-sm font-medium">{application.jobTitle}</p>
+                  <p className="text-sm font-medium">{jobTitle}</p>
                 </div>
                 <div>
                   <Label className="text-xs text-muted-foreground">Company</Label>
-                  <p className="text-sm font-medium">{application.company}</p>
+                  <p className="text-sm font-medium">{company}</p>
                 </div>
                 {application.jobType && (
                   <div>

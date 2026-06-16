@@ -6,12 +6,21 @@
 **Repo:** https://github.com/RazonIn4K/shopmatch-pro
 **Last verified:** 2026-06-16
 
+## What This Recording Proves
+
+- You can ship a real deployed SaaS surface, not just a static mockup.
+- You can connect the full product loop: public listing pages, Firebase Auth, role-based dashboards, Firestore data, Stripe test-mode billing, and CI checks.
+- You can debug production issues: this build has verified fixes for auth redirect timing, Firestore application indexes, defensive missing-index reads, and legacy application rows that previously rendered incomplete snapshot data.
+- You know how to set honest boundaries: the app is test mode, seeded data is labeled, and security claims distinguish production runtime posture from dev-only advisories.
+
 ## Pre-Recording Checklist
 
 - Open `https://shopmatch.highencodelearning.com` in a clean browser tab.
 - Open `https://shopmatch.highencodelearning.com/jobs` in a second tab.
 - Accept or decline the cookie banner before recording so it does not cover the demo surface.
+- On `/jobs`, show the top several polished roles. Do not linger on the older lower-page seed rows named "Demo job" or "Test Developer Position"; they are QA data, not the strongest portfolio surface.
 - If you show auth, use `/login` and `/signup` after the refreshed light palette deploy is live; the cards should use a warm off-white page background, white form surfaces, and teal primary actions.
+- After signing in, wait 2-3 seconds for the success toast to clear before you start explaining the dashboard.
 - The browser tab, app icon, and social preview should use the refreshed briefcase/search mark; if they do not, hard-refresh once before recording.
 - Keep the GitHub Actions page ready if you want to show CI proof.
 - Close unrelated tabs and notifications.
@@ -33,6 +42,7 @@ Use these claims on camera:
 - "Latest CI is green for build, typecheck, unit tests, Firestore rules, local smoke, production smoke, accessibility, Snyk, and CodeQL."
 - "The deployed public pages and auth pages were browser-checked at desktop and mobile widths with no horizontal overflow; the authenticated dashboard checks pass in the production build."
 - "The demo has a refreshed favicon, app icon, web manifest, and social preview card that match the current ShopMatch palette."
+- "Legacy application rows degrade cleanly in the dashboard instead of exposing incomplete Firestore snapshot fields."
 - "This is a portfolio demo in test mode, not a live hiring marketplace."
 
 Avoid these claims:
@@ -152,8 +162,8 @@ Use this if you want the least risky one-take recording:
 3. Point at the "DEMO" banner and say it is test mode.
 4. Point at seeded accounts, but do not read the password slowly unless needed.
 5. Click "Browse demo jobs".
-6. Scroll the jobs list.
-7. Open `/login`, sign in as `owner@test.com`, and show `/dashboard/owner` only if you want the authenticated proof point.
+6. Scroll only through the first several polished job cards.
+7. Open `/login`, sign in as `owner@test.com`, wait for the success toast to disappear, and show `/dashboard/owner` only if you want the authenticated proof point.
 8. If you want a second authenticated proof point, sign out or use a clean tab and show `seeker@test.com` reaching `/dashboard/seeker`.
 9. Open GitHub Actions for the latest `main` run and point at green CI/CodeQL/Mirror.
 10. Open `docs/SECURITY.md` or README if you want to show the audit posture.

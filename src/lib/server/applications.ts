@@ -19,7 +19,7 @@ import {
   applicationStatusUpdateSchema,
   applicationSubmissionSchema,
 } from '@/types'
-import type { Application } from '@/types'
+import type { Application, ApplicationStatus } from '@/types'
 
 import { isMissingIndexError, toDateValue } from './firestore'
 
@@ -43,6 +43,16 @@ export type ApplicationListResult = {
   total: number
 }
 
+function nonEmptyString(value: unknown, fallback: string): string {
+  return typeof value === 'string' && value.trim().length > 0 ? value.trim() : fallback
+}
+
+function normalizeApplicationStatus(value: unknown): ApplicationStatus {
+  return applicationStatuses.includes(value as ApplicationStatus)
+    ? (value as ApplicationStatus)
+    : 'pending'
+}
+
 /**
  * Converts a Firestore application document into the Application API model,
  * normalizing Timestamp fields to Dates for JSON serialization.
@@ -52,6 +62,11 @@ export function transformApplicationDocument(doc: FirebaseFirestore.DocumentSnap
   return {
     id: doc.id,
     ...data,
+    jobTitle: nonEmptyString(data.jobTitle, 'Archived role'),
+    company: nonEmptyString(data.company, 'Company unavailable'),
+    seekerName: nonEmptyString(data.seekerName, 'Anonymous applicant'),
+    seekerEmail: nonEmptyString(data.seekerEmail ?? data.email, 'Email unavailable'),
+    status: normalizeApplicationStatus(data.status),
     createdAt: toDateValue(data.createdAt),
     updatedAt: toDateValue(data.updatedAt),
     reviewedAt: toDateValue(data.reviewedAt),
