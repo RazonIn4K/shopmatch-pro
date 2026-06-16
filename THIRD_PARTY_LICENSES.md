@@ -417,7 +417,7 @@ npm ls <package-name>
 | 2025-10-13 | FOSSA | Automated scan | ⚠️ False positives resolved |
 | 2025-10-13 | npm audit | Security scan | ✅ 0 vulnerabilities (648 total packages: 248 prod, 315 dev) |
 | 2026-04-24 | Codex | npm audit, FOSSA locator review | ✅ 0 npm vulnerabilities; locators refreshed |
-| 2026-06-16 | Codex | npm audit, FOSSA config review | ✅ Production audit clean; FOSSA analysis wired in CI; reviewed FOSSA ignores applied |
+| 2026-06-16 | Codex | npm audit, FOSSA config review | ✅ Production audit clean; FOSSA license/security scans passing; reviewed FOSSA ignores applied; CI diff gate active |
 
 **Latest Security Audit** (2026-06-16):
 - `npm audit --omit=dev`: 0 vulnerabilities

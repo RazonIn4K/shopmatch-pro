@@ -11,6 +11,17 @@ The current reviewed FOSSA project is:
 - Revision scan ID: `109223003`
 - FOSSA scan status: succeeded
 
+Current post-remediation verification:
+
+- Current revision: `55dcc8c3652c8e94b16735659a7a9887b8a70862`
+- Current revision scan ID: `109231746`
+- FOSSA revision status: not stale
+- Active unresolved licensing issues: 0
+- Active unresolved security issues: 0
+- Active unresolved quality issues: 0
+- CI run `27653396029` passed the FOSSA policy regression gate against reviewed baseline `e0ff828281cc9fe8ba377315526e7e6d01869a06`
+- Dry-run remediation workflow `27653593770` confirmed the script is idempotent and found zero active issues to change
+
 Dashboard/API inspection for the reviewed revision reported 54 unresolved issues:
 
 | Category | Count | Notes |
@@ -119,9 +130,10 @@ libvips source is available upstream at `https://github.com/lovell/sharp-libvips
 
 ## Outdated Dependency Quality Findings
 
-FOSSA reported 36 active quality findings, all `outdated_dependency`, all
-transitive, and all caused by the "Major - 3 Policy" Semver Outdated Rule.
-The FOSSA security issue count for this revision is zero.
+For the reviewed baseline revision, FOSSA reported 36 quality findings, all
+`outdated_dependency`, all transitive, and all caused by the "Major - 3 Policy"
+Semver Outdated Rule. The FOSSA security issue count for that reviewed revision
+was zero.
 
 - `@apidevtools/json-schema-ref-parser@9.1.2`
 - `@asamuzakjp/css-color@3.2.0`
@@ -205,6 +217,10 @@ The apply run reported:
 A follow-up dry run against commit
 `1c95c269e4e5039705e222ad34b26848abe33cf2` in workflow run `27653132946`
 also reported zero active licensing, quality, and vulnerability issues.
+
+A final dry run against current commit
+`55dcc8c3652c8e94b16735659a7a9887b8a70862` in workflow run `27653593770`
+reported zero active licensing, quality, and vulnerability issues.
 
 The FOSSA CLI still reports the reviewed baseline findings in an absolute
 `fossa test` run, so CI uses the FOSSA-supported `--diff` mode against the

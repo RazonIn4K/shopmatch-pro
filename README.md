@@ -133,7 +133,7 @@ Show clients how you reason about hiring performance with the new **Analytics & 
 - **Package Manager:** npm
 - **Linting:** ESLint + Prettier
 - **Testing:** Playwright E2E (smoke tests, accessibility), Jest unit tests, Firebase Emulator
-- **Security:** Snyk scanning, production dependency audit clean, full audit residuals documented in [SECURITY.md](./docs/SECURITY.md), FOSSA analysis wired in CI with dashboard policy mediation pending
+- **Security:** Snyk scanning, production dependency audit clean, full audit residuals documented in [SECURITY.md](./docs/SECURITY.md), FOSSA license/security scans passing with reviewed issue remediation applied and a `fossa test --diff` regression gate in CI
 - **Guardrails:** Branch naming enforced as `type/ID-slug` (`feat|fix|perf|sec|docs|test|refactor|ci|build`); use `ci` for infrastructure changes
 
 ## 🧭 Repository Structure
@@ -542,9 +542,9 @@ This project uses various open-source packages. Dependencies have been reviewed 
 - ✅ Dependencies are commercial-compatible, including reviewed LGPL/MPL library and dev-tool usage
 - ✅ Dual-licensed packages use BSD option (node-forge)
 - ✅ No strong copyleft licenses (GPL, AGPL) in distribution
-- ✅ FOSSA false positives and review findings are documented in [docs/FOSSA_LICENSE_REVIEW_2026-06-16.md](./docs/FOSSA_LICENSE_REVIEW_2026-06-16.md)
+- ✅ FOSSA false positives and review findings are documented in [docs/FOSSA_LICENSE_REVIEW_2026-06-16.md](./docs/FOSSA_LICENSE_REVIEW_2026-06-16.md); current revision `55dcc8c3652c8e94b16735659a7a9887b8a70862` has zero unresolved FOSSA licensing, security, or quality issues
 
-**FOSSA Configuration**: Scan targets and path filters are configured in [.fossa.yml](./.fossa.yml). License policy and auto-ignore decisions are managed in the FOSSA dashboard.
+**FOSSA Configuration**: Scan targets and path filters are configured in [.fossa.yml](./.fossa.yml). License policy and reviewed ignore decisions are managed in FOSSA and through the guarded `FOSSA Reviewed Issue Remediation` workflow.
 
 ---
 

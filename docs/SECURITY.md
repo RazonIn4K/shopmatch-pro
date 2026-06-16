@@ -61,12 +61,12 @@ Status after the 2026-06-16 dependency sweep:
 - #182 production-dependencies group, #168 development-tools group,
   #170 @types/node, #183 axios (dev-transitive)
 
-**Tracked, advisory-only (FOSSA dashboard)**
-- Dependency Quality: 36 transitive staleness findings from FOSSA's Semver
-  Outdated Rule; no active FOSSA security issues and no production npm audit
-  vulnerabilities
-- License Compliance: 18 reviewed CC-BY-SA-4.0, LGPL, and MPL findings
+**FOSSA compliance status**
+- Current revision `55dcc8c3652c8e94b16735659a7a9887b8a70862` has zero active
+  FOSSA licensing, security, and quality issues.
+- The 18 reviewed license findings and 36 reviewed quality findings are
   documented in `docs/FOSSA_LICENSE_REVIEW_2026-06-16.md`; the guarded
   `FOSSA Reviewed Issue Remediation` workflow applied the reviewed ignore
-  rules through the repository `FOSSA_API_KEY` secret, and `fossa test --diff`
-  is a hard CI regression gate
+  rules through the repository `FOSSA_API_KEY` secret.
+- `fossa test --diff e0ff828281cc9fe8ba377315526e7e6d01869a06` is the hard CI
+  regression gate for new or unreviewed FOSSA findings.

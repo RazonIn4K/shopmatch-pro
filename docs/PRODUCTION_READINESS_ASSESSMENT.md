@@ -38,7 +38,7 @@ Based on the Pre-Launch Checklist from CLAUDE.md, here's the current state:
 | **SEO Meta Tags** | ✅ Implemented | Comprehensive meta tags in `layout.tsx` (OG, Twitter, canonical) |
 | **Accessibility Audit** | ✅ Passing | Zero violations on 4 tested pages (homepage, dashboard, subscribe, login) |
 | **Bundle Budget** | ✅ Compliant | ≤ 300 KB first-load JS enforced via CI |
-| **Security Scanning** | ✅ Active | CodeQL + Snyk + Dependabot active; FOSSA analysis wired in CI with dashboard policy mediation pending |
+| **Security Scanning** | ✅ Active | CodeQL + Snyk + Dependabot active; FOSSA license/security scans passing with reviewed remediation applied and CI diff gating active |
 | **CI/CD Pipeline** | ✅ Green | Latest main commit passing all checks |
 
 ### 🔄 Recommended Enhancements (Optional)
@@ -112,7 +112,7 @@ Based on the Pre-Launch Checklist from CLAUDE.md, here's the current state:
 **Automated Security Scanning**:
 - ✅ CodeQL (GitHub native - JavaScript/TypeScript analysis)
 - ✅ Snyk (dependency vulnerabilities, code analysis, license compliance)
-- ⚠️ FOSSA (analysis wired in CI; dependency quality and licensing policy mediation pending in dashboard)
+- ✅ FOSSA (license/security scans passing; reviewed issue remediation applied; `fossa test --diff` regression gate active in CI)
 - ✅ Dependabot (automated security updates + version updates)
 
 **Security Controls**:
@@ -242,7 +242,7 @@ robots: {
 
 1. **Demo/Portfolio Mode**: Robots meta set to `noindex` (intentional for demo project)
 2. **Snyk Code Test Quota**: Exceeded on some PRs (expected with free plan)
-3. **FOSSA False Positives**: License and dependency quality findings documented; dashboard policy/auto-ignore mediation still required
+3. **FOSSA Reviewed Findings**: License and dependency quality findings documented and applied through the guarded remediation workflow; new findings are blocked by the CI diff gate
 
 ---
 
@@ -400,7 +400,7 @@ Before pressing "Deploy to Production", verify:
 - ✅ All quality gates passing
 - ✅ Comprehensive monitoring and error tracking
 - ✅ Complete documentation stack
-- ✅ Automated security scanning and dependency updates; FOSSA review remains monitored through the dashboard
+- ✅ Automated security scanning and dependency updates; FOSSA review is applied and monitored through CI plus the FOSSA dashboard
 - ✅ Production deployments active and stable
 
 **Recommendation**: Proceed with production launch after completing the Immediate Next Steps (1-2 hours). The repository is in excellent shape for deployment and demonstrates professional-grade engineering practices.

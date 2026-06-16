@@ -262,10 +262,10 @@ vercel --prod --force
 
 ### Issue: "FOSSA Dependency Quality check failing in PR"
 
-**Status**: Known issue, non-blocking
-**Cause**: FOSSA flagged a minor dependency quality concern
-**Action**: Safe to ignore - all security checks (CodeQL, Snyk, License) passed
-**Fix**: FOSSA issues auto-resolve when dependency is updated in future
+**Status**: Treat as actionable until reviewed
+**Cause**: FOSSA found a new dependency quality issue relative to the reviewed baseline
+**Action**: Review the finding in FOSSA, confirm whether it is a true security/compliance issue or a transitive staleness finding, and document the decision in `docs/FOSSA_LICENSE_REVIEW_2026-06-16.md`
+**Fix**: Prefer upstream dependency updates. If the finding is reviewed and accepted, use the guarded `FOSSA Reviewed Issue Remediation` workflow instead of bypassing CI.
 
 ---
 

@@ -12,8 +12,8 @@ Current behavior:
 
 Operational status as of 2026-06-16:
 - `GITLAB_MIRROR_TOKEN` is present in the GitHub repository secret list.
-- Workflow dispatch run `27645919309` completed successfully and executed `git push gitlab main --follow-tags`.
-- GitHub and GitLab `main` were verified matching at `ebc5aa22c60d8d4dc800c72454a94916f72d7b06` before the Next.js 16.2.9 remediation commit.
+- Latest mirror workflow run `27653396045` completed successfully for commit `55dcc8c3652c8e94b16735659a7a9887b8a70862`.
+- GitHub and GitLab `main` were verified matching at `55dcc8c3652c8e94b16735659a7a9887b8a70862`.
 - After any new push to `main`, verify the mirror workflow succeeds and GitHub/GitLab heads match before treating GitLab scanners as current.
 
 To rotate or re-create real mirroring:

@@ -381,7 +381,7 @@ Deployment: Vercel Production (Auto-deployed)
 - ✅ CI/CD pipeline passing
 - ✅ Production health checks passing
 - ✅ SSL certificate active
-- ✅ CodeQL, Snyk, production audit, and local quality gates passing; FOSSA analysis wired in CI with advisory policy output
+- ✅ CodeQL, Snyk, production audit, and local quality gates passing; FOSSA license/security scans passing with reviewed remediation applied and CI diff gating active
 
 ### **Feature Requirements**
 - ✅ User signup/login flow
