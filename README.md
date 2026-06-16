@@ -26,10 +26,10 @@
 
 ### **Technical Highlights** 💡
 
-- ⚡ **Performance**: 176.9 KB first-load JS (41% under budget), ~3s builds with Turbopack
+- ⚡ **Performance**: Latest verified production build keeps shared first-load JS at 288 kB, with `/jobs` at 291 kB
 - 🔒 **Security**: No high/critical npm advisories; Firebase/Google transitive advisories tracked in [Security Documentation](./docs/SECURITY.md), plus Firestore rules, Stripe webhook verification, RBAC, and type-safe APIs
-- 🛡️ **CI/CD**: 6-job automated pipeline (build, lint, test, a11y, smoke tests, security scan), branch protection, conventional commits
-- 🎨 **Modern Stack**: Next.js 15, TypeScript 5.7, Tailwind v4, shadcn/ui
+- 🛡️ **CI/CD**: multi-job automated pipeline (build, lint, test, a11y, smoke tests, security scan), branch protection, conventional commits
+- 🎨 **Modern Stack**: Next.js 15.5.19, React 19, TypeScript 5.9, Tailwind v4, shadcn-style UI primitives
 - 🧪 **Quality**: Zero ESLint errors, TypeScript strict mode, Playwright E2E tests, accessibility verified
 - 📚 **Documentation**: Architecture diagrams, API docs, runbooks, AI development guide (CLAUDE.md)
 - 🚀 **Deployed**: Vercel with auto-deployment, production smoke tests on every main push
@@ -113,8 +113,8 @@ Show clients how you reason about hiring performance with the new **Analytics & 
 ## 📁 Tech Stack
 
 ### Frontend
-- **Framework:** Next.js 15.5.4 (App Router, Server Components, Turbopack)
-- **Language:** TypeScript 5.7 (strict mode)
+- **Framework:** Next.js 15.5.19 (App Router, Server Components, Turbopack)
+- **Language:** TypeScript 5.9 (strict mode)
 - **Styling:** Tailwind CSS v4 + shadcn/ui component library
 - **Forms:** React Hook Form + Zod validation
 - **State:** React Context API for auth and global state
@@ -128,11 +128,11 @@ Show clients how you reason about hiring performance with the new **Analytics & 
 
 ### Development Tools
 - **Version Control:** Git + GitHub with branch protection
-- **CI/CD:** GitHub Actions (6-job pipeline: branch/commit validation, build & quality checks, accessibility tests, local smoke tests, Snyk security scan, production smoke tests)
+- **CI/CD:** GitHub Actions (branch/commit validation, build & quality checks, accessibility tests, local smoke tests, Snyk security scan, production smoke tests)
 - **Package Manager:** npm
 - **Linting:** ESLint + Prettier
 - **Testing:** Playwright E2E (smoke tests, accessibility), Jest unit tests, Firebase Emulator
-- **Security:** Snyk scanning, npm audit (0 vulnerabilities), FOSSA license compliance
+- **Security:** Snyk scanning, production dependency audit clean, full audit residuals documented in [SECURITY.md](./docs/SECURITY.md), FOSSA license compliance
 - **Guardrails:** Branch naming enforced as `type/ID-slug` (`feat|fix|perf|sec|docs|test|refactor|ci|build`); use `ci` for infrastructure changes
 
 ## 🧭 Repository Structure
@@ -434,9 +434,9 @@ curl http://localhost:3000/api/stripe/checkout
 ✓ Compiled successfully
 ✓ All TypeScript checks passing
 ✓ Zero ESLint errors
-✓ 19 routes (8 pages, 11 API endpoints)
-✓ Bundle size: 245 kB shared chunks
-✓ Build time: ~3 seconds with Turbopack
+✓ 27 routes in the latest verified production build
+✓ Shared first-load JS: 288 kB
+✓ /jobs first-load JS: 291 kB
 ```
 
 ## 🚀 Live Deployment
@@ -509,12 +509,11 @@ npm run dev
 - ✅ Security rules enforced
 
 ### Potential Enhancements (If Continuing Development)
-- [ ] Automated test suite (Jest + Playwright)
 - [ ] Email notifications
 - [ ] Advanced search/filtering
-- [ ] Analytics dashboard
-- [ ] API rate limiting
 - [ ] Resume parsing
+- [ ] Persist rate limits outside in-memory serverless instances
+- [ ] Enable real GitLab mirroring by adding `GITLAB_MIRROR_TOKEN`
 
 See [FUTURE_ROADMAP.md](./docs/FUTURE_ROADMAP.md) for complete feature roadmap.
 
@@ -552,8 +551,7 @@ This project uses various open-source packages. All dependencies have been revie
 ## 📊 Project Metrics
 
 - **Lines of Code:** ~15,000+ (TypeScript, React, API routes)
-- **Build Size:** 245 KB shared chunks (optimized)
-- **Build Time:** ~3 seconds (Turbopack)
+- **Build Size:** 288 kB shared first-load JS in the latest verified production build
 - **API Endpoints:** 11 RESTful routes
 - **Pages:** 8 user-facing pages
 - **Components:** 30+ reusable React components
@@ -566,4 +564,4 @@ This project uses various open-source packages. All dependencies have been revie
 
 **Project Type:** Portfolio Demonstration  
 **Status:** Production-Ready (Test Mode)  
-**Last Updated:** October 2025
+**Last Updated:** June 16, 2026

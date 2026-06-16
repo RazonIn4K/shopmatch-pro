@@ -40,7 +40,8 @@
 - Responsive design with Tailwind CSS + shadcn/ui
 
 ✅ **Security & Best Practices**
-- **Zero npm vulnerabilities** (verified 2025-11-16 with npm audit)
+- Production dependency audit is clean; Dependabot has zero open alerts
+- Full `npm audit` residuals are documented as dev-only Firebase Tools/OpenTelemetry advisories in [SECURITY.md](./SECURITY.md)
 - Firebase security rules protecting all data access
 - Stripe webhook signature verification
 - Server-side authentication with Firebase Admin SDK
@@ -66,7 +67,7 @@
 - Data validation at multiple layers
 
 ✅ **Developer Experience**
-- Turbopack for lightning-fast builds (~3 seconds)
+- Turbopack-powered local development and production builds
 - Hot module replacement for instant feedback
 - TypeScript for type safety and IntelliSense
 - ESLint + Prettier for code consistency
@@ -81,11 +82,11 @@
 - **TypeScript strict mode** enabled
 - **100% type safety** on all API routes
 - **Security rules** tested and validated
-- **Build size**: 245 KB shared chunks (optimized)
-- **Build time**: ~3 seconds with Turbopack
+- **Build size**: 288 kB shared first-load JS; `/jobs` first-load JS is 291 kB in the latest verified build
+- **Build verification**: Latest CI run passed build, typecheck, unit tests, Firestore rules, local smoke, production smoke, accessibility, Snyk, and CodeQL
 
 ### Testing & Quality Assurance
-- **Automated CI/CD Pipeline**: 6-job workflow on every PR
+- **Automated CI/CD Pipeline**: multi-job workflow on every PR and push to `main`
   - Branch & commit validation (naming conventions, Conventional Commits)
   - Build & quality checks (ESLint zero errors, TypeScript strict mode)
   - Accessibility tests (Playwright + axe-core, zero violations)
@@ -119,8 +120,9 @@
 
 ### Frontend Excellence
 ```
-Next.js 15.5.4          - Latest React framework with App Router
-TypeScript 5.7          - Type-safe development
+Next.js 15.5.19         - React framework with App Router
+React 19.2              - UI runtime
+TypeScript 5.9          - Type-safe development
 Tailwind CSS v4         - Utility-first styling
 shadcn/ui               - High-quality component library
 React Hook Form + Zod   - Form handling with validation
@@ -131,7 +133,7 @@ React Hook Form + Zod   - Form handling with validation
 Firebase Auth           - Authentication with OAuth providers
 Cloud Firestore         - NoSQL database with real-time updates
 Firebase Admin SDK      - Server-side operations and security
-Stripe API v16          - Payment processing and subscriptions
+Stripe SDK 22.2         - Payment processing and subscriptions
 Vercel Edge Functions   - Serverless API deployment
 ```
 
@@ -327,7 +329,7 @@ match /jobs/{jobId} {
 - Stripe webhook signature verification
 - JWT token verification on all API routes
 - Input validation and sanitization
-- Rate limiting via Vercel edge functions
+- Best-effort in-memory rate limiting for application submission and CSV export paths
 
 ---
 
@@ -522,12 +524,13 @@ This isn't a basic CRUD app - it includes:
 - Legal compliance (Terms, Privacy, Cookie Consent)
 
 ### 3. Modern Tech Stack
-Uses the latest and greatest:
-- Next.js 15 (released Nov 2024)
+Uses a current production-grade stack:
+- Next.js 15.5.19
+- React 19.2
 - React Server Components
-- Turbopack for faster builds
+- Turbopack for local and production builds
 - Tailwind CSS v4
-- TypeScript 5.7
+- TypeScript 5.9
 
 ### 4. Professional Documentation
 Extensive documentation demonstrating technical writing skills:
@@ -631,11 +634,10 @@ ZIP: Any 5 digits
 ## 🚀 Next Steps (If Continuing Development)
 
 ### Immediate Improvements
-- [ ] Automated testing suite (Jest + React Testing Library)
-- [ ] Lighthouse performance optimization (target 95+ score)
+- [ ] Lighthouse performance optimization pass on the canonical domain
 - [ ] Email notifications for applications
 - [ ] Advanced search and filtering
-- [ ] Job analytics dashboard
+- [ ] Persist rate-limit counters outside in-memory serverless instances
 
 ### Future Features
 - [ ] Company profiles with branding
@@ -645,11 +647,10 @@ ZIP: Any 5 digits
 - [ ] API for third-party integrations
 
 ### Technical Debt
-- [ ] Add E2E test suite (Playwright)
 - [ ] Implement caching strategy
-- [ ] Add rate limiting
-- [ ] Set up error alerting (Sentry)
-- [ ] Performance monitoring
+- [ ] Promote GitLab mirroring from skipped to active by adding `GITLAB_MIRROR_TOKEN`
+- [ ] Recheck Firebase Tools/OpenTelemetry dev-only advisories when upstream releases a non-downgrade fix
+- [ ] Expand authenticated Playwright coverage with stable local demo secrets
 
 ---
 
@@ -670,7 +671,7 @@ ZIP: Any 5 digits
 ---
 
 **Built by:** David Ortiz
-**Technologies:** Next.js 15, TypeScript, Firebase, Stripe, Vercel, Tailwind CSS
+**Technologies:** Next.js 15.5.19, React 19, TypeScript 5.9, Firebase, Stripe, Vercel, Tailwind CSS
 **Status:** ✅ Production-Ready (Test Mode)
 **Purpose:** Portfolio demonstration of full-stack SaaS development capabilities
-**Last Updated:** October 2025
+**Last Updated:** June 16, 2026
