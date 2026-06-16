@@ -82,7 +82,7 @@
 - **TypeScript strict mode** enabled
 - **100% type safety** on all API routes
 - **Security rules** tested and validated
-- **Build size**: 283.86 kB homepage first-load JS; `/jobs` first-load JS is 294.45 kB in the latest verified build
+- **Build size**: 282.46 kB homepage first-load JS; `/jobs` first-load JS is 292.78 kB in the latest verified build
 - **Build verification**: Latest CI run passed build, typecheck, unit tests, Firestore rules, local smoke, production smoke, accessibility, Snyk, and CodeQL
 
 ### Testing & Quality Assurance

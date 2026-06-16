@@ -92,19 +92,20 @@ The following packages contain LGPL-3.0-or-later licensed code (libvips image pr
 
 | Package | Version | Platform | License |
 |---------|---------|----------|---------|
-| `@img/sharp-libvips-darwin-arm64` | 1.2.3 | macOS ARM64 | LGPL-3.0-or-later |
-| `@img/sharp-libvips-darwin-x64` | 1.2.3 | macOS x64 | LGPL-3.0-or-later |
-| `@img/sharp-libvips-linux-arm` | 1.2.3 | Linux ARM | LGPL-3.0-or-later |
-| `@img/sharp-libvips-linux-arm64` | 1.2.3 | Linux ARM64 | LGPL-3.0-or-later |
-| `@img/sharp-libvips-linuxmusl-arm64` | 1.2.3 | Linux musl ARM64 | LGPL-3.0-or-later |
-| `@img/sharp-libvips-linuxmusl-x64` | 1.2.3 | Linux musl x64 | LGPL-3.0-or-later |
-| `@img/sharp-libvips-linux-ppc64` | 1.2.3 | Linux PowerPC64 | LGPL-3.0-or-later |
-| `@img/sharp-libvips-linux-s390x` | 1.2.3 | Linux s390x | LGPL-3.0-or-later |
-| `@img/sharp-libvips-linux-x64` | 1.2.3 | Linux x64 | LGPL-3.0-or-later |
-| `@img/sharp-wasm32` | 0.34.4 | WebAssembly | LGPL-3.0-or-later |
-| `@img/sharp-win32-arm64` | 0.34.4 | Windows ARM64 | LGPL-3.0-or-later |
-| `@img/sharp-win32-ia32` | 0.34.4 | Windows 32-bit | LGPL-3.0-or-later |
-| `@img/sharp-win32-x64` | 0.34.4 | Windows 64-bit | LGPL-3.0-or-later |
+| `@img/sharp-libvips-darwin-arm64` | 1.2.4 | macOS ARM64 | LGPL-3.0-or-later |
+| `@img/sharp-libvips-darwin-x64` | 1.2.4 | macOS x64 | LGPL-3.0-or-later |
+| `@img/sharp-libvips-linux-arm` | 1.2.4 | Linux ARM | LGPL-3.0-or-later |
+| `@img/sharp-libvips-linux-arm64` | 1.2.4 | Linux ARM64 | LGPL-3.0-or-later |
+| `@img/sharp-libvips-linuxmusl-arm64` | 1.2.4 | Linux musl ARM64 | LGPL-3.0-or-later |
+| `@img/sharp-libvips-linuxmusl-x64` | 1.2.4 | Linux musl x64 | LGPL-3.0-or-later |
+| `@img/sharp-libvips-linux-ppc64` | 1.2.4 | Linux PowerPC64 | LGPL-3.0-or-later |
+| `@img/sharp-libvips-linux-riscv64` | 1.2.4 | Linux RISC-V 64 | LGPL-3.0-or-later |
+| `@img/sharp-libvips-linux-s390x` | 1.2.4 | Linux s390x | LGPL-3.0-or-later |
+| `@img/sharp-libvips-linux-x64` | 1.2.4 | Linux x64 | LGPL-3.0-or-later |
+| `@img/sharp-wasm32` | 0.34.5 | WebAssembly | LGPL-3.0-or-later |
+| `@img/sharp-win32-arm64` | 0.34.5 | Windows ARM64 | LGPL-3.0-or-later |
+| `@img/sharp-win32-ia32` | 0.34.5 | Windows 32-bit | LGPL-3.0-or-later |
+| `@img/sharp-win32-x64` | 0.34.5 | Windows 64-bit | LGPL-3.0-or-later |
 
 **Used By**: Next.js (for automatic image optimization)
 **Transitive Dependency**: Yes (via Next.js → Sharp)

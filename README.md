@@ -26,7 +26,7 @@
 
 ### **Technical Highlights** 💡
 
-- ⚡ **Performance**: Latest verified production build keeps homepage first-load JS at 283.86 kB brotli, with `/jobs` at 294.45 kB
+- ⚡ **Performance**: Latest verified production build keeps homepage first-load JS at 282.46 kB brotli, with `/jobs` at 292.78 kB
 - 🔒 **Security**: No high/critical npm advisories; Firebase/Google transitive advisories tracked in [Security Documentation](./docs/SECURITY.md), plus Firestore rules, Stripe webhook verification, RBAC, and type-safe APIs
 - 🛡️ **CI/CD**: multi-job automated pipeline (build, lint, test, a11y, smoke tests, security scan), branch protection, conventional commits
 - 🎨 **Modern Stack**: Next.js 16.2.9, React 19, TypeScript 5.9, Tailwind v4, shadcn-style UI primitives
@@ -436,8 +436,8 @@ curl http://localhost:3000/api/stripe/checkout
 ✓ All TypeScript checks passing
 ✓ Zero ESLint errors
 ✓ Next.js 16 production build passing
-✓ Homepage first-load JS: 283.86 kB brotli
-✓ /jobs first-load JS: 294.45 kB brotli
+✓ Homepage first-load JS: 282.46 kB brotli
+✓ /jobs first-load JS: 292.78 kB brotli
 ```
 
 ## 🚀 Live Deployment
@@ -551,7 +551,7 @@ This project uses various open-source packages. Dependencies have been reviewed 
 ## 📊 Project Metrics
 
 - **Lines of Code:** ~15,000+ (TypeScript, React, API routes)
-- **Build Size:** 283.86 kB homepage first-load JS in the latest verified production build
+- **Build Size:** 282.46 kB homepage first-load JS in the latest verified production build
 - **API Endpoints:** 11 RESTful routes
 - **Pages:** 8 user-facing pages
 - **Components:** 30+ reusable React components

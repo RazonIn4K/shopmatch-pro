@@ -2,9 +2,10 @@
 
 ## Summary
 
-The latest GitHub Actions FOSSA CLI run for commit
+An earlier GitHub Actions FOSSA CLI run for commit
 `04e8003dae297069083299753090e180c6569fd3` successfully uploaded analysis, then
-`fossa test --timeout 1200` reported 38 active policy issues:
+`fossa test --timeout 1200` reported 38 active policy issues before the Next.js
+16 upgrade:
 
 - 1 denied license issue: CC-BY-SA-4.0 on `next@15.5.19`
 - 14 flagged license review issues: 13 Sharp/libvips LGPL packages and MPL-2.0 on `next@15.5.19`
@@ -14,14 +15,20 @@ Earlier dashboard results also listed `highlight.js@10.7.3` and
 `@axe-core/playwright@4.11.3`; those two findings were not present in the latest
 CLI policy output.
 
-Package versions in this document are evidence from the cited FOSSA revision.
+Package versions in this document are evidence from the cited FOSSA revisions.
 `package.json` and `package-lock.json` remain the source of truth for current
 dependency versions.
 
 Current status update on 2026-06-16: Next.js has since been upgraded to 16.2.9
-to remediate current production dependency advisories. Re-run FOSSA after this
-upgrade before using the exact issue counts below as the current dashboard
-state.
+to remediate current production dependency advisories. GitHub Actions CI run
+`27647359032` uploaded FOSSA analysis for
+`dcad089495c660c70a0c5b330a2d3e2653978391`; the advisory policy test reported
+39 dashboard issues:
+
+- 23 outdated dependency quality issues, all transitive
+- 15 flagged license review issues: 14 Sharp/libvips LGPL packages and MPL-2.0
+  on `next@16.2.9`
+- 1 denied license issue: CC-BY-SA-4.0 on `next@16.2.9`
 
 The security scan was passing in FOSSA. Local npm verification shows production dependencies are clean:
 
@@ -61,7 +68,7 @@ FOSSA dashboard or with FOSSA API workflows that have the correct permissions.
 
 ## License Rationale
 
-### `next@15.5.19`
+### `next@16.2.9`
 
 Next.js is declared MIT in npm metadata. The FOSSA CC-BY-SA-4.0 detection is treated as a non-code artwork false positive from bundled dependency assets. ShopMatch Pro does not use or distribute that artwork.
 
@@ -111,8 +118,8 @@ For the cited FOSSA revision, these findings could not be cleared by
 `.fossa.yml` alone. Re-run FOSSA after the Next.js 16.2.9 upgrade and mediate
 the current dashboard findings by package/version:
 
-1. Accept or auto-ignore CC-BY-SA-4.0 on `next@15.5.19` for this project and selected version. Rationale: non-code artwork/license text detection; ShopMatch Pro does not use or distribute the artwork.
-2. Accept MPL-2.0 on `next@15.5.19` for unmodified dependency usage.
+1. Accept or auto-ignore CC-BY-SA-4.0 on `next@16.2.9` for this project and selected version. Rationale: non-code artwork/license text detection; ShopMatch Pro does not use or distribute the artwork.
+2. Accept MPL-2.0 on `next@16.2.9` for unmodified dependency usage.
 3. Allow or auto-ignore LGPL-3.0-or-later for the Sharp/libvips platform packages listed in `THIRD_PARTY_LICENSES.md`. Rationale: unmodified library usage with source available upstream.
 4. Decide whether FOSSA outdated dependency quality findings should remain a hard gate. If they are advisory for this project, adjust the FOSSA quality policy or add scoped ignore rules for the current transitive findings.
 5. After dashboard mediation, change the CI policy test from advisory back to a hard gate by making the `Run FOSSA policy test` step exit non-zero on `fossa test` failure.

@@ -115,8 +115,8 @@ Actions: Email notification
 
 | Metric | Budget | Current | Status |
 |--------|--------|---------|--------|
-| Homepage first-load JS | ≤ 300 kB | 283.86 kB | ✅ Pass |
-| Largest measured route | Informational | 363.01 kB | ⚠️ Monitor |
+| Homepage first-load JS | ≤ 300 kB | 282.46 kB | ✅ Pass |
+| Largest measured route | Informational | 360.86 kB | ⚠️ Monitor |
 | API response time | ≤ 500ms | ~200ms avg | ✅ Pass |
 | Database query | ≤ 200ms | ~100ms avg | ✅ Pass |
 
