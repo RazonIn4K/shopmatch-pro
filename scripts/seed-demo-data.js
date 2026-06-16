@@ -284,7 +284,7 @@ async function main() {
       console.log(`📨 Created 3 sample applications`)
     }
     console.log('\n✨ Demo is ready!')
-    console.log('Visit: https://shopmatch-pro.vercel.app/jobs')
+    console.log('Visit: https://shopmatch.highencodelearning.com/jobs')
 
   } catch (error) {
     console.error('\n💥 Seeding failed!')

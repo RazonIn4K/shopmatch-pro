@@ -199,7 +199,7 @@ async function main() {
     console.log('   Email: seeker@test.com')
     console.log('   Password: testtest123')
     console.log('   Role: seeker')
-    console.log('\n✨ These credentials match the homepage at https://shopmatch-pro.vercel.app/')
+    console.log('\n✨ These credentials match the homepage at https://shopmatch.highencodelearning.com/')
     console.log('\n🧪 Run E2E tests with: npm run test:e2e')
 
   } catch (error) {

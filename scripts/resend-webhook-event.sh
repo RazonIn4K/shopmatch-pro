@@ -95,7 +95,7 @@ print_success "Stripe CLI is authenticated"
 
 # Check production health
 print_info "Checking production health..."
-HEALTH_RESPONSE=$(curl -s https://shopmatch-pro.vercel.app/api/health)
+HEALTH_RESPONSE=$(curl -s https://shopmatch.highencodelearning.com/api/health)
 if echo "$HEALTH_RESPONSE" | jq -e '.status == "ok"' > /dev/null 2>&1; then
   print_success "Production is healthy"
 else
@@ -169,7 +169,7 @@ print_info "Step 2/5: Checking Vercel logs for webhook processing..."
 print_warning "Note: Requires Vercel CLI authentication"
 
 if command -v vercel &> /dev/null; then
-  LOG_OUTPUT=$(vercel logs https://shopmatch-pro.vercel.app --since 10m 2>&1 || echo "")
+  LOG_OUTPUT=$(vercel logs https://shopmatch.highencodelearning.com --since 10m 2>&1 || echo "")
   
   if echo "$LOG_OUTPUT" | grep -q "Activated subscription access for user $USER_ID"; then
     print_success "Found success log: Subscription activated for user $USER_ID"
@@ -186,7 +186,7 @@ fi
 
 # Step 3: Check Production Health
 print_info "Step 3/5: Verifying production health..."
-HEALTH=$(curl -s https://shopmatch-pro.vercel.app/api/health)
+HEALTH=$(curl -s https://shopmatch.highencodelearning.com/api/health)
 if echo "$HEALTH" | jq -e '.checks.stripe == true' > /dev/null 2>&1; then
   print_success "Stripe integration is healthy"
 else
@@ -197,11 +197,11 @@ fi
 print_info "Step 4/5: Checking webhook endpoint configuration..."
 WEBHOOK_LIST=$(stripe webhook_endpoints list 2>/dev/null || echo "{}")
 
-if echo "$WEBHOOK_LIST" | jq -e '.data[] | select(.url | contains("shopmatch-pro.vercel.app"))' > /dev/null 2>&1; then
+if echo "$WEBHOOK_LIST" | jq -e '.data[] | select(.url | contains("shopmatch.highencodelearning.com"))' > /dev/null 2>&1; then
   print_success "Webhook endpoint is configured"
   
   # Check if it's enabled
-  WEBHOOK_STATUS=$(echo "$WEBHOOK_LIST" | jq -r '.data[] | select(.url | contains("shopmatch-pro.vercel.app")) | .status')
+  WEBHOOK_STATUS=$(echo "$WEBHOOK_LIST" | jq -r '.data[] | select(.url | contains("shopmatch.highencodelearning.com")) | .status')
   if [[ "$WEBHOOK_STATUS" == "enabled" ]]; then
     print_success "Webhook endpoint is enabled"
   else
@@ -232,9 +232,9 @@ echo "       - subActive: true"
 echo "       - stripeCustomerId: $CUSTOMER_ID"
 echo ""
 echo "  3. Job Creation Test:"
-echo "     URL: https://shopmatch-pro.vercel.app/login"
+echo "     URL: https://shopmatch.highencodelearning.com/login"
 echo "     Login with: $USER_EMAIL"
-echo "     Navigate to: https://shopmatch-pro.vercel.app/jobs/new"
+echo "     Navigate to: https://shopmatch.highencodelearning.com/jobs/new"
 echo "     Expected: Page loads successfully (no 403 error)"
 echo ""
 
@@ -254,7 +254,7 @@ echo ""
 echo "Next steps:"
 echo "  1. Complete manual verification steps above"
 echo "  2. If issues persist, check Vercel logs:"
-echo "     vercel logs https://shopmatch-pro.vercel.app --follow"
+echo "     vercel logs https://shopmatch.highencodelearning.com --follow"
 echo "  3. Review full guide:"
 echo "     docs/WEBHOOK_EVENT_RESEND_GUIDE.md"
 echo ""

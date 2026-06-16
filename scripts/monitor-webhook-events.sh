@@ -21,7 +21,7 @@ BOLD='\033[1m'
 NC='\033[0m' # No Color
 
 # Configuration
-WEBHOOK_URL="https://shopmatch-pro.vercel.app/api/stripe/webhook"
+WEBHOOK_URL="https://shopmatch.highencodelearning.com/api/stripe/webhook"
 LIMIT=50
 WATCH_MODE=false
 TAIL_MODE=false

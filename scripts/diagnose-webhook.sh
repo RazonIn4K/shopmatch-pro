@@ -43,7 +43,7 @@ fi
 
 # Step 1: Test webhook endpoint responds
 echo -e "${BLUE}Step 1: Testing webhook endpoint accessibility...${NC}"
-WEBHOOK_URL="https://shopmatch-pro.vercel.app/api/stripe/webhook"
+WEBHOOK_URL="https://shopmatch.highencodelearning.com/api/stripe/webhook"
 RESPONSE=$(curl -s -X POST -H "Content-Type: application/json" -d '{"test": "data"}' $WEBHOOK_URL)
 
 if echo "$RESPONSE" | grep -q "Missing signature"; then
@@ -58,7 +58,7 @@ echo ""
 
 # Step 2: Check production health
 echo -e "${BLUE}Step 2: Checking production health...${NC}"
-HEALTH=$(curl -s https://shopmatch-pro.vercel.app/api/health)
+HEALTH=$(curl -s https://shopmatch.highencodelearning.com/api/health)
 FIREBASE_OK=$(echo "$HEALTH" | jq -r '.checks.firebase')
 STRIPE_OK=$(echo "$HEALTH" | jq -r '.checks.stripe')
 ENV_OK=$(echo "$HEALTH" | jq -r '.checks.environment')

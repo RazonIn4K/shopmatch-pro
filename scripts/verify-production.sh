@@ -40,12 +40,12 @@ echo ""
 
 # Health endpoint
 check "Health API" \
-    "curl -sf https://shopmatch-pro.vercel.app/api/health | jq -e '.status == \"ok\"' > /dev/null" \
+    "curl -sf https://shopmatch.highencodelearning.com/api/health | jq -e '.status == \"ok\"' > /dev/null" \
     "200 OK"
 
 # Homepage
 check "Homepage" \
-    "curl -sf -o /dev/null -w '%{http_code}' https://shopmatch-pro.vercel.app | grep -q '200'" \
+    "curl -sf -o /dev/null -w '%{http_code}' https://shopmatch.highencodelearning.com | grep -q '200'" \
     "200 OK"
 
 echo ""
@@ -54,23 +54,23 @@ echo ""
 
 # Check each security header
 check "X-Content-Type-Options" \
-    "curl -sI https://shopmatch-pro.vercel.app | grep -qi 'x-content-type-options: nosniff'" \
+    "curl -sI https://shopmatch.highencodelearning.com | grep -qi 'x-content-type-options: nosniff'" \
     "nosniff"
 
 check "X-Frame-Options" \
-    "curl -sI https://shopmatch-pro.vercel.app | grep -qi 'x-frame-options: DENY'" \
+    "curl -sI https://shopmatch.highencodelearning.com | grep -qi 'x-frame-options: DENY'" \
     "DENY"
 
 check "X-XSS-Protection" \
-    "curl -sI https://shopmatch-pro.vercel.app | grep -qi 'x-xss-protection'" \
+    "curl -sI https://shopmatch.highencodelearning.com | grep -qi 'x-xss-protection'" \
     "enabled"
 
 check "Referrer-Policy" \
-    "curl -sI https://shopmatch-pro.vercel.app | grep -qi 'referrer-policy'" \
+    "curl -sI https://shopmatch.highencodelearning.com | grep -qi 'referrer-policy'" \
     "present"
 
 check "Permissions-Policy" \
-    "curl -sI https://shopmatch-pro.vercel.app | grep -qi 'permissions-policy'" \
+    "curl -sI https://shopmatch.highencodelearning.com | grep -qi 'permissions-policy'" \
     "present"
 
 echo ""
@@ -78,11 +78,11 @@ echo -e "${BLUE}=== Legal Pages ===${NC}"
 echo ""
 
 check "Terms of Service" \
-    "curl -sf -o /dev/null -w '%{http_code}' https://shopmatch-pro.vercel.app/legal/terms | grep -q '200'" \
+    "curl -sf -o /dev/null -w '%{http_code}' https://shopmatch.highencodelearning.com/legal/terms | grep -q '200'" \
     "200 OK"
 
 check "Privacy Policy" \
-    "curl -sf -o /dev/null -w '%{http_code}' https://shopmatch-pro.vercel.app/legal/privacy | grep -q '200'" \
+    "curl -sf -o /dev/null -w '%{http_code}' https://shopmatch.highencodelearning.com/legal/privacy | grep -q '200'" \
     "200 OK"
 
 echo ""
@@ -90,12 +90,12 @@ echo -e "${BLUE}=== API Endpoints ===${NC}"
 echo ""
 
 check "Sentry Test Endpoint" \
-    "curl -sf https://shopmatch-pro.vercel.app/api/sentry-test | jq -e '.status == \"ok\"' > /dev/null" \
+    "curl -sf https://shopmatch.highencodelearning.com/api/sentry-test | jq -e '.status == \"ok\"' > /dev/null" \
     "200 OK"
 
 # Stripe webhook (expect 400 or 405 without valid signature)
 echo -n "Checking Stripe Webhook... "
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST https://shopmatch-pro.vercel.app/api/stripe/webhook -H "Content-Type: application/json" -d '{}')
+HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST https://shopmatch.highencodelearning.com/api/stripe/webhook -H "Content-Type: application/json" -d '{}')
 if [ "$HTTP_CODE" = "400" ] || [ "$HTTP_CODE" = "405" ] || [ "$HTTP_CODE" = "200" ]; then
     echo -e "${GREEN}✅ PASS${NC} (HTTP $HTTP_CODE)"
 else
@@ -143,7 +143,7 @@ echo ""
 
 # Test Sentry error capture
 echo -n "Testing Sentry error capture... "
-RESPONSE=$(curl -sf "https://shopmatch-pro.vercel.app/api/sentry-test?error=true")
+RESPONSE=$(curl -sf "https://shopmatch.highencodelearning.com/api/sentry-test?error=true")
 if echo "$RESPONSE" | jq -e '.error' > /dev/null 2>&1; then
     echo -e "${GREEN}✅ PASS${NC}"
     echo "  Check Sentry dashboard: https://davidortizhighencodelearningco.sentry.io/issues/"
@@ -158,7 +158,7 @@ echo "=========================================="
 if [ $FAILED_CHECKS -eq 0 ]; then
     echo -e "${GREEN}✅ All checks passed! Production is healthy.${NC}"
     echo ""
-    echo "Production URL: https://shopmatch-pro.vercel.app/"
+    echo "Production URL: https://shopmatch.highencodelearning.com/"
     exit 0
 else
     echo -e "${RED}❌ $FAILED_CHECKS check(s) failed.${NC}"
