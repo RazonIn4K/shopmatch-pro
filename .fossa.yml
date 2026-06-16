@@ -6,7 +6,6 @@ version: 3
 
 project:
   name: shopmatch-pro
-  team: development
   policy: default
   link: https://github.com/RazonIn4K/shopmatch-pro
 
