@@ -22,7 +22,7 @@ Target Branches: Include by pattern → main
 1. Validate Branch Name
 2. Build and Test
 3. Accessibility Testing
-4. Measure first-load JS (Playwright)
+4. Measure first-load JS
 ```
 
 **Note**: When the GUI shows matrix jobs, you may see:

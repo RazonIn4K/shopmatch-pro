@@ -26,7 +26,7 @@
 ### Technical Excellence
 
 ✅ **Production-Grade Architecture**
-- Next.js 15 with App Router and Server Components
+- Next.js 16 with App Router and Server Components
 - TypeScript strict mode with comprehensive type safety
 - Modular component architecture following React best practices
 - Clean separation of concerns (API routes, business logic, UI)
@@ -82,7 +82,7 @@
 - **TypeScript strict mode** enabled
 - **100% type safety** on all API routes
 - **Security rules** tested and validated
-- **Build size**: 288 kB shared first-load JS; `/jobs` first-load JS is 291 kB in the latest verified build
+- **Build size**: 283.86 kB homepage first-load JS; `/jobs` first-load JS is 294.45 kB in the latest verified build
 - **Build verification**: Latest CI run passed build, typecheck, unit tests, Firestore rules, local smoke, production smoke, accessibility, Snyk, and CodeQL
 
 ### Testing & Quality Assurance
@@ -120,7 +120,7 @@
 
 ### Frontend Excellence
 ```
-Next.js 15.5.19         - React framework with App Router
+Next.js 16.2.9          - React framework with App Router
 React 19.2              - UI runtime
 TypeScript 5.9          - Type-safe development
 Tailwind CSS v4         - Utility-first styling
@@ -525,7 +525,7 @@ This isn't a basic CRUD app - it includes:
 
 ### 3. Modern Tech Stack
 Uses a current production-grade stack:
-- Next.js 15.5.19
+- Next.js 16.2.9
 - React 19.2
 - React Server Components
 - Turbopack for local and production builds
@@ -648,7 +648,6 @@ ZIP: Any 5 digits
 
 ### Technical Debt
 - [ ] Implement caching strategy
-- [ ] Add `GITLAB_MIRROR_TOKEN` so GitLab mirroring runs automatically instead of relying on manual SSH sync
 - [ ] Recheck Firebase Tools/OpenTelemetry dev-only advisories when upstream releases a non-downgrade fix
 - [ ] Expand authenticated Playwright coverage with stable local demo secrets
 
@@ -671,7 +670,7 @@ ZIP: Any 5 digits
 ---
 
 **Built by:** David Ortiz
-**Technologies:** Next.js 15.5.19, React 19, TypeScript 5.9, Firebase, Stripe, Vercel, Tailwind CSS
+**Technologies:** Next.js 16.2.9, React 19, TypeScript 5.9, Firebase, Stripe, Vercel, Tailwind CSS
 **Status:** ✅ Production-Ready (Test Mode)
 **Purpose:** Portfolio demonstration of full-stack SaaS development capabilities
 **Last Updated:** June 16, 2026

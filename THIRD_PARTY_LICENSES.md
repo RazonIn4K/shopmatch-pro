@@ -8,7 +8,7 @@ This document lists all third-party software dependencies used in ShopMatch Pro 
 
 ShopMatch Pro is licensed under the **MIT License** (see [LICENSE](./LICENSE)). All third-party dependencies have been reviewed for license compatibility with MIT and commercial use.
 
-> **2026-06-16 Update**: Active FOSSA license alerts were reviewed in [docs/FOSSA_LICENSE_REVIEW_2026-06-16.md](./docs/FOSSA_LICENSE_REVIEW_2026-06-16.md). GitHub Actions now uploads FOSSA analysis; dashboard policy or auto-ignore mediation is still required.
+> **2026-06-16 Update**: Active FOSSA license alerts were reviewed in [docs/FOSSA_LICENSE_REVIEW_2026-06-16.md](./docs/FOSSA_LICENSE_REVIEW_2026-06-16.md). GitHub Actions now uploads FOSSA analysis; dashboard policy or auto-ignore mediation is still required. Next.js was upgraded to 16.2.9 after that review to clear current production advisories.
 > **2026-04-24 Update**: Dependency versions and FOSSA override locators were refreshed after the audit advisory update.
 
 ### Key Licensing Decisions
@@ -29,7 +29,7 @@ dependency versions; refresh this table from those files during license reviews.
 
 | Package | Version | License | Purpose |
 |---------|---------|---------|---------|
-| `next` | 15.5.19 | MIT | React framework for production |
+| `next` | 16.2.9 | MIT | React framework for production |
 | `react` | 19.2.7 | MIT | UI library |
 | `react-dom` | 19.2.7 | MIT | React DOM renderer |
 
@@ -136,7 +136,7 @@ The following packages contain LGPL-3.0-or-later licensed code (libvips image pr
 
 **Status**: ✅ **Acceptable for commercial use**
 
-**Package**: `next` (15.5.19)
+**Package**: `next` (16.2.9)
 **License**: Contains some MPL-2.0 licensed code
 **Depth**: Direct dependency
 
@@ -234,7 +234,7 @@ All development dependencies are used only during development and build processe
 | `@types/react` | 19.2.17 | MIT | React type definitions |
 | `@types/react-dom` | 19.2.3 | MIT | React DOM type definitions |
 | `eslint` | ^9 | MIT | Code linting (development only) |
-| `eslint-config-next` | 15.5.19 | MIT | Next.js ESLint rules |
+| `eslint-config-next` | 16.2.9 | MIT | Next.js ESLint rules |
 | `tailwindcss` | ^4 | MIT | CSS framework (build-time processing) |
 | `@tailwindcss/postcss` | 4.3.1 | MIT | PostCSS integration (build-time) |
 | `@eslint/eslintrc` | 3.3.5 | MIT | ESLint configuration utilities |
@@ -421,6 +421,7 @@ npm ls <package-name>
 **Latest Security Audit** (2026-06-16):
 - `npm audit --omit=dev`: 0 vulnerabilities
 - `npm audit`: 3 moderate dev-only residuals through `firebase-tools -> @google-cloud/pubsub -> @opentelemetry/core@1.30.1`
+- `next` and `eslint-config-next`: upgraded to 16.2.9 after Snyk reported current Next.js production advisories.
 
 **Verification**: Run `npm audit` in the project directory to verify current security status.
 
@@ -469,7 +470,7 @@ FOSSA and other scanning tools may flag certain transitive dependencies as "outd
 **TL;DR**: "Outdated" warnings are informational, not critical. As long as:
 - ✅ No production security vulnerabilities (`npm audit --omit=dev` on 2026-06-16 shows 0 vulnerabilities)
 - ✅ All licenses are compatible (documented: all permissive - MIT, Apache-2.0, BSD, ISC)
-- ✅ Direct dependencies are updated (verified 2026-06-16: Next.js 15.5.19, React 19.2.7, etc.)
+- ✅ Direct dependencies are updated (verified 2026-06-16: Next.js 16.2.9, React 19.2.7, etc.)
 - ✅ Application builds and runs correctly (production build passing)
 
 ...then "outdated" warnings for transitive dependencies are **acceptable** and **safe to ignore**.

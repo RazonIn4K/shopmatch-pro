@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import dynamic from 'next/dynamic'
@@ -29,25 +29,7 @@ export default function OwnerDashboardPage() {
   const [selectedApplication, setSelectedApplication] = useState<Application | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
 
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/login')
-      return
-    }
-
-    if (!authLoading && user?.role !== 'owner') {
-      toast.error('Access denied: Owner account required')
-      router.push('/subscribe')
-      return
-    }
-
-    if (user && user.role === 'owner') {
-      fetchDashboardData()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, authLoading, router])
-
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     if (!user) return
 
     try {
@@ -78,7 +60,27 @@ export default function OwnerDashboardPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [user])
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login')
+      return
+    }
+
+    if (!authLoading && user?.role !== 'owner') {
+      toast.error('Access denied: Owner account required')
+      router.push('/subscribe')
+      return
+    }
+
+    if (user && user.role === 'owner') {
+      const timeoutId = window.setTimeout(() => {
+        void fetchDashboardData()
+      }, 0)
+      return () => window.clearTimeout(timeoutId)
+    }
+  }, [user, authLoading, router, fetchDashboardData])
 
   const handleDeleteJob = async (jobId: string) => {
     if (!confirm('Are you sure you want to delete this job?')) return

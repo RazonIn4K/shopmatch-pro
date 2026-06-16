@@ -3,6 +3,10 @@
 **Repository**: RazonIn4K/shopmatch-pro
 **Latest Commit**: 8ef1ea7 (fix: MP-219 harden application export button)
 
+> Historical assessment. For current dependency and security status, use
+> [SECURITY.md](./SECURITY.md), [GITLAB-CI.md](./GITLAB-CI.md), and the latest
+> GitHub Actions run.
+
 ---
 
 ## Executive Summary

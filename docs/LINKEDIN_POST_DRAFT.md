@@ -8,7 +8,7 @@ Use one of these after recording. Replace `[Loom Link]` with the final video URL
 I just refreshed ShopMatch Pro, a deployed SaaS job board demo I built to prove full-stack product execution beyond a static portfolio page.
 
 What it shows:
-- Next.js 15.5, React 19, TypeScript 5.9
+- Next.js 16.2.9, React 19, TypeScript 5.9
 - Firebase Auth and Firestore
 - Stripe test-mode subscriptions and webhook handling
 - Employer and job seeker demo flows
@@ -102,4 +102,4 @@ Avoid:
 - "zero vulnerabilities" without qualification
 - "real payments"
 - "live hiring marketplace"
-- "GitLab scanning is active" until `GITLAB_MIRROR_TOKEN` is configured
+- "GitLab scanning is current" unless the latest mirror workflow has completed after the commit being discussed

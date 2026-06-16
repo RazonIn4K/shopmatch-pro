@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 
@@ -21,25 +21,7 @@ export default function SeekerDashboardPage() {
   const [selectedApplication, setSelectedApplication] = useState<Application | null>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
 
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/login')
-      return
-    }
-
-    if (!authLoading && user?.role !== 'seeker') {
-      toast.error('Access denied: Seeker account required')
-      router.push('/dashboard/owner')
-      return
-    }
-
-    if (user && user.role === 'seeker') {
-      fetchApplications()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, authLoading, router])
-
-  const fetchApplications = async () => {
+  const fetchApplications = useCallback(async () => {
     if (!user) return
 
     try {
@@ -62,7 +44,27 @@ export default function SeekerDashboardPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [user])
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login')
+      return
+    }
+
+    if (!authLoading && user?.role !== 'seeker') {
+      toast.error('Access denied: Seeker account required')
+      router.push('/dashboard/owner')
+      return
+    }
+
+    if (user && user.role === 'seeker') {
+      const timeoutId = window.setTimeout(() => {
+        void fetchApplications()
+      }, 0)
+      return () => window.clearTimeout(timeoutId)
+    }
+  }, [user, authLoading, router, fetchApplications])
 
   if (loading || authLoading) {
     return (

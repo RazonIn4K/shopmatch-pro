@@ -69,13 +69,16 @@ export function ApplicationDetailDialog({
   onStatusUpdated,
 }: ApplicationDetailDialogProps) {
   const { user } = useAuth()
-  const [notes, setNotes] = React.useState('')
+  const applicationId = application?.id ?? null
+  const [notesDraft, setNotesDraft] = React.useState<{
+    applicationId: string | null
+    value: string
+  } | null>(null)
   const [updating, setUpdating] = React.useState(false)
-
-  // Reset notes when application changes
-  React.useEffect(() => {
-    setNotes(application?.notes ?? '')
-  }, [application])
+  const notes =
+    notesDraft?.applicationId === applicationId
+      ? notesDraft.value
+      : application?.notes ?? ''
 
   const handleStatusUpdate = async (status: ApplicationStatus) => {
     if (!application) return
@@ -324,7 +327,9 @@ export function ApplicationDetailDialog({
                 id="notes"
                 placeholder="Add notes about this application (visible only to you)..."
                 value={notes}
-                onChange={(e) => setNotes(e.target.value)}
+                onChange={(e) =>
+                  setNotesDraft({ applicationId, value: e.target.value })
+                }
                 rows={4}
                 maxLength={2000}
                 className="resize-none"

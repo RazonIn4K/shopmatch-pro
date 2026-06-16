@@ -11,12 +11,12 @@ Current behavior:
 - If `GITLAB_MIRROR_TOKEN` is missing, the workflow fails and records `GitLab mirror failed` in the step summary. A skipped mirror must not look like a successful GitLab sync.
 
 Operational status as of 2026-06-16:
-- `GITLAB_MIRROR_TOKEN` is not present in the GitHub repository secret list, so automatic mirroring is blocked until the secret is added.
-- The local SSH remote named `gitlab` is reachable and can push `main` directly.
-- Manual SSH sync verified GitLab `main` at `7207ce9bccff7833390485b8432500cae9442335`.
-- After any local manual sync, verify the GitHub and GitLab heads match before treating GitLab scanners as current.
+- `GITLAB_MIRROR_TOKEN` is present in the GitHub repository secret list.
+- Workflow dispatch run `27645919309` completed successfully and executed `git push gitlab main --follow-tags`.
+- GitHub and GitLab `main` were verified matching at `ebc5aa22c60d8d4dc800c72454a94916f72d7b06` before the Next.js 16.2.9 remediation commit.
+- After any new push to `main`, verify the mirror workflow succeeds and GitHub/GitLab heads match before treating GitLab scanners as current.
 
-To enable real mirroring:
+To rotate or re-create real mirroring:
 
 1. In GitLab, create a token with write access to `razonin4k/shopmatch-pro-ci`.
 2. In GitHub, go to `RazonIn4K/shopmatch-pro` -> Settings -> Secrets and variables -> Actions.
@@ -33,7 +33,7 @@ git ls-remote origin refs/heads/main
 git ls-remote gitlab refs/heads/main
 ```
 
-Manual sync fallback while the GitHub secret is missing:
+Manual sync fallback if the GitHub secret is invalid or unavailable:
 
 ```bash
 git push gitlab main --follow-tags

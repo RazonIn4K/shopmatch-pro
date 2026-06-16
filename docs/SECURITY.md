@@ -29,7 +29,7 @@ Status after the 2026-06-16 dependency sweep:
 - `npm audit`: 3 moderate, 0 high, 0 critical
 
 **Fixed**
-- `next` 15.5.19 — cleared all App Router/middleware advisories (`<=15.5.16` range)
+- `next` 16.2.9 — clears the current Snyk-reported production advisories; 16.1.7 was rejected locally because `npm audit --omit=dev` still reported production Next.js advisories.
 - `fast-uri`, `fast-xml-builder`, `protobufjs`, `ws` — transitive bumps via the earlier June sweep
 - `js-yaml`, `joi`, `form-data`, Babel packages, and Google client transitive packages — refreshed via `npm audit fix`
 - Sentry/OpenTelemetry runtime path: `@opentelemetry/core`, `@opentelemetry/resources`, and `@opentelemetry/sdk-trace-base` 2.7.1 -> 2.8.0

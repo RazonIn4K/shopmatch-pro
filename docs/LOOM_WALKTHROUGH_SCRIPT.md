@@ -35,13 +35,13 @@
 Use these claims on camera:
 
 - "This is a deployed portfolio SaaS demo running on Vercel."
-- "The stack is Next.js 15.5.19, React 19, TypeScript 5.9, Firebase, Stripe, Sentry, Tailwind CSS, and GitHub Actions."
+- "The stack is Next.js 16.2.9, React 19, TypeScript 5.9, Firebase, Stripe, Sentry, Tailwind CSS, and GitHub Actions."
 - "It has seeded demo accounts, Stripe test-mode billing, job posting, application tracking, analytics, Firestore rules, and production smoke tests."
 - "The seeded employer and seeker accounts both reach their role-specific dashboards in the verified production build."
 - "GitHub Dependabot has zero open alerts, and the production dependency audit is clean."
 - "The full audit still tracks three dev-only Firebase Tools/OpenTelemetry moderate advisories, documented in `docs/SECURITY.md`; they are not in the Vercel runtime bundle."
 - "Latest CI is green for build, typecheck, unit tests, Firestore rules, local smoke, production smoke, accessibility, Snyk, and CodeQL."
-- "GitLab is configured as a secondary security-scanning mirror. The local GitLab remote is manually synced to the latest reviewed commit; automatic GitHub-to-GitLab mirroring still needs the `GITLAB_MIRROR_TOKEN` repository secret."
+- "GitLab is configured as a secondary security-scanning mirror, and the GitHub-to-GitLab mirror workflow is configured with its repository secret."
 - "The deployed public pages and auth pages were browser-checked at desktop and mobile widths with no horizontal overflow; the authenticated dashboard checks pass in the production build."
 - "The demo has a refreshed favicon, app icon, web manifest, and social preview card that match the current ShopMatch palette."
 - "Legacy application rows degrade cleanly in the dashboard instead of exposing incomplete Firestore snapshot fields."
@@ -51,7 +51,7 @@ Avoid these claims:
 
 - Do not say "zero vulnerabilities" without qualifying it as production/deployed dependencies.
 - Do not imply real payments are processed. Stripe is test mode.
-- Do not say GitHub Actions is automatically mirroring to GitLab until `GITLAB_MIRROR_TOKEN` is configured.
+- Do not say GitLab scanner results are current unless the latest mirror workflow has completed successfully after the commit you are showing.
 - Do not create new accounts or real-looking customer data on camera unless you plan to clean it up.
 
 ## 90-Second Loom Script
@@ -149,7 +149,7 @@ Key points:
 - Production smoke tests run against `shopmatch.highencodelearning.com`.
 - Dependabot has zero open alerts.
 - Production audit is clean; remaining full-audit advisories are dev-only Firebase Tools/OpenTelemetry and documented.
-- GitLab `main` is manually synced to the latest reviewed commit; automatic mirroring now fails loudly until the `GITLAB_MIRROR_TOKEN` secret is added.
+- GitLab mirroring is configured; verify the latest `Mirror to GitLab` workflow is green before calling GitLab scanner results current.
 
 ### 4:30-5:00 - Close
 

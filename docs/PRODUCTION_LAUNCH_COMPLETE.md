@@ -4,6 +4,10 @@
 **Status:** ✅ **100% PRODUCTION READY & DEPLOYED**
 **Final PR:** #40 (Automatic Token Refresh)
 
+> Historical launch record. For current dependency versions, CI status, and
+> security posture, use [SECURITY.md](./SECURITY.md), [GITLAB-CI.md](./GITLAB-CI.md),
+> and the latest GitHub Actions run.
+
 ---
 
 ## 🎉 **Executive Summary**
@@ -97,7 +101,7 @@ Deployment: Vercel Production (Auto-deployed)
 ## 🔧 **Technical Architecture**
 
 ### **Frontend**
-- **Framework:** Next.js 15 (App Router)
+- **Framework:** Next.js 16 (App Router)
 - **Language:** TypeScript
 - **Styling:** TailwindCSS
 - **UI Components:** shadcn/ui
@@ -468,7 +472,7 @@ ShopMatch Pro has successfully completed its MVP phase and is **fully operationa
 
 - ✅ **Seamless user experience** - From signup to job posting in minutes
 - ✅ **Reliable subscription flow** - Stripe integration with automatic activation
-- ✅ **Robust architecture** - Next.js 15, Firebase, TypeScript, TailwindCSS
+- ✅ **Robust architecture** - Next.js 16, Firebase, TypeScript, TailwindCSS
 - ✅ **Production-grade security** - Runtime scans and quality gates passing; FOSSA dashboard mediation pending for documented policy findings
 - ✅ **Comprehensive documentation** - Complete guides for deployment and maintenance
 

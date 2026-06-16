@@ -26,10 +26,10 @@
 
 ### **Technical Highlights** 💡
 
-- ⚡ **Performance**: Latest verified production build keeps shared first-load JS at 288 kB, with `/jobs` at 291 kB
+- ⚡ **Performance**: Latest verified production build keeps homepage first-load JS at 283.86 kB brotli, with `/jobs` at 294.45 kB
 - 🔒 **Security**: No high/critical npm advisories; Firebase/Google transitive advisories tracked in [Security Documentation](./docs/SECURITY.md), plus Firestore rules, Stripe webhook verification, RBAC, and type-safe APIs
 - 🛡️ **CI/CD**: multi-job automated pipeline (build, lint, test, a11y, smoke tests, security scan), branch protection, conventional commits
-- 🎨 **Modern Stack**: Next.js 15.5.19, React 19, TypeScript 5.9, Tailwind v4, shadcn-style UI primitives
+- 🎨 **Modern Stack**: Next.js 16.2.9, React 19, TypeScript 5.9, Tailwind v4, shadcn-style UI primitives
 - 🧪 **Quality**: Zero ESLint errors, TypeScript strict mode, Playwright E2E tests, accessibility verified
 - 📚 **Documentation**: Architecture diagrams, API docs, runbooks, AI development guide (CLAUDE.md)
 - 🚀 **Deployed**: Vercel with auto-deployment, production smoke tests on every main push
@@ -88,7 +88,7 @@
 - 💳 Stripe subscription integration
 - 🔄 Real-time updates with Firebase
 - 📱 Fully responsive design
-- ⚡ Built with Next.js 15 + Turbopack
+- ⚡ Built with Next.js 16 + Turbopack
 
 ## 📈 Analytics & Insights Demo
 
@@ -113,7 +113,7 @@ Show clients how you reason about hiring performance with the new **Analytics & 
 ## 📁 Tech Stack
 
 ### Frontend
-- **Framework:** Next.js 15.5.19 (App Router, Server Components, Turbopack)
+- **Framework:** Next.js 16.2.9 (App Router, Server Components, Turbopack)
 - **Language:** TypeScript 5.9 (strict mode)
 - **Styling:** Tailwind CSS v4 + shadcn/ui component library
 - **Forms:** React Hook Form + Zod validation
@@ -129,7 +129,7 @@ Show clients how you reason about hiring performance with the new **Analytics & 
 ### Development Tools
 - **Version Control:** Git + GitHub with branch protection
 - **CI/CD:** GitHub Actions (branch/commit validation, build & quality checks, accessibility tests, local smoke tests, Snyk security scan, production smoke tests)
-- **GitLab Security Mirror:** `gitlab.com/razonin4k/shopmatch-pro-ci` is available as a secondary scanner target; manual SSH sync is verified at `7207ce9`, and automatic GitHub-to-GitLab mirroring requires the `GITLAB_MIRROR_TOKEN` repository secret.
+- **GitLab Security Mirror:** `gitlab.com/razonin4k/shopmatch-pro-ci` is available as a secondary scanner target; automatic GitHub-to-GitLab mirroring is configured with `GITLAB_MIRROR_TOKEN` and was verified on 2026-06-16.
 - **Package Manager:** npm
 - **Linting:** ESLint + Prettier
 - **Testing:** Playwright E2E (smoke tests, accessibility), Jest unit tests, Firebase Emulator
@@ -137,7 +137,7 @@ Show clients how you reason about hiring performance with the new **Analytics & 
 - **Guardrails:** Branch naming enforced as `type/ID-slug` (`feat|fix|perf|sec|docs|test|refactor|ci|build`); use `ci` for infrastructure changes
 
 ## 🧭 Repository Structure
-- `src/` – Next.js 15 App Router source (routes, components, providers, utilities)
+- `src/` – Next.js 16 App Router source (routes, components, providers, utilities)
 - `e2e/` – Playwright suites (`login`, `demo-diagnostics`, `verify-demo-login` smoke tests run in CI)
 - `docs/` – Comprehensive documentation (architecture, security, runbooks, checklists, ADRs)
 - `.github/workflows/ci.yml` – All CI jobs (branch naming + commit checks, build, accessibility, production smoke tests)
@@ -435,9 +435,9 @@ curl http://localhost:3000/api/stripe/checkout
 ✓ Compiled successfully
 ✓ All TypeScript checks passing
 ✓ Zero ESLint errors
-✓ 27 routes in the latest verified production build
-✓ Shared first-load JS: 288 kB
-✓ /jobs first-load JS: 291 kB
+✓ Next.js 16 production build passing
+✓ Homepage first-load JS: 283.86 kB brotli
+✓ /jobs first-load JS: 294.45 kB brotli
 ```
 
 ## 🚀 Live Deployment
@@ -514,7 +514,6 @@ npm run dev
 - [ ] Advanced search/filtering
 - [ ] Resume parsing
 - [ ] Persist rate limits outside in-memory serverless instances
-- [ ] Add the GitHub Actions `GITLAB_MIRROR_TOKEN` secret so GitLab sync can run automatically instead of relying on manual SSH push
 
 See [FUTURE_ROADMAP.md](./docs/FUTURE_ROADMAP.md) for complete feature roadmap.
 
@@ -552,7 +551,7 @@ This project uses various open-source packages. Dependencies have been reviewed 
 ## 📊 Project Metrics
 
 - **Lines of Code:** ~15,000+ (TypeScript, React, API routes)
-- **Build Size:** 288 kB shared first-load JS in the latest verified production build
+- **Build Size:** 283.86 kB homepage first-load JS in the latest verified production build
 - **API Endpoints:** 11 RESTful routes
 - **Pages:** 8 user-facing pages
 - **Components:** 30+ reusable React components
@@ -561,7 +560,7 @@ This project uses various open-source packages. Dependencies have been reviewed 
 
 ---
 
-**Built with ❤️ using Next.js 15, Firebase, and Stripe**
+**Built with Next.js 16, Firebase, and Stripe**
 
 **Project Type:** Portfolio Demonstration  
 **Status:** Production-Ready (Test Mode)  

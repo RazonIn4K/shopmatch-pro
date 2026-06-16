@@ -45,12 +45,12 @@ npm run test:unit
 ### Performance Budgets
 
 **First-Load JS Budget (≤ 300 KB)**:
-- Measured via Playwright in headless Chromium
-- Counts only JavaScript loaded on initial page visit
-- Excludes prefetch requests and Next.js data fetches
-- Reports compressed bytes (what users actually download)
+- Measured from Next.js build output when size columns are present
+- Falls back to App Router client manifests and emitted production JS chunks on Next.js 16
+- Gates the homepage first-load JS budget and reports all measured routes
+- Reports compressed bytes; the Next.js 16 fallback uses brotli by default
 - Script: `scripts/ci/measure-first-load.mjs`
-- Local test: `FIRST_LOAD_BUDGET_KB=300 node scripts/ci/measure-first-load.mjs`
+- Local test: `npm run build 2>&1 | FIRST_LOAD_BUDGET_KB=300 node scripts/ci/measure-first-load.mjs`
 - CI artifact: `first-load-report.json` (uploaded on every build)
 
 **Lighthouse Budgets** (`lighthouse-budgets.json`):

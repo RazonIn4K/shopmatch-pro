@@ -293,10 +293,9 @@ gh pr checks --watch
 
 **Verification**:
 - [ ] CI job `validate-branch` starts and passes
-- [ ] CI job `Build and Test (18.x)` starts and passes
 - [ ] CI job `Build and Test (20.x)` starts and passes
 - [ ] CI job `Accessibility Testing` starts and passes
-- [ ] Step `Measure first-load JS (Playwright)` passes with "✅ PASSED" in logs
+- [ ] Step `Measure first-load JS` passes with "✅ PASSED" in logs
 - [ ] All jobs complete in under 10 minutes
 - [ ] Artifacts uploaded: `first-load-report`, `build-output`, `accessibility-results`
 
@@ -310,15 +309,14 @@ cat first-load-report.json | jq '.summary'
 
 # Expected output:
 # {
-#   "resourceCount": X,
-#   "totalKB": Y,
+#   "homepageFirstLoadKB": Y,
 #   "budgetKB": 300
 # }
 ```
 
 **Verification**:
 - [ ] `first-load-report.json` exists
-- [ ] `totalKB` is ≤ 300
+- [ ] `homepageFirstLoadKB` is ≤ 300
 - [ ] `budgetExceeded` is `false`
 
 **Cleanup**:
@@ -338,56 +336,39 @@ gh pr close "https://github.com/.../pull/XXX" --delete-branch
 
 **Test 1: Measure Current Bundle**
 ```bash
-# 1. Start server
-npm start &
-SERVER_PID=$!
-
-# 2. Wait for server
-npx wait-on http://localhost:3000
-
-# 3. Run measurement
-FIRST_LOAD_BUDGET_KB=300 node scripts/ci/measure-first-load.mjs
+# Run build and pipe output to the bundle measurement script
+npm run build 2>&1 | FIRST_LOAD_BUDGET_KB=300 node scripts/ci/measure-first-load.mjs
 
 # Expected output:
 # 📈 First-Load JS Summary:
-#    Total: XXX KB (Y resources)
+#    Homepage: XXX KB
 #    Budget: 300 KB
 #    Status: ✅ PASSED
-
-# 4. Stop server
-kill $SERVER_PID
 ```
 
 **Verification**:
 - [ ] Script exits with code 0 (success)
-- [ ] Total KB is ≤ 300
+- [ ] Homepage first-load KB is ≤ 300
 - [ ] Report saved to `first-load-report.json`
-- [ ] Report includes resource breakdown
+- [ ] Report includes route and largest-route breakdown
 
 **Test 2: Simulate Budget Failure**
 ```bash
-# 1. Start server
-npm start &
-SERVER_PID=$!
-
-# 2. Run with low budget (should fail)
-FIRST_LOAD_BUDGET_KB=50 node scripts/ci/measure-first-load.mjs
+# Run with low budget (should fail)
+npm run build 2>&1 | FIRST_LOAD_BUDGET_KB=50 node scripts/ci/measure-first-load.mjs
 
 # Expected output:
 # ❌ Budget exceeded by XXX KB!
 # 💡 Recommendations:
 #    - Use dynamic imports for large components
 #    ...
-
-# 3. Stop server
-kill $SERVER_PID
 ```
 
 **Verification**:
 - [ ] Script exits with code 1 (failure)
 - [ ] Error message shows excess KB
 - [ ] Recommendations displayed
-- [ ] Largest resource identified
+- [ ] Largest route identified
 
 **Time Estimate**: 5 minutes
 
@@ -929,7 +910,7 @@ gh pr create --title "[QA-001] Verify quality gates" --body "Testing all quality
 
 **Automated Quality Gates**:
 - [ ] CI: All checks passing (build, lint, type check)
-- [ ] First-load JS: ≤ 300 KB (verify artifact)
+- [ ] Homepage first-load JS: ≤ 300 KB (verify artifact)
 - [ ] Accessibility: Zero violations (verify artifact)
 - [ ] CodeQL: No security issues (if enabled)
 
@@ -1216,7 +1197,7 @@ open lighthouse-report.html  # macOS
 - [ ] Accessibility score ≥ 90
 - [ ] First Contentful Paint ≤ 2s
 - [ ] Total Blocking Time ≤ 300ms
-- [ ] First Load JS ≤ 300 KB (check in Network tab)
+- [ ] Homepage first-load JS ≤ 300 KB (check CI artifact)
 
 **Time Estimate**: 20 minutes
 

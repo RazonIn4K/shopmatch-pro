@@ -3,6 +3,10 @@
 **Status**: Production-Ready MVP
 **S-Tier**: S2 (Standardized)
 
+> Historical audit. For current dependency versions, security posture, and CI
+> mirror status, use [SECURITY.md](./SECURITY.md), [GITLAB-CI.md](./GITLAB-CI.md),
+> and the latest GitHub Actions run.
+
 ---
 
 ## Executive Summary

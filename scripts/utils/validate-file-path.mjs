@@ -12,7 +12,7 @@
  *
  * Usage:
  * ```javascript
- * const { validateFilePath } = require('./utils/validate-file-path')
+ * import { validateFilePath } from './utils/validate-file-path.mjs'
  *
  * try {
  *   const validatedPath = validateFilePath(process.argv[2])

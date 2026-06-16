@@ -239,7 +239,7 @@ Enable these protections in order:
   |-----------------------------|------------------------------------------|
   | `build (20.x)`              | Production build on Node 20              |
   | `validate-branch`           | Branch naming convention enforcement     |
-  | `First-load JS (Playwright)`| Bundle budget ≤ 300 KB enforcement       |
+  | `Measure first-load JS`     | Homepage bundle budget ≤ 300 KB enforcement |
   | `Accessibility Tests`       | axe-core WCAG violation detection        |
   | `CodeQL`                    | Security vulnerability scanning          |
 
@@ -393,7 +393,7 @@ When PR is created, verify:
 - ✅ **5 CI checks run**:
   1. `validate-branch` ✅ (branch name valid)
   2. `build (20.x)` ✅ (production build succeeds)
-  3. `First-load JS (Playwright)` ✅ (≤ 300 KB)
+  3. `Measure first-load JS` ✅ (≤ 300 KB homepage)
   4. `Accessibility Tests` ✅ (no WCAG violations)
   5. `CodeQL` ✅ (no security issues)
 - ✅ **Merge blocked** (until 1 approval + all checks green)

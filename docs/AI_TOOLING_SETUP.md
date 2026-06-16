@@ -324,7 +324,7 @@ If using Jules, create `.jules/config.json`:
 {
   "environment": {
     "NODE_ENV": "development",
-    "FRAMEWORK": "Next.js 15"
+    "FRAMEWORK": "Next.js 16"
   },
   "knowledge": {
     "branch_naming": "type/<ID>-<slug>",
@@ -451,7 +451,7 @@ npm run test:a11y
 | TypeScript | Strict mode, no `any` | `npm run typecheck` | Build logs |
 | Linting | ESLint + Next.js rules | `npm run lint` | Lint report |
 | Build | Production build success | `npm run build` | `.next/` directory |
-| Bundle budget | ≤300KB first-load JS | Playwright measurement | `first-load-report.json` |
+| Bundle budget | ≤300KB homepage first-load JS | Next build output / App Router manifest measurement | `first-load-report.json` |
 | Accessibility | Zero axe violations | `@axe-core/playwright` | `playwright-report/` |
 | Tests | Unit + E2E passing | Jest + Playwright | Test reports |
 

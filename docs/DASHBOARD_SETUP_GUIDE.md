@@ -320,8 +320,8 @@ Record current performance metrics:
 - Dashboard (/dashboard): LCP 2.2s, FID 70ms, CLS 0.06
 
 **Bundle Size**:
-- First Load JS: 254 kB
-- Largest Page: 327 kB
+- Homepage first-load JS: 283.86 kB brotli
+- Largest measured route: 363.01 kB brotli
 ```
 
 ### 3. Weekly Review Process

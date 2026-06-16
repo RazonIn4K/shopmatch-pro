@@ -115,18 +115,18 @@ Actions: Email notification
 
 | Metric | Budget | Current | Status |
 |--------|--------|---------|--------|
-| First Load JS | ≤ 300 kB | 254 kB | ✅ Pass |
-| Largest page | ≤ 350 kB | 327 kB | ✅ Pass |
+| Homepage first-load JS | ≤ 300 kB | 283.86 kB | ✅ Pass |
+| Largest measured route | Informational | 363.01 kB | ⚠️ Monitor |
 | API response time | ≤ 500ms | ~200ms avg | ✅ Pass |
 | Database query | ≤ 200ms | ~100ms avg | ✅ Pass |
 
 ### CI Enforcement
 
-Bundle budget is enforced in CI:
+The homepage bundle budget is enforced in CI:
 ```yaml
 # .github/workflows/ci.yml
 - name: First-load JS budget
-  run: FIRST_LOAD_BUDGET_KB=300 node scripts/ci/measure-first-load.mjs
+  run: FIRST_LOAD_BUDGET_KB=300 node scripts/ci/measure-first-load.mjs build-output.txt
 ```
 
 ## Troubleshooting

@@ -18,6 +18,11 @@ Package versions in this document are evidence from the cited FOSSA revision.
 `package.json` and `package-lock.json` remain the source of truth for current
 dependency versions.
 
+Current status update on 2026-06-16: Next.js has since been upgraded to 16.2.9
+to remediate current production dependency advisories. Re-run FOSSA after this
+upgrade before using the exact issue counts below as the current dashboard
+state.
+
 The security scan was passing in FOSSA. Local npm verification shows production dependencies are clean:
 
 ```bash
@@ -102,7 +107,9 @@ Do not force major-version npm overrides for these chains without retesting Fire
 
 ## Dashboard Actions Required
 
-These findings cannot be cleared by `.fossa.yml` alone:
+For the cited FOSSA revision, these findings could not be cleared by
+`.fossa.yml` alone. Re-run FOSSA after the Next.js 16.2.9 upgrade and mediate
+the current dashboard findings by package/version:
 
 1. Accept or auto-ignore CC-BY-SA-4.0 on `next@15.5.19` for this project and selected version. Rationale: non-code artwork/license text detection; ShopMatch Pro does not use or distribute the artwork.
 2. Accept MPL-2.0 on `next@15.5.19` for unmodified dependency usage.

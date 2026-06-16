@@ -16,7 +16,8 @@ export function CookieConsent() {
     // Check if user has already given consent
     const consent = localStorage.getItem('cookie-consent');
     if (!consent) {
-      setShowBanner(true);
+      const timeoutId = window.setTimeout(() => setShowBanner(true), 0);
+      return () => window.clearTimeout(timeoutId);
     }
   }, []);
 

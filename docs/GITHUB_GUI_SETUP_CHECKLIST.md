@@ -68,7 +68,7 @@ Scroll down and enable the following (check each box):
   1. `validate-branch`
   2. `build (20.x)` (exact name including the version)
   3. `accessibility`
-  4. `Measure first-load JS (Playwright)` (exact capitalization)
+  4. `Measure first-load JS` (exact capitalization)
 
 **Note**: These names must match exactly what appears in `.github/workflows/ci.yml`
 
@@ -449,7 +449,7 @@ Once all items above are checked:
 1. `validate-branch`
 2. `build (20.x)`
 3. `accessibility`
-4. `Measure first-load JS (Playwright)`
+4. `Measure first-load JS`
 
 ### Code Owner Paths (from .github/CODEOWNERS)
 - `/src/app/api/stripe/**` → @RazonIn4K

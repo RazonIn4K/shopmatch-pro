@@ -39,7 +39,7 @@ Before deploying, ensure you have:
 
 ### 2. Configure Build Settings
 
-**Important**: Leave all build settings as default. Next.js 15 with Turbopack is automatically detected.
+**Important**: Leave all build settings as default. Next.js 16 with Turbopack is automatically detected.
 
 ## Environment Variables
 
