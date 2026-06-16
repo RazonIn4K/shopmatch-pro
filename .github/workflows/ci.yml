@@ -457,11 +457,11 @@ jobs:
         # - Fails on low severity or higher
         # - Respects .snyk policy file for ignored issues
         set +e
-        snyk test --all-projects --severity-threshold=low --json > snyk-report.json
+        snyk test --all-projects --severity-threshold=low --json > snyk-report.json 2>&1
         snyk_status=$?
         set -e
 
-        if grep -Eiq 'SNYK-0005|Authentication error|Use `snyk auth` to authenticate|401 Unauthorized' snyk-report.json; then
+        if grep -Eiq 'SNYK-0005|Authentication error|snyk auth|401 Unauthorized' snyk-report.json; then
           echo "::error::SNYK_TOKEN is configured but Snyk authentication failed."
           {
             echo "## Snyk scan failed"
