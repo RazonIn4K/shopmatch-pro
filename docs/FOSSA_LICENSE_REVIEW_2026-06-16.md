@@ -11,10 +11,10 @@ The current reviewed FOSSA project is:
 - Revision scan ID: `109223003`
 - FOSSA scan status: succeeded
 
-Current post-remediation verification:
+Post-remediation verification snapshot:
 
-- Current revision: `55dcc8c3652c8e94b16735659a7a9887b8a70862`
-- Current revision scan ID: `109231746`
+- Verified revision: `55dcc8c3652c8e94b16735659a7a9887b8a70862`
+- Verified revision scan ID: `109231746`
 - FOSSA revision status: not stale
 - Active unresolved licensing issues: 0
 - Active unresolved security issues: 0

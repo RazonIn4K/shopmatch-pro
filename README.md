@@ -542,7 +542,7 @@ This project uses various open-source packages. Dependencies have been reviewed 
 - ✅ Dependencies are commercial-compatible, including reviewed LGPL/MPL library and dev-tool usage
 - ✅ Dual-licensed packages use BSD option (node-forge)
 - ✅ No strong copyleft licenses (GPL, AGPL) in distribution
-- ✅ FOSSA false positives and review findings are documented in [docs/FOSSA_LICENSE_REVIEW_2026-06-16.md](./docs/FOSSA_LICENSE_REVIEW_2026-06-16.md); current revision `55dcc8c3652c8e94b16735659a7a9887b8a70862` has zero unresolved FOSSA licensing, security, or quality issues
+- ✅ FOSSA false positives and review findings are documented in [docs/FOSSA_LICENSE_REVIEW_2026-06-16.md](./docs/FOSSA_LICENSE_REVIEW_2026-06-16.md); the 2026-06-16 post-remediation verification recorded zero unresolved FOSSA licensing, security, or quality issues
 
 **FOSSA Configuration**: Scan targets and path filters are configured in [.fossa.yml](./.fossa.yml). License policy and reviewed ignore decisions are managed in FOSSA and through the guarded `FOSSA Reviewed Issue Remediation` workflow.
 

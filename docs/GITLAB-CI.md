@@ -12,9 +12,8 @@ Current behavior:
 
 Operational status as of 2026-06-16:
 - `GITLAB_MIRROR_TOKEN` is present in the GitHub repository secret list.
-- Latest mirror workflow run `27653396045` completed successfully for commit `55dcc8c3652c8e94b16735659a7a9887b8a70862`.
-- GitHub and GitLab `main` were verified matching at `55dcc8c3652c8e94b16735659a7a9887b8a70862`.
-- After any new push to `main`, verify the mirror workflow succeeds and GitHub/GitLab heads match before treating GitLab scanners as current.
+- The mirror workflow has been verified on `main` pushes, including the FOSSA remediation and documentation sync cycle.
+- Because the head SHA changes on every push, use the local verification commands below to confirm GitHub and GitLab heads match before treating GitLab scanners as current.
 
 To rotate or re-create real mirroring:
 

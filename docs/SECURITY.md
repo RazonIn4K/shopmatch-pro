@@ -62,7 +62,7 @@ Status after the 2026-06-16 dependency sweep:
   #170 @types/node, #183 axios (dev-transitive)
 
 **FOSSA compliance status**
-- Current revision `55dcc8c3652c8e94b16735659a7a9887b8a70862` has zero active
+- The 2026-06-16 post-remediation verification snapshot recorded zero active
   FOSSA licensing, security, and quality issues.
 - The 18 reviewed license findings and 36 reviewed quality findings are
   documented in `docs/FOSSA_LICENSE_REVIEW_2026-06-16.md`; the guarded
