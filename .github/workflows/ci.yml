@@ -540,31 +540,17 @@ jobs:
       if: steps.fossa-secret.outputs.available == 'true'
       run: fossa analyze
 
-    - name: Run FOSSA policy test (advisory)
+    - name: Run FOSSA policy test
       if: steps.fossa-secret.outputs.available == 'true'
       run: |
-        set +e
+        set -o pipefail
         fossa test --timeout 1200 2>&1 | tee fossa-policy-test.log
-        status=${PIPESTATUS[0]}
-        set -e
 
-        if [ "$status" -eq 0 ]; then
-          {
-            echo "## FOSSA policy test"
-            echo ""
-            echo "FOSSA policy test passed."
-          } >> "$GITHUB_STEP_SUMMARY"
-        else
-          echo "::warning::FOSSA policy test reported active dashboard issues. See fossa-policy-test.log and docs/FOSSA_LICENSE_REVIEW_2026-06-16.md."
-          {
-            echo "## FOSSA policy test"
-            echo ""
-            echo "FOSSA analysis uploaded successfully, but the policy test reported active dashboard issues."
-            echo ""
-            echo "This step is advisory until the reviewed LGPL/MPL and false-positive findings are accepted in the FOSSA dashboard."
-            echo "See \`docs/FOSSA_LICENSE_REVIEW_2026-06-16.md\` for the package-level rationale and required dashboard actions."
-          } >> "$GITHUB_STEP_SUMMARY"
-        fi
+        {
+          echo "## FOSSA policy test"
+          echo ""
+          echo "FOSSA policy test passed."
+        } >> "$GITHUB_STEP_SUMMARY"
 
     - name: Upload FOSSA policy log
       if: always() && steps.fossa-secret.outputs.available == 'true'

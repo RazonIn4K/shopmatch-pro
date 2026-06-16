@@ -67,5 +67,6 @@ Status after the 2026-06-16 dependency sweep:
   vulnerabilities
 - License Compliance: 18 reviewed CC-BY-SA-4.0, LGPL, and MPL findings
   documented in `docs/FOSSA_LICENSE_REVIEW_2026-06-16.md`; the guarded
-  `FOSSA Reviewed Issue Remediation` workflow can apply the reviewed ignore
-  rules through the repository `FOSSA_API_KEY` secret
+  `FOSSA Reviewed Issue Remediation` workflow applied the reviewed ignore
+  rules through the repository `FOSSA_API_KEY` secret, and `fossa test` is a
+  hard CI gate

@@ -52,7 +52,7 @@ Updated GitHub Actions to:
 
 - Install the FOSSA CLI directly.
 - Run `fossa analyze` before `fossa test`, so the current revision exists in FOSSA.
-- Keep the policy test advisory until the dashboard policy/ignore inbox is mediated.
+- Run `fossa test` as a hard CI gate after the reviewed ignore rules were applied.
 - Upload `fossa-policy-test.log` as a CI artifact for review.
 
 Important boundary: `.fossa.yml` controls scan settings such as project metadata,
@@ -187,9 +187,28 @@ and no ignore rules will be created.
 The automation uses FOSSA's documented `PUT /api/v2/issues` endpoint to apply
 `type: "ignore"` with review notes to the exact reviewed issue set.
 
+## Remediation Applied
+
+The reviewed FOSSA ignores were applied through GitHub Actions workflow run
+`27653061853`.
+
+The apply run reported:
+
+- Applied reviewed licensing ignores: 18
+- Applied reviewed quality ignores: 36
+- Post-apply active licensing issues: 0
+- Post-apply active quality issues: 0
+- Post-apply active vulnerability issues: 0
+- Total affected issues reported by FOSSA: 54
+
+A follow-up dry run against commit
+`1c95c269e4e5039705e222ad34b26848abe33cf2` in workflow run `27653132946`
+also reported zero active licensing, quality, and vulnerability issues.
+
 ## Dashboard Actions Required
 
-The minimum safe action set is:
+The reviewed dashboard/API actions have been completed. Keep this section as the
+reversal/review checklist for future FOSSA policy changes:
 
 1. Ignore the 18 reviewed licensing issues for this project and selected package versions.
 2. Ignore the 36 reviewed quality `outdated_dependency` findings for this project.
@@ -198,7 +217,7 @@ The minimum safe action set is:
 
 ## Follow-Up
 
-1. Run the remediation workflow in dry-run mode.
-2. If the dry run confirms the expected active issue set, run it in apply mode.
-3. Re-run CI and confirm the FOSSA policy artifact reports zero active issues.
-4. Re-enable hard CI failure for `fossa test` after FOSSA is clean.
+1. Keep `fossa test --timeout 1200` as a hard CI gate.
+2. Re-review FOSSA ignore rules when direct dependency versions change.
+3. Keep Dependabot/Snyk enabled and accept upstream fixes when they resolve
+   transitive quality findings without risky forced overrides.
