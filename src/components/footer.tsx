@@ -10,25 +10,25 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-50 border-t border-gray-200">
+    <footer className="border-t border-[#d9ded4] bg-[#f4f6f3]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Brand */}
           <div className="col-span-1">
-            <div className="text-lg font-bold text-gray-900 mb-4">ShopMatch Pro</div>
-            <p className="text-sm text-gray-600">
+            <div className="mb-4 text-lg font-bold text-[#171a16]">ShopMatch Pro</div>
+            <p className="text-sm text-[#4f584c]">
               Connecting talented job seekers with great opportunities.
             </p>
           </div>
 
           {/* Product Links */}
           <div>
-            <div className="text-sm font-semibold text-gray-900 mb-4">Product</div>
+            <div className="mb-4 text-sm font-semibold text-[#171a16]">Product</div>
             <ul className="space-y-2">
               <li>
                 <Link 
                   href="/jobs" 
-                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                  className="text-sm text-[#4f584c] transition-colors hover:text-[#0f766e]"
                 >
                   Browse Jobs
                 </Link>
@@ -36,7 +36,7 @@ export function Footer() {
               <li>
                 <Link 
                   href="/dashboard" 
-                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                  className="text-sm text-[#4f584c] transition-colors hover:text-[#0f766e]"
                 >
                   Dashboard
                 </Link>
@@ -44,7 +44,7 @@ export function Footer() {
               <li>
                 <Link 
                   href="/subscribe" 
-                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                  className="text-sm text-[#4f584c] transition-colors hover:text-[#0f766e]"
                 >
                   Pricing
                 </Link>
@@ -54,12 +54,12 @@ export function Footer() {
 
           {/* Company Links */}
           <div>
-            <div className="text-sm font-semibold text-gray-900 mb-4">Company</div>
+            <div className="mb-4 text-sm font-semibold text-[#171a16]">Company</div>
             <ul className="space-y-2">
               <li>
                 <a 
                   href="mailto:support@shopmatchpro.com" 
-                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                  className="text-sm text-[#4f584c] transition-colors hover:text-[#0f766e]"
                 >
                   Contact
                 </a>
@@ -67,7 +67,7 @@ export function Footer() {
               <li>
                 <a 
                   href="mailto:support@shopmatchpro.com" 
-                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                  className="text-sm text-[#4f584c] transition-colors hover:text-[#0f766e]"
                 >
                   Support
                 </a>
@@ -77,12 +77,12 @@ export function Footer() {
 
           {/* Legal Links */}
           <div>
-            <div className="text-sm font-semibold text-gray-900 mb-4">Legal</div>
+            <div className="mb-4 text-sm font-semibold text-[#171a16]">Legal</div>
             <ul className="space-y-2">
               <li>
                 <Link 
                   href="/legal/terms" 
-                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                  className="text-sm text-[#4f584c] transition-colors hover:text-[#0f766e]"
                 >
                   Terms of Service
                 </Link>
@@ -90,7 +90,7 @@ export function Footer() {
               <li>
                 <Link 
                   href="/legal/privacy" 
-                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
+                  className="text-sm text-[#4f584c] transition-colors hover:text-[#0f766e]"
                 >
                   Privacy Policy
                 </Link>
@@ -100,9 +100,9 @@ export function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-8 pt-8 border-t border-gray-200">
+        <div className="mt-8 border-t border-[#d9ded4] pt-8">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-[#5d6659]">
               © {currentYear} ShopMatch Pro. All rights reserved.
             </p>
             <div className="flex gap-6">
@@ -110,7 +110,7 @@ export function Footer() {
                 href="https://twitter.com/shopmatchpro" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-[#7b8376] transition-colors hover:text-[#0f766e]"
                 aria-label="Twitter"
               >
                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -121,7 +121,7 @@ export function Footer() {
                 href="https://linkedin.com/company/shopmatchpro" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-[#7b8376] transition-colors hover:text-[#0f766e]"
                 aria-label="LinkedIn"
               >
                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">

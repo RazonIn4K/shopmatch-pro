@@ -9,6 +9,7 @@
 
 import { type FormEvent, useState } from 'react'
 import Link from 'next/link'
+import { Building2, Search } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -35,7 +36,7 @@ export interface SignupViewProps {
  */
 function AuthAlert({ message }: { message: string }) {
   return (
-    <div className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 p-3 rounded">
+    <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm font-medium text-red-700">
       {message}
     </div>
   )
@@ -60,10 +61,11 @@ export function SignupView({
   const [selectedRole, setSelectedRole] = useState<UserRole>('seeker')
 
   return (
-    <Card className="w-full max-w-md border border-slate-200/70 bg-white/95 text-foreground shadow-xl shadow-slate-900/10 backdrop-blur-sm dark:border-slate-700/60 dark:bg-slate-900/90 dark:text-slate-50 dark:shadow-[0_30px_80px_-40px_rgba(15,23,42,0.85)]">
+    <Card className="w-full max-w-md border border-[#d9ded4] bg-white text-[#171a16] shadow-xl shadow-[#111812]/10">
       <CardHeader className="space-y-2 text-center">
-        <h1 className="text-3xl font-semibold tracking-tight text-foreground">Join ShopMatch Pro</h1>
-        <CardDescription className="text-base text-muted-foreground dark:text-slate-300">
+        <p className="text-sm font-bold uppercase text-[#0f766e]">ShopMatch Pro</p>
+        <h1 className="text-3xl font-black tracking-tight text-[#171a16]">Create your demo account</h1>
+        <CardDescription className="text-base text-[#5d6659]">
           Create your account to get started
         </CardDescription>
       </CardHeader>
@@ -73,7 +75,7 @@ export function SignupView({
           onClick={onGoogleSignup}
           disabled={isLoading}
           variant="outline"
-          className="w-full justify-center gap-2 border border-slate-200/70 bg-white text-foreground transition-colors hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 dark:hover:bg-slate-700/80"
+          className="w-full justify-center gap-2 border border-[#cbd5c6] bg-white text-[#171a16] transition-colors hover:border-[#0f766e] hover:bg-[#f7faf6] focus-visible:ring-2 focus-visible:ring-[#0f766e] focus-visible:ring-offset-2"
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
             <title>Google logo</title>
@@ -99,10 +101,10 @@ export function SignupView({
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-slate-200/80 dark:border-slate-700/60" />
+            <span className="w-full border-t border-[#d9ded4]" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="rounded-md bg-white px-3 py-1 text-xs font-semibold text-muted-foreground dark:bg-slate-900 dark:text-slate-300">
+            <span className="rounded-md bg-white px-3 py-1 text-xs font-bold text-[#5d6659]">
               Or continue with email
             </span>
           </div>
@@ -117,12 +119,12 @@ export function SignupView({
               name="displayName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-semibold text-foreground">Display Name</FormLabel>
+                  <FormLabel className="text-sm font-semibold text-[#171a16]">Display Name</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       placeholder="Enter your full name"
-                      className="bg-slate-50/80 text-foreground placeholder:text-slate-500 focus-visible:ring-primary/70 focus-visible:ring-offset-2 dark:bg-slate-800/70 dark:text-slate-50 dark:placeholder:text-slate-400"
+                      className="border-[#cbd5c6] bg-[#fafaf8] text-[#171a16] placeholder:text-[#6f786b] focus-visible:ring-[#0f766e] focus-visible:ring-offset-2"
                       disabled={isLoading}
                     />
                   </FormControl>
@@ -137,13 +139,13 @@ export function SignupView({
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-semibold text-foreground">Email</FormLabel>
+                  <FormLabel className="text-sm font-semibold text-[#171a16]">Email</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       type="email"
                       placeholder="Enter your email"
-                      className="bg-slate-50/80 text-foreground placeholder:text-slate-500 focus-visible:ring-primary/70 focus-visible:ring-offset-2 dark:bg-slate-800/70 dark:text-slate-50 dark:placeholder:text-slate-400"
+                      className="border-[#cbd5c6] bg-[#fafaf8] text-[#171a16] placeholder:text-[#6f786b] focus-visible:ring-[#0f766e] focus-visible:ring-offset-2"
                       disabled={isLoading}
                     />
                   </FormControl>
@@ -158,7 +160,7 @@ export function SignupView({
               name="role"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-semibold text-foreground">I am a:</FormLabel>
+                  <FormLabel className="text-sm font-semibold text-[#171a16]">I am a:</FormLabel>
                   <FormControl>
                     <div className="grid grid-cols-2 gap-2">
                       <Button
@@ -170,12 +172,13 @@ export function SignupView({
                         }}
                         disabled={isLoading}
                         className={cn(
-                          "justify-start border border-slate-200/80 bg-white/90 text-foreground shadow-sm transition-transform hover:translate-y-[-1px] hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 dark:hover:bg-slate-700/80",
+                          "justify-start border border-[#cbd5c6] bg-white text-[#171a16] shadow-sm transition-transform hover:translate-y-[-1px] hover:border-[#0f766e] hover:bg-[#f7faf6] focus-visible:ring-2 focus-visible:ring-[#0f766e] focus-visible:ring-offset-2",
                           selectedRole === 'owner' &&
-                            "border-blue-500 bg-blue-600 text-white shadow-lg shadow-blue-600/20 hover:bg-blue-500 focus-visible:ring-blue-400 dark:border-blue-400 dark:bg-blue-500 dark:hover:bg-blue-400"
+                            "border-[#0f766e] bg-[#0f766e] text-white shadow-lg shadow-[#0f766e]/20 hover:bg-[#115e59]"
                         )}
                       >
-                        🏢 Employer
+                        <Building2 className="h-4 w-4" aria-hidden="true" />
+                        Employer
                       </Button>
                       <Button
                         type="button"
@@ -186,12 +189,13 @@ export function SignupView({
                         }}
                         disabled={isLoading}
                         className={cn(
-                          "justify-start border border-slate-200/80 bg-white/90 text-foreground shadow-sm transition-transform hover:translate-y-[-1px] hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-primary/70 focus-visible:ring-offset-2 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 dark:hover:bg-slate-700/80",
+                          "justify-start border border-[#cbd5c6] bg-white text-[#171a16] shadow-sm transition-transform hover:translate-y-[-1px] hover:border-[#0f766e] hover:bg-[#f7faf6] focus-visible:ring-2 focus-visible:ring-[#0f766e] focus-visible:ring-offset-2",
                           selectedRole === 'seeker' &&
-                            "border-blue-500 bg-blue-600 text-white shadow-lg shadow-blue-600/20 hover:bg-blue-500 focus-visible:ring-blue-400 dark:border-blue-400 dark:bg-blue-500 dark:hover:bg-blue-400"
+                            "border-[#0f766e] bg-[#0f766e] text-white shadow-lg shadow-[#0f766e]/20 hover:bg-[#115e59]"
                         )}
                       >
-                        🔍 Job Seeker
+                        <Search className="h-4 w-4" aria-hidden="true" />
+                        Job Seeker
                       </Button>
                     </div>
                   </FormControl>
@@ -206,13 +210,13 @@ export function SignupView({
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-semibold text-foreground">Password</FormLabel>
+                  <FormLabel className="text-sm font-semibold text-[#171a16]">Password</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       type="password"
                       placeholder="Create a password"
-                      className="bg-slate-50/80 text-foreground placeholder:text-slate-500 focus-visible:ring-primary/70 focus-visible:ring-offset-2 dark:bg-slate-800/70 dark:text-slate-50 dark:placeholder:text-slate-400"
+                      className="border-[#cbd5c6] bg-[#fafaf8] text-[#171a16] placeholder:text-[#6f786b] focus-visible:ring-[#0f766e] focus-visible:ring-offset-2"
                       disabled={isLoading}
                     />
                   </FormControl>
@@ -227,13 +231,13 @@ export function SignupView({
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-semibold text-foreground">Confirm Password</FormLabel>
+                  <FormLabel className="text-sm font-semibold text-[#171a16]">Confirm Password</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       type="password"
                       placeholder="Confirm your password"
-                      className="bg-slate-50/80 text-foreground placeholder:text-slate-500 focus-visible:ring-primary/70 focus-visible:ring-offset-2 dark:bg-slate-800/70 dark:text-slate-50 dark:placeholder:text-slate-400"
+                      className="border-[#cbd5c6] bg-[#fafaf8] text-[#171a16] placeholder:text-[#6f786b] focus-visible:ring-[#0f766e] focus-visible:ring-offset-2"
                       disabled={isLoading}
                     />
                   </FormControl>
@@ -247,7 +251,7 @@ export function SignupView({
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-blue-600 text-white shadow-lg shadow-blue-600/20 transition-colors hover:bg-blue-500 focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 dark:bg-blue-500 dark:hover:bg-blue-400"
+              className="w-full bg-[#0f766e] text-white shadow-lg shadow-[#0f766e]/20 transition-colors hover:bg-[#115e59] focus-visible:ring-2 focus-visible:ring-[#0f766e] focus-visible:ring-offset-2"
             >
               {isLoading ? 'Creating account...' : 'Create Account'}
             </Button>
@@ -255,9 +259,9 @@ export function SignupView({
         </Form>
       </CardContent>
       <CardFooter className="flex flex-col space-y-3 text-center">
-        <div className="text-sm text-muted-foreground dark:text-slate-300">
+        <div className="text-sm text-[#5d6659]">
           Already have an account?{' '}
-          <Link href="/login" className="font-semibold text-blue-600 hover:underline dark:text-blue-400 dark:hover:text-blue-300">
+          <Link href="/login" className="font-semibold text-[#0f766e] hover:underline">
             Sign in
           </Link>
         </div>

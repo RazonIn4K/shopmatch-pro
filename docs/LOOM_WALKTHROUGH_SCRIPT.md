@@ -10,6 +10,8 @@
 
 - Open `https://shopmatch.highencodelearning.com` in a clean browser tab.
 - Open `https://shopmatch.highencodelearning.com/jobs` in a second tab.
+- Accept or decline the cookie banner before recording so it does not cover the demo surface.
+- If you show auth, use `/login` and `/signup` after the refreshed light palette deploy is live; the cards should use a warm off-white page background, white form surfaces, and teal primary actions.
 - Keep the GitHub Actions page ready if you want to show CI proof.
 - Close unrelated tabs and notifications.
 - Use the seeded demo accounts shown on the homepage:
@@ -27,6 +29,7 @@ Use these claims on camera:
 - "GitHub Dependabot has zero open alerts, and the production dependency audit is clean."
 - "The full audit still tracks three dev-only Firebase Tools/OpenTelemetry moderate advisories, documented in `docs/SECURITY.md`; they are not in the Vercel runtime bundle."
 - "Latest CI is green for build, typecheck, unit tests, Firestore rules, local smoke, production smoke, accessibility, Snyk, and CodeQL."
+- "Before deploy, the current public pages and auth pages were browser-checked locally at desktop and mobile widths with no horizontal overflow or console errors."
 - "This is a portfolio demo in test mode, not a live hiring marketplace."
 
 Avoid these claims:
@@ -62,7 +65,7 @@ Click one job if the page makes a clean detail transition. Otherwise stay on the
 
 Screen: login or dashboard after using the seeded employer account.
 
-> "On the employer side, access is role-based. Paid features are guarded by Firebase custom claims and server-side checks, while Stripe webhooks keep subscription state in sync."
+> "On the employer side, access is role-based. The auth pages are part of the polished product surface, and paid features are guarded by Firebase custom claims and server-side checks while Stripe webhooks keep subscription state in sync."
 
 If not already logged in, show the homepage demo credentials instead of logging in live.
 
@@ -141,13 +144,15 @@ Key points:
 Use this if you want the least risky one-take recording:
 
 1. Start at `https://shopmatch.highencodelearning.com`.
-2. Point at the "DEMO" banner and say it is test mode.
-3. Point at seeded accounts, but do not read the password slowly unless needed.
-4. Click "Browse demo jobs".
-5. Scroll the jobs list.
-6. Open GitHub Actions for the latest `main` run and point at green CI/CodeQL/Mirror.
-7. Open `docs/SECURITY.md` or README if you want to show the audit posture.
-8. End back on the live site.
+2. Clear the cookie banner before starting, or do it immediately and briefly on camera.
+3. Point at the "DEMO" banner and say it is test mode.
+4. Point at seeded accounts, but do not read the password slowly unless needed.
+5. Click "Browse demo jobs".
+6. Scroll the jobs list.
+7. Open `/login` only if you want to show the refreshed auth surface; otherwise use the homepage seeded-account card.
+8. Open GitHub Actions for the latest `main` run and point at green CI/CodeQL/Mirror.
+9. Open `docs/SECURITY.md` or README if you want to show the audit posture.
+10. End back on the live site.
 
 ## Post-Recording Checklist
 

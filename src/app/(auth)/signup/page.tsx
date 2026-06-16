@@ -39,7 +39,8 @@ export default function SignupPage() {
   } = useSignup()
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-[#f4f6f3] px-4 py-12 text-[#171a16] sm:px-6 lg:px-8">
+      <div className="mx-auto flex min-h-[calc(100svh-6rem)] w-full max-w-6xl items-center justify-center">
       <SignupView
         form={form}
         isLoading={isLoading}
@@ -47,6 +48,7 @@ export default function SignupPage() {
         onSubmit={handleEmailSignup}
         onGoogleSignup={handleGoogleSignup}
       />
+      </div>
     </main>
   )
 }
