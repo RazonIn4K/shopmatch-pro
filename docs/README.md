@@ -25,6 +25,7 @@
 
 ## 🔧 Setup & Configuration
 - [GITHUB_SETUP_GUIDE.md](GITHUB_SETUP_GUIDE.md) — Complete repository setup (15 min)
+- [GITLAB-CI.md](GITLAB-CI.md) — GitLab mirror setup and security scanner reference
 - [GITHUB_GUI_SETUP_CHECKLIST.md](GITHUB_GUI_SETUP_CHECKLIST.md) — Quick setup checklist
 - [RULESET_QUICK_REFERENCE.md](RULESET_QUICK_REFERENCE.md) — Branch protection reference
 - [REPOSITORY_GUARDRAILS.md](REPOSITORY_GUARDRAILS.md) — Technical deep dive
