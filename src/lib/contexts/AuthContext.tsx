@@ -162,12 +162,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * @param displayName - User's display name
    */
   const signup = async (email: string, password: string, role: UserRole, displayName: string) => {
+    let didAuthenticate = false
+
     try {
       setLoading(true)
       setError(null)
 
       // Create Firebase Auth user
       const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+      didAuthenticate = true
 
       // Update user profile with display name
       await updateProfile(userCredential.user, { displayName })
@@ -204,7 +207,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setError(getAuthErrorMessage(error instanceof Error && 'code' in error ? (error as { code: string }).code : ''))
       throw error
     } finally {
-      setLoading(false)
+      if (!didAuthenticate) {
+        setLoading(false)
+      }
     }
   }
 
@@ -215,18 +220,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * @param password - User's password
    */
   const signin = async (email: string, password: string) => {
+    let didAuthenticate = false
+
     try {
       setLoading(true)
       setError(null)
 
       await signInWithEmailAndPassword(auth, email, password)
+      didAuthenticate = true
 
     } catch (error: unknown) {
       console.error('Signin error:', error)
       setError(getAuthErrorMessage(error instanceof Error && 'code' in error ? (error as { code: string }).code : ''))
       throw error
     } finally {
-      setLoading(false)
+      if (!didAuthenticate) {
+        setLoading(false)
+      }
     }
   }
 
@@ -237,6 +247,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Creates user document if first-time Google sign-in.
    */
   const signinWithGoogle = async () => {
+    let didAuthenticate = false
+
     try {
       setLoading(true)
       setError(null)
@@ -244,6 +256,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const provider = new GoogleAuthProvider()
       const result = await signInWithPopup(auth, provider)
       const user = result.user
+      didAuthenticate = true
 
       // Create user document if this is a new user
       if (user.displayName && user.email) {
@@ -279,7 +292,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setError(getAuthErrorMessage(error instanceof Error && 'code' in error ? (error as { code: string }).code : ''))
       throw error
     } finally {
-      setLoading(false)
+      if (!didAuthenticate) {
+        setLoading(false)
+      }
     }
   }
 

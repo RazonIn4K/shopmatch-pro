@@ -107,13 +107,7 @@ export function getFirebaseAuth() {
   return getAuth(getFirebaseClientApp())
 }
 
-export const auth = new Proxy({} as ReturnType<typeof getAuth>, {
-  get(_target, prop, receiver) {
-    const firebaseAuth = getFirebaseAuth()
-    const value = Reflect.get(firebaseAuth, prop, receiver)
-    return typeof value === 'function' ? value.bind(firebaseAuth) : value
-  },
-})
+export const auth = getFirebaseAuth()
 
 /**
  * Cloud Firestore database service instance
@@ -137,13 +131,7 @@ export function getFirebaseDb() {
   return getFirestore(getFirebaseClientApp())
 }
 
-export const db = new Proxy({} as ReturnType<typeof getFirestore>, {
-  get(_target, prop, receiver) {
-    const firestore = getFirebaseDb()
-    const value = Reflect.get(firestore, prop, receiver)
-    return typeof value === 'function' ? value.bind(firestore) : value
-  },
-})
+export const db = getFirebaseDb()
 
 /**
  * Default Firebase app export for advanced use cases
@@ -154,12 +142,6 @@ export const db = new Proxy({} as ReturnType<typeof getFirestore>, {
  * - Custom Firebase service initialization
  * - Testing and mocking scenarios
  */
-const firebaseApp = new Proxy({} as FirebaseApp, {
-  get(_target, prop, receiver) {
-    const clientApp = getFirebaseClientApp()
-    const value = Reflect.get(clientApp, prop, receiver)
-    return typeof value === 'function' ? value.bind(clientApp) : value
-  },
-})
+const firebaseApp = getFirebaseClientApp()
 
 export default firebaseApp

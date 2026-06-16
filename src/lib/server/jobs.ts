@@ -18,7 +18,7 @@ import { adminDb, isFirebaseAdminFallbackMode } from '@/lib/firebase/admin'
 import { jobFormSchema, jobStatuses, jobTypes } from '@/types'
 import type { Job } from '@/types'
 
-import { toDateValue } from './firestore'
+import { isMissingIndexError, toDateValue } from './firestore'
 
 /** Validated job form payload (output of jobFormSchema). */
 export type JobFormInput = ReturnType<typeof jobFormSchema.parse>
@@ -53,6 +53,30 @@ export function transformJobDocument(doc: FirebaseFirestore.DocumentSnapshot): J
     publishedAt: toDateValue(data.publishedAt),
     expiresAt: toDateValue(data.expiresAt),
   } as Job
+}
+
+function createdAtToMillis(value: Job['createdAt']): number {
+  if (!value) {
+    return 0
+  }
+
+  if (value instanceof Date) {
+    return value.getTime()
+  }
+
+  if (typeof value === 'string') {
+    return new Date(value).getTime()
+  }
+
+  if (typeof value === 'object' && typeof value.toDate === 'function') {
+    return value.toDate().getTime()
+  }
+
+  return 0
+}
+
+function sortJobsByCreatedAtDesc(jobs: Job[]): Job[] {
+  return [...jobs].sort((a, b) => createdAtToMillis(b.createdAt) - createdAtToMillis(a.createdAt))
 }
 
 function buildJobsQuery(filters: JobListFilters): FirebaseFirestore.Query {
@@ -201,13 +225,30 @@ export async function listJobs(filters: JobListFilters): Promise<JobListResult> 
 
   let jobs: Job[]
   let usingLocalFallback = false
+  let inMemoryOrderedJobs: Job[] | null = null
+  let totalFromQuery: number | null = null
 
   if (isFirebaseAdminFallbackMode) {
     jobs = buildDemoJobs()
     usingLocalFallback = true
   } else {
-    const snapshot = await paginatedQuery.get()
-    jobs = snapshot.docs.map(transformJobDocument)
+    try {
+      const snapshot = await paginatedQuery.get()
+      jobs = snapshot.docs.map(transformJobDocument)
+
+      const countSnapshot = await baseQuery.count().get()
+      totalFromQuery = countSnapshot.data().count
+    } catch (error) {
+      if (!isMissingIndexError(error)) {
+        throw error
+      }
+
+      inMemoryOrderedJobs = sortJobsByCreatedAtDesc(
+        (await baseQuery.get()).docs.map(transformJobDocument)
+      )
+      jobs = inMemoryOrderedJobs.slice(offset, offset + filters.limit)
+      totalFromQuery = inMemoryOrderedJobs.length
+    }
   }
 
   if (jobs.length === 0 && process.env.NODE_ENV === 'development') {
@@ -220,19 +261,21 @@ export async function listJobs(filters: JobListFilters): Promise<JobListResult> 
   let filteredTotal = jobs.length
 
   if (filters.location) {
-    if (usingLocalFallback) {
+    if (usingLocalFallback || inMemoryOrderedJobs) {
       const locationLower = filters.location.toLowerCase()
-      filteredJobs = jobs.filter((job) => job.location.toLowerCase().includes(locationLower))
-      filteredTotal = filteredJobs.length
+      const sourceJobs = inMemoryOrderedJobs ?? jobs
+      const locationMatches = sourceJobs.filter((job) => job.location.toLowerCase().includes(locationLower))
+      filteredJobs = inMemoryOrderedJobs
+        ? locationMatches.slice(offset, offset + filters.limit)
+        : locationMatches
+      filteredTotal = locationMatches.length
     } else {
       const result = await applyLocationFiltering(jobs, baseQuery, filters.location)
       filteredJobs = result.filteredJobs
       filteredTotal = result.filteredTotal
     }
-  } else if (!usingLocalFallback) {
-    // No location filter - use standard count query
-    const countSnapshot = await baseQuery.count().get()
-    filteredTotal = countSnapshot.data().count
+  } else if (!usingLocalFallback && totalFromQuery !== null) {
+    filteredTotal = totalFromQuery
   }
 
   return { jobs: filteredJobs, total: filteredTotal }

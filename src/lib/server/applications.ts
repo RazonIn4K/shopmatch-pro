@@ -21,7 +21,7 @@ import {
 } from '@/types'
 import type { Application } from '@/types'
 
-import { toDateValue } from './firestore'
+import { isMissingIndexError, toDateValue } from './firestore'
 
 /** Validated application submission payload. */
 export type ApplicationSubmissionInput = ReturnType<typeof applicationSubmissionSchema.parse>
@@ -58,6 +58,30 @@ export function transformApplicationDocument(doc: FirebaseFirestore.DocumentSnap
   } as Application
 }
 
+function createdAtToMillis(value: Application['createdAt']): number {
+  if (!value) {
+    return 0
+  }
+
+  if (value instanceof Date) {
+    return value.getTime()
+  }
+
+  if (typeof value === 'string') {
+    return new Date(value).getTime()
+  }
+
+  if (typeof value === 'object' && typeof value.toDate === 'function') {
+    return value.toDate().getTime()
+  }
+
+  return 0
+}
+
+function sortApplicationsByCreatedAtDesc(applications: Application[]): Application[] {
+  return [...applications].sort((a, b) => createdAtToMillis(b.createdAt) - createdAtToMillis(a.createdAt))
+}
+
 function buildApplicationsQuery(filters: ApplicationListFilters): FirebaseFirestore.Query {
   let query: FirebaseFirestore.Query = adminDb.collection('applications')
 
@@ -83,18 +107,34 @@ export async function listApplications(
 ): Promise<ApplicationListResult> {
   const offset = (filters.page - 1) * filters.limit
 
-  const snapshot = await buildApplicationsQuery(filters)
-    .orderBy('createdAt', 'desc')
-    .limit(filters.limit)
-    .offset(offset)
-    .get()
+  try {
+    const snapshot = await buildApplicationsQuery(filters)
+      .orderBy('createdAt', 'desc')
+      .limit(filters.limit)
+      .offset(offset)
+      .get()
 
-  const countSnapshot = await buildApplicationsQuery(filters).count().get()
-  const total = countSnapshot.data().count
+    const countSnapshot = await buildApplicationsQuery(filters).count().get()
+    const total = countSnapshot.data().count
 
-  const applications = snapshot.docs.map(transformApplicationDocument)
+    const applications = snapshot.docs.map(transformApplicationDocument)
 
-  return { applications, total }
+    return { applications, total }
+  } catch (error) {
+    if (!isMissingIndexError(error)) {
+      throw error
+    }
+
+    const snapshot = await buildApplicationsQuery(filters).get()
+    const sortedApplications = sortApplicationsByCreatedAtDesc(
+      snapshot.docs.map(transformApplicationDocument)
+    )
+
+    return {
+      applications: sortedApplications.slice(offset, offset + filters.limit),
+      total: sortedApplications.length,
+    }
+  }
 }
 
 /**

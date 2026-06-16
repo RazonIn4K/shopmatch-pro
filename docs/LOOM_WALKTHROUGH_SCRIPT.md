@@ -27,10 +27,11 @@ Use these claims on camera:
 - "This is a deployed portfolio SaaS demo running on Vercel."
 - "The stack is Next.js 15.5.19, React 19, TypeScript 5.9, Firebase, Stripe, Sentry, Tailwind CSS, and GitHub Actions."
 - "It has seeded demo accounts, Stripe test-mode billing, job posting, application tracking, analytics, Firestore rules, and production smoke tests."
+- "The seeded employer and seeker accounts both reach their role-specific dashboards in the verified production build."
 - "GitHub Dependabot has zero open alerts, and the production dependency audit is clean."
 - "The full audit still tracks three dev-only Firebase Tools/OpenTelemetry moderate advisories, documented in `docs/SECURITY.md`; they are not in the Vercel runtime bundle."
 - "Latest CI is green for build, typecheck, unit tests, Firestore rules, local smoke, production smoke, accessibility, Snyk, and CodeQL."
-- "The deployed public pages and auth pages were browser-checked at desktop and mobile widths with no horizontal overflow or console errors."
+- "The deployed public pages and auth pages were browser-checked at desktop and mobile widths with no horizontal overflow; the authenticated dashboard checks pass in the production build."
 - "The demo has a refreshed favicon, app icon, web manifest, and social preview card that match the current ShopMatch palette."
 - "This is a portfolio demo in test mode, not a live hiring marketplace."
 
@@ -69,7 +70,7 @@ Screen: login or dashboard after using the seeded employer account.
 
 > "On the employer side, access is role-based. The auth pages are part of the polished product surface, and paid features are guarded by Firebase custom claims and server-side checks while Stripe webhooks keep subscription state in sync."
 
-If not already logged in, show the homepage demo credentials instead of logging in live.
+The current verified path is `owner@test.com` -> `/dashboard/owner` and `seeker@test.com` -> `/dashboard/seeker`. If Firebase is slow during the recording, show the homepage demo credentials and the already-open dashboard tab instead of repeating sign-in attempts.
 
 ### 1:05-1:20 - Engineering Proof
 
@@ -125,6 +126,7 @@ Key points:
 - Owners can manage applications and export data.
 - The analytics view is config-driven and suited to client demos.
 - Rate limiting exists on application submission and CSV export paths.
+- Firestore composite indexes are tracked in `firestore.indexes.json`; the app also handles missing-index reads defensively so the portfolio dashboard does not fail closed during a demo.
 
 ### 3:30-4:30 - Engineering Proof
 
@@ -151,10 +153,11 @@ Use this if you want the least risky one-take recording:
 4. Point at seeded accounts, but do not read the password slowly unless needed.
 5. Click "Browse demo jobs".
 6. Scroll the jobs list.
-7. Open `/login` only if you want to show the refreshed auth surface; otherwise use the homepage seeded-account card.
-8. Open GitHub Actions for the latest `main` run and point at green CI/CodeQL/Mirror.
-9. Open `docs/SECURITY.md` or README if you want to show the audit posture.
-10. End back on the live site.
+7. Open `/login`, sign in as `owner@test.com`, and show `/dashboard/owner` only if you want the authenticated proof point.
+8. If you want a second authenticated proof point, sign out or use a clean tab and show `seeker@test.com` reaching `/dashboard/seeker`.
+9. Open GitHub Actions for the latest `main` run and point at green CI/CodeQL/Mirror.
+10. Open `docs/SECURITY.md` or README if you want to show the audit posture.
+11. End back on the live site.
 
 ## Post-Recording Checklist
 
