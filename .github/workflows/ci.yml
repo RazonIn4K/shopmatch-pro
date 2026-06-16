@@ -456,7 +456,24 @@ jobs:
         # - Scans all projects (npm, package.json)
         # - Fails on low severity or higher
         # - Respects .snyk policy file for ignored issues
-        snyk test --all-projects --severity-threshold=low --json > snyk-report.json || true
+        set +e
+        snyk test --all-projects --severity-threshold=low --json > snyk-report.json
+        snyk_status=$?
+        set -e
+
+        if grep -Eiq 'SNYK-0005|Authentication error|Use `snyk auth` to authenticate|401 Unauthorized' snyk-report.json; then
+          echo "::error::SNYK_TOKEN is configured but Snyk authentication failed."
+          {
+            echo "## Snyk scan failed"
+            echo ""
+            echo "The configured \`SNYK_TOKEN\` was rejected by Snyk. Rotate the GitHub Actions secret and re-run CI."
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit 1
+        fi
+
+        if [ "$snyk_status" -ne 0 ]; then
+          echo "::warning::Snyk reported advisory dependency findings. See snyk-security-report artifact."
+        fi
 
         # Display human-readable summary
         snyk test --all-projects --severity-threshold=low || true
