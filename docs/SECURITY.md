@@ -24,12 +24,13 @@
 
 ## Dependency Backlog (last triaged: 2026-06-15)
 
-Status after the 2026-06-15 dependency sweep (`npm audit`: 9 moderate, 0 high, 0 critical):
+Status after the 2026-06-15 dependency sweep (`npm audit`: 11 moderate, 0 high, 0 critical):
 
 **Fixed**
 - `next` 15.5.19 — cleared all App Router/middleware advisories (`<=15.5.16` range)
 - `fast-uri`, `fast-xml-builder`, `protobufjs`, `ws` — transitive bumps via the earlier June sweep
 - `js-yaml`, `joi`, `form-data`, Babel packages, and Google client transitive packages — refreshed via `npm audit fix`
+- Sentry/OpenTelemetry runtime path: `@opentelemetry/core`, `@opentelemetry/resources`, and `@opentelemetry/sdk-trace-base` 2.7.1 -> 2.8.0
 - `actions/upload-artifact` v4 → v7 — Node 24 Actions runtime cutover (2026-06-16)
 
 **Tracked residuals**
@@ -42,6 +43,9 @@ Status after the 2026-06-15 dependency sweep (`npm audit`: 9 moderate, 0 high, 0
 - `firebase-tools` -> `gaxios` -> `uuid`
   - Current npm remediation suggests downgrading `firebase-tools` to 13.13.3. The local CLI is intentionally kept current because rules testing and emulator commands depend on it.
   - `firebase-tools` is a development dependency and is not part of the Vercel runtime bundle.
+- `firebase-tools` -> `@google-cloud/pubsub` -> `@opentelemetry/core`
+  - The app runtime OpenTelemetry path was patched to 2.8.0.
+  - The remaining vulnerable OpenTelemetry instance is nested under Firebase Tools' Pub/Sub dependency, so the current npm remediation again requires downgrading `firebase-tools` to 13.13.3.
 
 **Next action**
 - Keep Dependabot/Snyk enabled and take the upstream Firebase/Google client updates when they resolve these chains without SDK downgrades.
