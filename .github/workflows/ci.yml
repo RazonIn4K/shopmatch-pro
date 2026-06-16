@@ -474,10 +474,10 @@ jobs:
   fossa-scan:
     name: FOSSA License and Security Scan
     runs-on: ubuntu-latest
-    needs: build
     env:
       FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
       FOSSA_TELEMETRY_SCOPE: "off"
+      IS_FORK_PR: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
 
     steps:
     - name: Checkout code
@@ -488,12 +488,25 @@ jobs:
       run: |
         if [ -z "${FOSSA_API_KEY:-}" ]; then
           echo "available=false" >> "$GITHUB_OUTPUT"
-          echo "::warning::FOSSA_API_KEY is not available; skipping FOSSA scan."
+
+          if [ "${IS_FORK_PR}" = "true" ]; then
+            echo "::warning::FOSSA_API_KEY is not available for fork pull requests; skipping FOSSA scan."
+            {
+              echo "## FOSSA scan skipped"
+              echo ""
+              echo "GitHub does not expose repository secrets to fork pull requests."
+              echo "The scan will run on protected branch pushes and same-repository pull requests."
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          echo "::error::FOSSA_API_KEY is required for FOSSA analysis on protected branch and same-repository CI runs."
           {
-            echo "## FOSSA scan skipped"
+            echo "## FOSSA scan failed"
             echo ""
             echo "Set the GitHub Actions secret \`FOSSA_API_KEY\` to upload analysis and run policy tests."
           } >> "$GITHUB_STEP_SUMMARY"
+          exit 1
         else
           echo "available=true" >> "$GITHUB_OUTPUT"
         fi

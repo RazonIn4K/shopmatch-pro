@@ -21,7 +21,9 @@ ShopMatch Pro is licensed under the **MIT License** (see [LICENSE](./LICENSE)). 
 
 ## Direct Dependencies
 
-**Note**: Versions listed are as of 2026-06-16. See `package.json` for current versions.
+**Note**: Versions listed are a license-review snapshot as of 2026-06-16.
+`package.json` and `package-lock.json` are the source of truth for current
+dependency versions; refresh this table from those files during license reviews.
 
 ### Core Framework & Runtime
 

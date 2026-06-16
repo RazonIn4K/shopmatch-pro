@@ -3,7 +3,7 @@
 ## Summary
 
 The latest GitHub Actions FOSSA CLI run for commit
-`44b65516132ba45573c5391223d27a1343039ba5` successfully uploaded analysis, then
+`04e8003dae297069083299753090e180c6569fd3` successfully uploaded analysis, then
 `fossa test --timeout 1200` reported 38 active policy issues:
 
 - 1 denied license issue: CC-BY-SA-4.0 on `next@15.5.19`
@@ -13,6 +13,10 @@ The latest GitHub Actions FOSSA CLI run for commit
 Earlier dashboard results also listed `highlight.js@10.7.3` and
 `@axe-core/playwright@4.11.3`; those two findings were not present in the latest
 CLI policy output.
+
+Package versions in this document are evidence from the cited FOSSA revision.
+`package.json` and `package-lock.json` remain the source of truth for current
+dependency versions.
 
 The security scan was passing in FOSSA. Local npm verification shows production dependencies are clean:
 
