@@ -2,35 +2,29 @@
 
 ## Summary
 
-An earlier GitHub Actions FOSSA CLI run for commit
-`04e8003dae297069083299753090e180c6569fd3` successfully uploaded analysis, then
-`fossa test --timeout 1200` reported 38 active policy issues before the Next.js
-16 upgrade:
+The current reviewed FOSSA project is:
 
-- 1 denied license issue: CC-BY-SA-4.0 on `next@15.5.19`
-- 14 flagged license review issues: 13 Sharp/libvips LGPL packages and MPL-2.0 on `next@15.5.19`
-- 23 outdated dependency quality issues, all transitive
+- Project: `shopmatch-pro`
+- Locator: `git+github.com/RazonIn4K/shopmatch-pro`
+- URL: `https://app.fossa.com/projects/git%2Bgithub.com%2FRazonIn4K%2Fshopmatch-pro`
+- Reviewed revision: `e0ff828281cc9fe8ba377315526e7e6d01869a06`
+- Revision scan ID: `109223003`
+- FOSSA scan status: succeeded
 
-Earlier dashboard results also listed `highlight.js@10.7.3` and
-`@axe-core/playwright@4.11.3`; those two findings were not present in the latest
-CLI policy output.
+Dashboard/API inspection for the reviewed revision reported 54 unresolved issues:
 
-Package versions in this document are evidence from the cited FOSSA revisions.
+| Category | Count | Notes |
+|----------|-------|-------|
+| Licensing - denied | 2 | CC-BY-SA-4.0 artwork/license-file detections |
+| Licensing - flagged | 16 | MPL-2.0 and LGPL-3.0-or-later review findings |
+| Security vulnerabilities | 0 | No active FOSSA security issues |
+| Quality - outdated | 36 | Transitive staleness findings from the Semver Outdated Rule |
+
 `package.json` and `package-lock.json` remain the source of truth for current
-dependency versions.
+dependency versions. This document records the FOSSA review decision for the
+specific packages and versions listed below.
 
-Current status update on 2026-06-16: Next.js has since been upgraded to 16.2.9
-to remediate current production dependency advisories. GitHub Actions CI run
-`27647359032` uploaded FOSSA analysis for
-`dcad089495c660c70a0c5b330a2d3e2653978391`; the advisory policy test reported
-39 dashboard issues:
-
-- 23 outdated dependency quality issues, all transitive
-- 15 flagged license review issues: 14 Sharp/libvips LGPL packages and MPL-2.0
-  on `next@16.2.9`
-- 1 denied license issue: CC-BY-SA-4.0 on `next@16.2.9`
-
-The security scan was passing in FOSSA. Local npm verification shows production dependencies are clean:
+Local npm verification shows production dependencies are clean:
 
 ```bash
 npm audit --omit=dev
@@ -66,67 +60,145 @@ targets, and path filters. It does not create local license policies or issue
 auto-ignore rules. FOSSA policy and auto-ignore decisions must be made in the
 FOSSA dashboard or with FOSSA API workflows that have the correct permissions.
 
-## License Rationale
+## Reviewed License Findings
+
+| Package | Version | Issue ID | License | FOSSA type | Review decision |
+|---------|---------|----------|---------|------------|-----------------|
+| `next` | 16.2.9 | 17742268 | CC-BY-SA-4.0 | Denied by policy | Ignore for this project/version |
+| `next` | 16.2.9 | 17742267 | MPL-2.0 | Flagged by policy | Ignore for this project/version |
+| `highlight.js` | 10.7.3 | 17592533 | CC-BY-SA-4.0 | Denied by policy | Ignore for this project/version |
+| `@axe-core/playwright` | 4.11.3 | 16727735 | MPL-2.0 | Flagged by policy | Ignore for this project/version |
 
 ### `next@16.2.9`
 
-Next.js is declared MIT in npm metadata. The FOSSA CC-BY-SA-4.0 detection is treated as a non-code artwork false positive from bundled dependency assets. ShopMatch Pro does not use or distribute that artwork.
+Next.js is declared MIT in npm metadata. FOSSA detected CC-BY-SA-4.0 in
+`dist/compiled/glob/LICENSE`, specifically the Glob logo artwork attribution.
+ShopMatch Pro does not use, display, distribute, or modify that logo artwork.
 
-The MPL-2.0 detection is acceptable for unmodified dependency usage. ShopMatch Pro does not modify Next.js or any MPL-licensed files.
+FOSSA detected MPL-2.0 in `dist/compiled/@vercel/og/satori/LICENSE`. This is
+acceptable for unmodified dependency usage. ShopMatch Pro does not modify Next.js
+or any MPL-licensed files.
 
 ### `highlight.js@10.7.3`
 
-`highlight.js` is declared BSD-3-Clause in npm metadata. The CC-BY-SA-4.0 detection is treated as non-code artwork/assets in the dependency chain. ShopMatch Pro does not import `highlight.js` directly and does not distribute the artwork.
+`highlight.js` is declared BSD-3-Clause in npm metadata. The CC-BY-SA-4.0
+detection is treated as non-code artwork/assets in the dependency chain.
+ShopMatch Pro does not import `highlight.js` directly and does not use or
+distribute the flagged artwork.
 
 ### `@axe-core/playwright@4.11.3`
 
-`@axe-core/playwright` is MPL-2.0 and is used only by Playwright accessibility tests. It is a devDependency, is not bundled into the production application, and is used as-is without local source modifications.
+`@axe-core/playwright` is MPL-2.0 and is used only by Playwright accessibility
+tests. It is a devDependency, is not bundled into the production application,
+and is used as-is without local source modifications.
+
+## Reviewed Sharp/libvips Findings
+
+FOSSA flagged 14 platform-specific Sharp/libvips packages under
+LGPL-3.0-or-later. These are transitive dependencies loaded through `sharp` and
+Next.js image optimization. They are unmodified native image libraries, and
+libvips source is available upstream at `https://github.com/lovell/sharp-libvips`.
+
+| Package | Version | Issue ID | Locator |
+|---------|---------|----------|---------|
+| `@img/sharp-libvips-darwin-arm64` | 1.2.4 | 14125305 | `npm+@img/sharp-libvips-darwin-arm64$1.2.4` |
+| `@img/sharp-libvips-darwin-x64` | 1.2.4 | 14125309 | `npm+@img/sharp-libvips-darwin-x64$1.2.4` |
+| `@img/sharp-libvips-linux-arm` | 1.2.4 | 14125306 | `npm+@img/sharp-libvips-linux-arm$1.2.4` |
+| `@img/sharp-libvips-linux-arm64` | 1.2.4 | 14125313 | `npm+@img/sharp-libvips-linux-arm64$1.2.4` |
+| `@img/sharp-libvips-linux-ppc64` | 1.2.4 | 14125303 | `npm+@img/sharp-libvips-linux-ppc64$1.2.4` |
+| `@img/sharp-libvips-linux-riscv64` | 1.2.4 | 14125314 | `npm+@img/sharp-libvips-linux-riscv64$1.2.4` |
+| `@img/sharp-libvips-linux-s390x` | 1.2.4 | 14125308 | `npm+@img/sharp-libvips-linux-s390x$1.2.4` |
+| `@img/sharp-libvips-linux-x64` | 1.2.4 | 14125307 | `npm+@img/sharp-libvips-linux-x64$1.2.4` |
+| `@img/sharp-libvips-linuxmusl-arm64` | 1.2.4 | 14125299 | `npm+@img/sharp-libvips-linuxmusl-arm64$1.2.4` |
+| `@img/sharp-libvips-linuxmusl-x64` | 1.2.4 | 14125300 | `npm+@img/sharp-libvips-linuxmusl-x64$1.2.4` |
+| `@img/sharp-wasm32` | 0.34.5 | 14125310 | `npm+@img/sharp-wasm32$0.34.5` |
+| `@img/sharp-win32-arm64` | 0.34.5 | 14125312 | `npm+@img/sharp-win32-arm64$0.34.5` |
+| `@img/sharp-win32-ia32` | 0.34.5 | 14125311 | `npm+@img/sharp-win32-ia32$0.34.5` |
+| `@img/sharp-win32-x64` | 0.34.5 | 14125302 | `npm+@img/sharp-win32-x64$0.34.5` |
 
 ## Outdated Dependency Quality Findings
 
-The latest FOSSA run reported 23 outdated dependency quality findings:
+FOSSA reported 36 active quality findings, all `outdated_dependency`, all
+transitive, and all caused by the "Major - 3 Policy" Semver Outdated Rule.
+The FOSSA security issue count for this revision is zero.
 
-- `@types/eslint-scope@3.7.7`
-- `agent-base@6.0.2`
-- `balanced-match@1.0.2`
-- `brace-expansion@1.1.14`
-- `commander@2.20.3`
-- `data-uri-to-buffer@4.0.1`
-- `eslint-scope@5.1.1`
-- `find-up@5.0.0`
-- `http-proxy-agent@5.0.0`
-- `https-proxy-agent@5.0.1`
-- `jest-worker@27.5.1`
-- `js-tokens@4.0.0`
-- `lru-cache@5.1.1`
-- `lru-cache@6.0.0`
-- `p-limit@3.1.0`
-- `string-width@4.2.3`
-- `tr46@0.0.3`
-- `type-fest@0.7.1`
+- `@apidevtools/json-schema-ref-parser@9.1.2`
+- `@asamuzakjp/css-color@3.2.0`
+- `@pnpm/network.ca-file@1.0.2`
+- `@sindresorhus/is@4.6.0`
+- `bl@4.1.0`
+- `boxen@5.1.2`
+- `commander@10.0.1`
+- `commander@5.1.0`
+- `configstore@5.0.1`
+- `cross-env@7.0.3`
+- `crypto-random-string@2.0.0`
+- `dot-prop@5.3.0`
+- `filesize@6.4.0`
+- `ini@1.3.8`
+- `ini@2.0.0`
+- `ip-regex@2.1.0`
+- `log-symbols@4.1.0`
+- `lru-cache@7.18.3`
+- `marked@13.0.3`
+- `mime@1.6.0`
+- `minimatch@5.1.9`
+- `minimatch@6.2.3`
+- `open@6.4.0`
+- `ora@5.4.1`
+- `parse5@5.1.1`
+- `path-to-regexp@0.1.13`
+- `path-to-regexp@1.9.0`
+- `pglite-2@0.2.17`
+- `strip-json-comments@2.0.1`
+- `type-fest@0.20.2`
+- `url-join@0.0.1`
 - `uuid@11.1.1`
-- `webidl-conversions@3.0.1`
-- `whatwg-url@5.0.0`
-- `which@2.0.2`
-- `wrap-ansi@7.0.0`
+- `widest-line@3.1.0`
+- `wrap-ansi@6.2.0`
+- `write-file-atomic@3.0.3`
+- `write-file-atomic@5.0.1`
 
-Do not force major-version npm overrides for these chains without retesting Firebase emulator, deploy, and rules workflows. Prefer upstream `firebase-tools` updates when they become available.
+Do not force major-version npm overrides for these chains without retesting
+Firebase emulator, deploy, rules, Playwright, and production build workflows.
+Prefer upstream dependency updates when they become available.
+
+## Remediation Automation
+
+The reviewed ignore actions are codified in:
+
+```bash
+npm run fossa:reviewed-ignores
+```
+
+The script is dry-run by default. Mutating mode requires:
+
+```bash
+npm run fossa:reviewed-ignores -- \
+  --apply \
+  --confirm apply-reviewed-fossa-ignores-for-shopmatch-pro
+```
+
+The manual GitHub workflow `.github/workflows/fossa-remediate-reviewed-issues.yml`
+can run the same script with the repository `FOSSA_API_KEY` secret. If that
+secret is push-only, the workflow will fail with a FOSSA API authorization error
+and no ignore rules will be created.
+
+The automation uses FOSSA's documented `PUT /api/v2/issues` endpoint to apply
+`type: "ignore"` with review notes to the exact reviewed issue set.
 
 ## Dashboard Actions Required
 
-For the cited FOSSA revision, these findings could not be cleared by
-`.fossa.yml` alone. Re-run FOSSA after the Next.js 16.2.9 upgrade and mediate
-the current dashboard findings by package/version:
+The minimum safe action set is:
 
-1. Accept or auto-ignore CC-BY-SA-4.0 on `next@16.2.9` for this project and selected version. Rationale: non-code artwork/license text detection; ShopMatch Pro does not use or distribute the artwork.
-2. Accept MPL-2.0 on `next@16.2.9` for unmodified dependency usage.
-3. Allow or auto-ignore LGPL-3.0-or-later for the Sharp/libvips platform packages listed in `THIRD_PARTY_LICENSES.md`. Rationale: unmodified library usage with source available upstream.
-4. Decide whether FOSSA outdated dependency quality findings should remain a hard gate. If they are advisory for this project, adjust the FOSSA quality policy or add scoped ignore rules for the current transitive findings.
-5. After dashboard mediation, change the CI policy test from advisory back to a hard gate by making the `Run FOSSA policy test` step exit non-zero on `fossa test` failure.
+1. Ignore the 18 reviewed licensing issues for this project and selected package versions.
+2. Ignore the 36 reviewed quality `outdated_dependency` findings for this project.
+3. Re-run `fossa test --timeout 1200` after ignores are created.
+4. If FOSSA policy test passes, change the CI step from advisory to hard-fail.
 
 ## Follow-Up
 
-1. Complete the FOSSA dashboard actions above for the latest uploaded revision.
-2. Re-run the FOSSA dashboard policy scan after mediation.
-3. Keep Dependabot/Snyk enabled and accept upstream Firebase CLI fixes when they resolve the dev-only OpenTelemetry and stale transitive chains without a downgrade.
-4. Re-enable hard CI failure for `fossa test` after the dashboard issue count is clean.
+1. Run the remediation workflow in dry-run mode.
+2. If the dry run confirms the expected active issue set, run it in apply mode.
+3. Re-run CI and confirm the FOSSA policy artifact reports zero active issues.
+4. Re-enable hard CI failure for `fossa test` after FOSSA is clean.

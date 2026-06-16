@@ -62,7 +62,10 @@ Status after the 2026-06-16 dependency sweep:
   #170 @types/node, #183 axios (dev-transitive)
 
 **Tracked, advisory-only (FOSSA dashboard)**
-- Dependency Quality: deprecated transitive packages (no runtime risk identified)
-- License Compliance: CC-BY-SA-4.0, LGPL, and MPL review findings documented
-  in `docs/FOSSA_LICENSE_REVIEW_2026-06-16.md`; FOSSA dashboard policy or
-  auto-ignore mediation is still required
+- Dependency Quality: 36 transitive staleness findings from FOSSA's Semver
+  Outdated Rule; no active FOSSA security issues and no production npm audit
+  vulnerabilities
+- License Compliance: 18 reviewed CC-BY-SA-4.0, LGPL, and MPL findings
+  documented in `docs/FOSSA_LICENSE_REVIEW_2026-06-16.md`; the guarded
+  `FOSSA Reviewed Issue Remediation` workflow can apply the reviewed ignore
+  rules through the repository `FOSSA_API_KEY` secret

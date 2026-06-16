@@ -8,7 +8,7 @@ This document lists all third-party software dependencies used in ShopMatch Pro 
 
 ShopMatch Pro is licensed under the **MIT License** (see [LICENSE](./LICENSE)). All third-party dependencies have been reviewed for license compatibility with MIT and commercial use.
 
-> **2026-06-16 Update**: Active FOSSA license alerts were reviewed in [docs/FOSSA_LICENSE_REVIEW_2026-06-16.md](./docs/FOSSA_LICENSE_REVIEW_2026-06-16.md). GitHub Actions now uploads FOSSA analysis; dashboard policy or auto-ignore mediation is still required. Next.js was upgraded to 16.2.9 after that review to clear current production advisories.
+> **2026-06-16 Update**: Active FOSSA license alerts were reviewed in [docs/FOSSA_LICENSE_REVIEW_2026-06-16.md](./docs/FOSSA_LICENSE_REVIEW_2026-06-16.md). GitHub Actions now uploads FOSSA analysis, and a guarded remediation workflow can apply the reviewed FOSSA ignore rules using the repository secret. Next.js was upgraded to 16.2.9 to clear current production advisories.
 > **2026-04-24 Update**: Dependency versions and FOSSA override locators were refreshed after the audit advisory update.
 
 ### Key Licensing Decisions
@@ -417,7 +417,7 @@ npm ls <package-name>
 | 2025-10-13 | FOSSA | Automated scan | ⚠️ False positives resolved |
 | 2025-10-13 | npm audit | Security scan | ✅ 0 vulnerabilities (648 total packages: 248 prod, 315 dev) |
 | 2026-04-24 | Codex | npm audit, FOSSA locator review | ✅ 0 npm vulnerabilities; locators refreshed |
-| 2026-06-16 | Codex | npm audit, FOSSA config review | ✅ Production audit clean; FOSSA analysis wired in CI; dashboard mediation pending |
+| 2026-06-16 | Codex | npm audit, FOSSA config review | ✅ Production audit clean; FOSSA analysis wired in CI; reviewed FOSSA remediation workflow added |
 
 **Latest Security Audit** (2026-06-16):
 - `npm audit --omit=dev`: 0 vulnerabilities
@@ -464,13 +464,13 @@ FOSSA and other scanning tools may flag certain transitive dependencies as "outd
 4. ❌ **Don't force-update transitive dependencies** - breaks compatibility and introduces bugs
 
 **FOSSA Badge Status**:
-- License compliance: ⚠️ Analysis uploads from CI; dashboard policy/auto-ignore mediation required
+- License compliance: ⚠️ Analysis uploads from CI; reviewed policy/auto-ignore remediation is ready to run
 - Security scan: ✅ FOSSA security scan passing; local production audit clean
 - "Outdated" warnings: ⚠️ May persist (transitive dependencies locked by parents)
 
 **TL;DR**: "Outdated" warnings are informational, not critical. As long as:
 - ✅ No production security vulnerabilities (`npm audit --omit=dev` on 2026-06-16 shows 0 vulnerabilities)
-- ✅ All licenses are compatible (documented: all permissive - MIT, Apache-2.0, BSD, ISC)
+- ✅ All reviewed licenses are compatible with the documented use (permissive licenses, unmodified MPL-2.0 use, unmodified LGPL libvips usage, and non-code CC-BY-SA artwork detections)
 - ✅ Direct dependencies are updated (verified 2026-06-16: Next.js 16.2.9, React 19.2.7, etc.)
 - ✅ Application builds and runs correctly (production build passing)
 

@@ -1,0 +1,57 @@
+name: FOSSA Reviewed Issue Remediation
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "Run mode"
+        required: true
+        default: dry-run
+        type: choice
+        options:
+          - dry-run
+          - apply
+      revision:
+        description: "FOSSA revision SHA to inspect"
+        required: true
+        default: e0ff828281cc9fe8ba377315526e7e6d01869a06
+      confirm:
+        description: "Required for apply: apply-reviewed-fossa-ignores-for-shopmatch-pro"
+        required: false
+        default: ""
+
+jobs:
+  reviewed-ignores:
+    name: Apply reviewed FOSSA ignores
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "20"
+
+      - name: Verify FOSSA secret
+        run: |
+          if [ -z "${FOSSA_API_KEY:-}" ]; then
+            echo "::error::FOSSA_API_KEY is required for FOSSA issue remediation."
+            exit 1
+          fi
+
+      - name: Dry-run reviewed FOSSA ignores
+        if: inputs.mode == 'dry-run'
+        run: npm run fossa:reviewed-ignores -- --revision "${{ inputs.revision }}"
+
+      - name: Apply reviewed FOSSA ignores
+        if: inputs.mode == 'apply'
+        run: |
+          npm run fossa:reviewed-ignores -- \
+            --revision "${{ inputs.revision }}" \
+            --apply \
+            --confirm "${{ inputs.confirm }}"

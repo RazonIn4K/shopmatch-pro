@@ -20,6 +20,7 @@
     "webhook:events": "sh scripts/monitor-webhook-events.sh",
     "webhook:events:watch": "sh scripts/monitor-webhook-events.sh --watch",
     "webhook:events:tail": "sh scripts/monitor-webhook-events.sh --tail",
+    "fossa:reviewed-ignores": "node scripts/fossa/apply-reviewed-ignores.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
