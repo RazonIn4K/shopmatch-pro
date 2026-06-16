@@ -22,34 +22,35 @@
 - Pre-merge Security Checklist (see TESTING.md & PR template)
 - Quarterly landscape & dependency review (SBOM/license)
 
-## Dependency Backlog (last triaged: 2026-06-15)
+## Dependency Backlog (last triaged: 2026-06-16)
 
-Status after the 2026-06-15 dependency sweep (`npm audit`: 11 moderate, 0 high, 0 critical):
+Status after the 2026-06-16 dependency sweep:
+- `npm audit --omit=dev`: 0 low, 0 moderate, 0 high, 0 critical
+- `npm audit`: 3 moderate, 0 high, 0 critical
 
 **Fixed**
 - `next` 15.5.19 — cleared all App Router/middleware advisories (`<=15.5.16` range)
 - `fast-uri`, `fast-xml-builder`, `protobufjs`, `ws` — transitive bumps via the earlier June sweep
 - `js-yaml`, `joi`, `form-data`, Babel packages, and Google client transitive packages — refreshed via `npm audit fix`
 - Sentry/OpenTelemetry runtime path: `@opentelemetry/core`, `@opentelemetry/resources`, and `@opentelemetry/sdk-trace-base` 2.7.1 -> 2.8.0
+- `uuid` GHSA-w5hq-g745-h8pq / CVE-2026-41907 — pinned transitive Firebase/Google client copies to patched `uuid` 11.1.1 through the npm `overrides` block
 - `actions/upload-artifact` v4 → v7 — Node 24 Actions runtime cutover (2026-06-16)
 
 **Tracked residuals**
-- `firebase-admin` -> `@google-cloud/storage` -> `retry-request` / `teeny-request` -> `uuid`
-  - Current npm remediation suggests downgrading `firebase-admin` to 10.3.0, which would move the app off the current Admin SDK line and is not an acceptable production fix.
-  - `firebase-admin` 14.0.0 was tested on 2026-06-15 and reverted because Vercel serverless runtime loading failed through the `firebase-admin/auth` -> `jwks-rsa` -> ESM-only `jose` chain.
-  - ShopMatch server code imports Admin App/Auth/Firestore only; Admin Storage is not used by the current runtime paths.
-- `firebase-admin` -> `@google-cloud/firestore` -> `google-gax` -> `uuid`
-  - This is the remaining Firestore-side chain while staying on the Vercel-compatible 13.10.x Admin SDK line.
-- `firebase-tools` -> `gaxios` -> `uuid`
-  - Current npm remediation suggests downgrading `firebase-tools` to 13.13.3. The local CLI is intentionally kept current because rules testing and emulator commands depend on it.
-  - `firebase-tools` is a development dependency and is not part of the Vercel runtime bundle.
 - `firebase-tools` -> `@google-cloud/pubsub` -> `@opentelemetry/core`
   - The app runtime OpenTelemetry path was patched to 2.8.0.
-  - The remaining vulnerable OpenTelemetry instance is nested under Firebase Tools' Pub/Sub dependency, so the current npm remediation again requires downgrading `firebase-tools` to 13.13.3.
+  - The remaining vulnerable OpenTelemetry instance is nested under Firebase Tools' Pub/Sub dependency, so the current npm remediation requires downgrading `firebase-tools` to 14.23.0.
+  - `firebase-tools` is a development dependency and is not part of the Vercel runtime bundle.
+  - Do not force an `@opentelemetry/core` 2.x override into `@google-cloud/pubsub` unless emulator and deploy commands are retested; Pub/Sub currently declares the 1.x OpenTelemetry line.
+
+**Compatibility notes**
+- `firebase-admin` 14.0.0 was tested on 2026-06-15 and reverted because Vercel serverless runtime loading failed through the `firebase-admin/auth` -> `jwks-rsa` -> ESM-only `jose` chain.
+- Keep `firebase-admin` on the Vercel-compatible 13.10.x line until a 14.x upgrade path is verified in production.
+- The `uuid` override was validated with Admin/Auth/Firestore, Google client package imports, local build, unit tests, and Firestore rules tests.
 
 **Next action**
 - Keep Dependabot/Snyk enabled and take the upstream Firebase/Google client updates when they resolve these chains without SDK downgrades.
-- Do not add broad `uuid` overrides for Firebase internals; a previous override was removed because it affected Firebase Admin runtime compatibility.
+- Recheck the Firebase Tools OpenTelemetry path when a patched Firebase CLI release is available that does not require a downgrade.
 
 **Superseded (safe to close/delete)**
 - Dependabot PRs #172, #173, #177, #185, #189 — covered by the bumps above
