@@ -497,9 +497,18 @@ jobs:
           echo "available=true" >> "$GITHUB_OUTPUT"
         fi
 
-    - name: Run FOSSA analysis and policy test
+    - name: Install FOSSA CLI
       if: steps.fossa-secret.outputs.available == 'true'
-      uses: fossas/fossa-action@v1.9.0
-      with:
-        api-key: ${{ secrets.FOSSA_API_KEY }}
-        run-tests: true
+      run: |
+        mkdir -p "${RUNNER_TEMP}/fossa"
+        curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install-latest.sh | bash -s -- -b "${RUNNER_TEMP}/fossa"
+        echo "${RUNNER_TEMP}/fossa" >> "$GITHUB_PATH"
+        "${RUNNER_TEMP}/fossa/fossa" --version
+
+    - name: Run FOSSA analysis
+      if: steps.fossa-secret.outputs.available == 'true'
+      run: fossa analyze
+
+    - name: Run FOSSA policy test
+      if: steps.fossa-secret.outputs.available == 'true'
+      run: fossa test --timeout 1200
