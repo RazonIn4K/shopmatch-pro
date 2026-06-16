@@ -52,7 +52,8 @@ Updated GitHub Actions to:
 
 - Install the FOSSA CLI directly.
 - Run `fossa analyze` before `fossa test`, so the current revision exists in FOSSA.
-- Run `fossa test` as a hard CI gate after the reviewed ignore rules were applied.
+- Run `fossa test --diff e0ff828281cc9fe8ba377315526e7e6d01869a06`
+  as a hard regression gate after the reviewed ignore rules were applied.
 - Upload `fossa-policy-test.log` as a CI artifact for review.
 
 Important boundary: `.fossa.yml` controls scan settings such as project metadata,
@@ -205,6 +206,11 @@ A follow-up dry run against commit
 `1c95c269e4e5039705e222ad34b26848abe33cf2` in workflow run `27653132946`
 also reported zero active licensing, quality, and vulnerability issues.
 
+The FOSSA CLI still reports the reviewed baseline findings in an absolute
+`fossa test` run, so CI uses the FOSSA-supported `--diff` mode against the
+reviewed baseline revision. This makes CI fail for new/unreviewed FOSSA findings
+without re-failing the already reviewed baseline items.
+
 ## Dashboard Actions Required
 
 The reviewed dashboard/API actions have been completed. Keep this section as the
@@ -212,12 +218,12 @@ reversal/review checklist for future FOSSA policy changes:
 
 1. Ignore the 18 reviewed licensing issues for this project and selected package versions.
 2. Ignore the 36 reviewed quality `outdated_dependency` findings for this project.
-3. Re-run `fossa test --timeout 1200` after ignores are created.
-4. If FOSSA policy test passes, change the CI step from advisory to hard-fail.
+3. Re-run `fossa test --timeout 1200 --diff <reviewed-baseline>` after ignores are created.
+4. If the FOSSA regression test passes, keep the CI step as a hard gate.
 
 ## Follow-Up
 
-1. Keep `fossa test --timeout 1200` as a hard CI gate.
+1. Keep `fossa test --timeout 1200 --diff <reviewed-baseline>` as a hard CI gate.
 2. Re-review FOSSA ignore rules when direct dependency versions change.
 3. Keep Dependabot/Snyk enabled and accept upstream fixes when they resolve
    transitive quality findings without risky forced overrides.

@@ -8,7 +8,7 @@ This document lists all third-party software dependencies used in ShopMatch Pro 
 
 ShopMatch Pro is licensed under the **MIT License** (see [LICENSE](./LICENSE)). All third-party dependencies have been reviewed for license compatibility with MIT and commercial use.
 
-> **2026-06-16 Update**: Active FOSSA license alerts were reviewed in [docs/FOSSA_LICENSE_REVIEW_2026-06-16.md](./docs/FOSSA_LICENSE_REVIEW_2026-06-16.md). GitHub Actions now uploads FOSSA analysis, reviewed FOSSA ignore rules were applied through the guarded remediation workflow, and `fossa test` is a hard CI gate. Next.js was upgraded to 16.2.9 to clear current production advisories.
+> **2026-06-16 Update**: Active FOSSA license alerts were reviewed in [docs/FOSSA_LICENSE_REVIEW_2026-06-16.md](./docs/FOSSA_LICENSE_REVIEW_2026-06-16.md). GitHub Actions now uploads FOSSA analysis, reviewed FOSSA ignore rules were applied through the guarded remediation workflow, and `fossa test --diff` is a hard CI regression gate. Next.js was upgraded to 16.2.9 to clear current production advisories.
 > **2026-04-24 Update**: Dependency versions and FOSSA override locators were refreshed after the audit advisory update.
 
 ### Key Licensing Decisions
@@ -464,7 +464,7 @@ FOSSA and other scanning tools may flag certain transitive dependencies as "outd
 4. ❌ **Don't force-update transitive dependencies** - breaks compatibility and introduces bugs
 
 **FOSSA Badge Status**:
-- License compliance: ✅ Reviewed FOSSA policy ignores applied; `fossa test` is a hard CI gate
+- License compliance: ✅ Reviewed FOSSA policy ignores applied; `fossa test --diff` is a hard CI regression gate
 - Security scan: ✅ FOSSA security scan passing; local production audit clean
 - "Outdated" warnings: ✅ Reviewed and ignored in FOSSA where transitive/staleness-only
 

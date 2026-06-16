@@ -494,6 +494,7 @@ jobs:
     env:
       FOSSA_API_KEY: ${{ secrets.FOSSA_API_KEY }}
       FOSSA_TELEMETRY_SCOPE: "off"
+      FOSSA_REVIEWED_BASELINE_REVISION: "e0ff828281cc9fe8ba377315526e7e6d01869a06"
       IS_FORK_PR: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
 
     steps:
@@ -540,16 +541,16 @@ jobs:
       if: steps.fossa-secret.outputs.available == 'true'
       run: fossa analyze
 
-    - name: Run FOSSA policy test
+    - name: Run FOSSA policy regression test
       if: steps.fossa-secret.outputs.available == 'true'
       run: |
         set -o pipefail
-        fossa test --timeout 1200 2>&1 | tee fossa-policy-test.log
+        fossa test --timeout 1200 --diff "$FOSSA_REVIEWED_BASELINE_REVISION" 2>&1 | tee fossa-policy-test.log
 
         {
-          echo "## FOSSA policy test"
+          echo "## FOSSA policy regression test"
           echo ""
-          echo "FOSSA policy test passed."
+          echo "FOSSA policy regression test passed with no new issues compared to reviewed baseline \`$FOSSA_REVIEWED_BASELINE_REVISION\`."
         } >> "$GITHUB_STEP_SUMMARY"
 
     - name: Upload FOSSA policy log
