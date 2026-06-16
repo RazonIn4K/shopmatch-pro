@@ -29,7 +29,7 @@ Use these claims on camera:
 - "GitHub Dependabot has zero open alerts, and the production dependency audit is clean."
 - "The full audit still tracks three dev-only Firebase Tools/OpenTelemetry moderate advisories, documented in `docs/SECURITY.md`; they are not in the Vercel runtime bundle."
 - "Latest CI is green for build, typecheck, unit tests, Firestore rules, local smoke, production smoke, accessibility, Snyk, and CodeQL."
-- "Before deploy, the current public pages and auth pages were browser-checked locally at desktop and mobile widths with no horizontal overflow or console errors."
+- "The deployed public pages and auth pages were browser-checked at desktop and mobile widths with no horizontal overflow or console errors."
 - "This is a portfolio demo in test mode, not a live hiring marketplace."
 
 Avoid these claims:
