@@ -4,7 +4,7 @@
 
 **Live site:** https://shopmatch.highencodelearning.com
 **Repo:** https://github.com/RazonIn4K/shopmatch-pro
-**Last verified:** 2026-06-16
+**Last verified:** 2026-06-17
 
 ## What This Recording Proves
 
@@ -40,7 +40,8 @@ Use these claims on camera:
 - "The seeded employer and seeker accounts both reach their role-specific dashboards in the verified production build."
 - "GitHub Dependabot has zero open alerts, and the production dependency audit is clean."
 - "The full audit still tracks three dev-only Firebase Tools/OpenTelemetry moderate advisories, documented in `docs/SECURITY.md`; they are not in the Vercel runtime bundle."
-- "Latest CI is green for build, typecheck, unit tests, Firestore rules, local smoke, production smoke, accessibility, Snyk, and CodeQL."
+- "The latest main-branch CI is green for build, typecheck, unit tests, Firestore rules, local smoke, production smoke, accessibility, Snyk, and CodeQL."
+- "The public homepage keeps Firebase auth out of the root layout; local production measurement on 2026-06-17 showed 169.68 KB first-load JS against the 300 KB CI budget."
 - "GitLab is configured as a secondary security-scanning mirror, and the GitHub-to-GitLab mirror workflow is configured with its repository secret."
 - "The deployed public pages and auth pages were browser-checked at desktop and mobile widths with no horizontal overflow; the authenticated dashboard checks pass in the production build."
 - "The demo has a refreshed favicon, app icon, web manifest, and social preview card that match the current ShopMatch palette."
@@ -52,6 +53,7 @@ Avoid these claims:
 - Do not say "zero vulnerabilities" without qualifying it as production/deployed dependencies.
 - Do not imply real payments are processed. Stripe is test mode.
 - Do not say GitLab scanner results are current unless the latest mirror workflow has completed successfully after the commit you are showing.
+- Do not say every open pull request is green if a Dependabot PR is still rerunning or waiting for rebase.
 - Do not create new accounts or real-looking customer data on camera unless you plan to clean it up.
 
 ## 90-Second Loom Script
@@ -88,7 +90,7 @@ The current verified path is `owner@test.com` -> `/dashboard/owner` and `seeker@
 
 Screen: GitHub Actions or README.
 
-> "The repo has the production hygiene I expect on client work: strict TypeScript, ESLint, unit tests, Playwright smoke and accessibility checks, Firestore rules tests, Snyk, CodeQL, and production smoke tests against the live domain."
+> "The repo has the production hygiene I expect on client work: strict TypeScript, ESLint, unit tests, Playwright smoke and accessibility checks, Firestore rules tests, Snyk, CodeQL, production smoke tests against the live domain, and a first-load budget on the public page."
 
 ### 1:20-1:30 - Close
 
@@ -147,6 +149,7 @@ Show GitHub Actions, `docs/SECURITY.md`, and/or README.
 Key points:
 - Current head is green in CI, CodeQL, and Snyk.
 - Production smoke tests run against `shopmatch.highencodelearning.com`.
+- The public landing page stays under the first-load JS budget by loading Firebase auth only on routes that need it.
 - Dependabot has zero open alerts.
 - Production audit is clean; remaining full-audit advisories are dev-only Firebase Tools/OpenTelemetry and documented.
 - GitLab mirroring is configured; verify the latest `Mirror to GitLab` workflow is green before calling GitLab scanner results current.

@@ -5,7 +5,6 @@
  * It provides global providers, styling, and essential meta configuration.
  *
  * Features:
- * - Authentication context provider
  * - Toast notification system
  * - Global CSS and typography
  * - Meta tags and SEO configuration
@@ -14,7 +13,6 @@
 
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
-import { AuthProvider } from '@/lib/contexts/AuthContext'
 import { Toaster } from '@/components/ui/sonner'
 import { getMetadataBase } from '@/lib/env'
 import { Footer } from '@/components/footer'
@@ -28,7 +26,7 @@ import { CookieConsent } from '@/components/cookie-consent'
  */
 export const metadata: Metadata = {
   title: 'ShopMatch Pro - Portfolio Demo Project',
-  description: 'Portfolio demonstration of a production-grade SaaS job board platform. Built with Next.js 15, Firebase, Stripe, and TypeScript. This is a test/demo project - no real transactions occur.',
+  description: 'Portfolio demonstration of a production-grade SaaS job board platform. Built with Next.js 16, Firebase, Stripe, and TypeScript. This is a test/demo project - no real transactions occur.',
   keywords: ['portfolio', 'demo', 'nextjs', 'typescript', 'firebase', 'stripe', 'full-stack', 'web development'],
   authors: [{ name: 'David Ortiz' }],
   creator: 'David Ortiz',
@@ -103,7 +101,6 @@ export const viewport: Viewport = {
  * Provides essential application-wide configuration and providers:
  * - HTML document structure and language
  * - Global CSS styles and typography
- * - Authentication context for user state management
  * - Toast notification system for user feedback
  * - Meta tags and SEO configuration
  *
@@ -117,14 +114,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <AuthProvider>
-          <div className="flex flex-col min-h-screen">
-            {children}
-            <Footer />
-          </div>
-          <CookieConsent />
-          <Toaster />
-        </AuthProvider>
+        <div className="flex flex-col min-h-screen">
+          {children}
+          <Footer />
+        </div>
+        <CookieConsent />
+        <Toaster />
       </body>
     </html>
   )

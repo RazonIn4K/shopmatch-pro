@@ -496,6 +496,7 @@ jobs:
       FOSSA_TELEMETRY_SCOPE: "off"
       FOSSA_REVIEWED_BASELINE_REVISION: "e0ff828281cc9fe8ba377315526e7e6d01869a06"
       IS_FORK_PR: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository }}
+      IS_DEPENDABOT_PR: ${{ github.event_name == 'pull_request' && github.actor == 'dependabot[bot]' }}
 
     steps:
     - name: Checkout code
@@ -507,13 +508,13 @@ jobs:
         if [ -z "${FOSSA_API_KEY:-}" ]; then
           echo "available=false" >> "$GITHUB_OUTPUT"
 
-          if [ "${IS_FORK_PR}" = "true" ]; then
-            echo "::warning::FOSSA_API_KEY is not available for fork pull requests; skipping FOSSA scan."
+          if [ "${IS_FORK_PR}" = "true" ] || [ "${IS_DEPENDABOT_PR}" = "true" ]; then
+            echo "::warning::FOSSA_API_KEY is not available for this pull request context; skipping FOSSA scan."
             {
               echo "## FOSSA scan skipped"
               echo ""
-              echo "GitHub does not expose repository secrets to fork pull requests."
-              echo "The scan will run on protected branch pushes and same-repository pull requests."
+              echo "GitHub does not expose this repository secret to fork pull requests or Dependabot pull requests unless an equivalent Dependabot secret is configured."
+              echo "The scan remains a hard gate on protected branch pushes and same-repository pull requests with access to \`FOSSA_API_KEY\`."
             } >> "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
