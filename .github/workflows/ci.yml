@@ -204,12 +204,12 @@ jobs:
         path: first-load-report.json
         retention-days: 7
 
-    - name: Upload build artifacts
+    - name: Upload build log
       if: matrix.node-version == '20.x'
       uses: actions/upload-artifact@v7
       with:
         name: build-output
-        path: .next/
+        path: build-output.txt
         retention-days: 7
 
   accessibility:
