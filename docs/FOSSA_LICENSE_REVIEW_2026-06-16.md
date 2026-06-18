@@ -11,7 +11,7 @@ The current reviewed FOSSA project is:
 - Revision scan ID: `109223003`
 - FOSSA scan status: succeeded
 
-Post-remediation verification snapshot:
+Original post-remediation verification snapshot:
 
 - Verified revision: `55dcc8c3652c8e94b16735659a7a9887b8a70862`
 - Verified revision scan ID: `109231746`
@@ -21,6 +21,14 @@ Post-remediation verification snapshot:
 - Active unresolved quality issues: 0
 - CI run `27653396029` passed the FOSSA policy regression gate against reviewed baseline `e0ff828281cc9fe8ba377315526e7e6d01869a06`
 - Dry-run remediation workflow `27653593770` confirmed the script is idempotent and found zero active issues to change
+
+Latest current-main CI verification snapshot:
+
+- Verified revision: `7e0e85e30c446fc0dc32b6da3c2f66cf9847bccd`
+- Verification date: `2026-06-18` UTC
+- CI run `27734511222` completed successfully, including `FOSSA License and Security Scan`, `Security Scan (Snyk)`, local smoke tests, production smoke tests, accessibility tests, Firestore rules tests, and build/test.
+- The FOSSA job uploaded analysis for revision `7e0e85e30c446fc0dc32b6da3c2f66cf9847bccd` and `fossa test --timeout 1200 --diff e0ff828281cc9fe8ba377315526e7e6d01869a06` passed with no new issues compared to the reviewed baseline.
+- Mirror workflow run `27734511216` completed successfully for the same revision, keeping GitLab `main` in sync.
 
 Dashboard/API inspection for the reviewed revision reported 54 unresolved issues:
 
@@ -218,9 +226,14 @@ A follow-up dry run against commit
 `1c95c269e4e5039705e222ad34b26848abe33cf2` in workflow run `27653132946`
 also reported zero active licensing, quality, and vulnerability issues.
 
-A final dry run against current commit
+A final dry run during remediation against commit
 `55dcc8c3652c8e94b16735659a7a9887b8a70862` in workflow run `27653593770`
 reported zero active licensing, quality, and vulnerability issues.
+
+A later current-main CI run against commit
+`7e0e85e30c446fc0dc32b6da3c2f66cf9847bccd` in workflow run `27734511222`
+uploaded FOSSA analysis for that revision and passed the same `--diff`
+policy gate with no new issues compared to the reviewed baseline.
 
 The FOSSA CLI still reports the reviewed baseline findings in an absolute
 `fossa test` run, so CI uses the FOSSA-supported `--diff` mode against the

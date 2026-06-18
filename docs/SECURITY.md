@@ -70,3 +70,6 @@ Status after the 2026-06-16 dependency sweep:
   rules through the repository `FOSSA_API_KEY` secret.
 - `fossa test --diff e0ff828281cc9fe8ba377315526e7e6d01869a06` is the hard CI
   regression gate for new or unreviewed FOSSA findings.
+- Current `main` revision `7e0e85e30c446fc0dc32b6da3c2f66cf9847bccd` passed
+  the FOSSA gate in CI run `27734511222` on 2026-06-18, with no new issues
+  compared to the reviewed baseline.

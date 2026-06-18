@@ -8,6 +8,7 @@ This document lists all third-party software dependencies used in ShopMatch Pro 
 
 ShopMatch Pro is licensed under the **MIT License** (see [LICENSE](./LICENSE)). All third-party dependencies have been reviewed for license compatibility with MIT and commercial use.
 
+> **2026-06-18 Update**: Current `main` revision `7e0e85e30c446fc0dc32b6da3c2f66cf9847bccd` passed the FOSSA `--diff` CI gate and GitLab mirror workflow. The direct dependency snapshot below was refreshed after the Firebase SDK update.
 > **2026-06-16 Update**: Active FOSSA license alerts were reviewed in [docs/FOSSA_LICENSE_REVIEW_2026-06-16.md](./docs/FOSSA_LICENSE_REVIEW_2026-06-16.md). GitHub Actions now uploads FOSSA analysis, reviewed FOSSA ignore rules were applied through the guarded remediation workflow, and `fossa test --diff` is a hard CI regression gate. Next.js was upgraded to 16.2.9 to clear current production advisories.
 > **2026-04-24 Update**: Dependency versions and FOSSA override locators were refreshed after the audit advisory update.
 
@@ -21,7 +22,7 @@ ShopMatch Pro is licensed under the **MIT License** (see [LICENSE](./LICENSE)). 
 
 ## Direct Dependencies
 
-**Note**: Versions listed are a license-review snapshot as of 2026-06-16.
+**Note**: Versions listed are a license-review snapshot as of 2026-06-18.
 `package.json` and `package-lock.json` are the source of truth for current
 dependency versions; refresh this table from those files during license reviews.
 
@@ -37,7 +38,7 @@ dependency versions; refresh this table from those files during license reviews.
 
 | Package | Version | License | Purpose | Notes |
 |---------|---------|---------|---------|-------|
-| `firebase` | 12.14.0 | Apache-2.0 | Client-side Firebase SDK | Authentication, Firestore |
+| `firebase` | 12.15.0 | Apache-2.0 | Client-side Firebase SDK | Authentication, Firestore |
 | `firebase-admin` | 13.10.0 | Apache-2.0 | Server-side Firebase SDK | Admin operations, token verification |
 
 **Transitive Dependency Note**:
