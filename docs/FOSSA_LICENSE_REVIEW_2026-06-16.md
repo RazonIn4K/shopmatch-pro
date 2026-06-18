@@ -22,13 +22,21 @@ Original post-remediation verification snapshot:
 - CI run `27653396029` passed the FOSSA policy regression gate against reviewed baseline `e0ff828281cc9fe8ba377315526e7e6d01869a06`
 - Dry-run remediation workflow `27653593770` confirmed the script is idempotent and found zero active issues to change
 
-Latest current-main CI verification snapshot:
+Recent CI verification snapshots:
 
-- Verified revision: `7e0e85e30c446fc0dc32b6da3c2f66cf9847bccd`
-- Verification date: `2026-06-18` UTC
-- CI run `27734511222` completed successfully, including `FOSSA License and Security Scan`, `Security Scan (Snyk)`, local smoke tests, production smoke tests, accessibility tests, Firestore rules tests, and build/test.
-- The FOSSA job uploaded analysis for revision `7e0e85e30c446fc0dc32b6da3c2f66cf9847bccd` and `fossa test --timeout 1200 --diff e0ff828281cc9fe8ba377315526e7e6d01869a06` passed with no new issues compared to the reviewed baseline.
-- Mirror workflow run `27734511216` completed successfully for the same revision, keeping GitLab `main` in sync.
+- Dependency-update verification on `2026-06-18` UTC: revision
+  `7e0e85e30c446fc0dc32b6da3c2f66cf9847bccd` passed CI run `27734511222`,
+  including `FOSSA License and Security Scan`, `Security Scan (Snyk)`, local
+  smoke tests, production smoke tests, accessibility tests, Firestore rules
+  tests, and build/test. The FOSSA job uploaded analysis for that revision and
+  `fossa test --timeout 1200 --diff e0ff828281cc9fe8ba377315526e7e6d01869a06`
+  passed with no new issues compared to the reviewed baseline.
+- Documentation-refresh verification on `2026-06-18` UTC: revision
+  `d466845fe56e6fdad3c36258a1b6d7b6cb652ff7` passed CI run `27735804320`,
+  including the same FOSSA, Snyk, smoke, accessibility, Firestore, and build/test
+  gates.
+- Mirror workflow runs `27734511216` and `27735804339` completed successfully,
+  keeping GitLab `main` in sync for the verified revisions.
 
 Dashboard/API inspection for the reviewed revision reported 54 unresolved issues:
 
@@ -230,10 +238,14 @@ A final dry run during remediation against commit
 `55dcc8c3652c8e94b16735659a7a9887b8a70862` in workflow run `27653593770`
 reported zero active licensing, quality, and vulnerability issues.
 
-A later current-main CI run against commit
+A later dependency-update CI run against commit
 `7e0e85e30c446fc0dc32b6da3c2f66cf9847bccd` in workflow run `27734511222`
 uploaded FOSSA analysis for that revision and passed the same `--diff`
 policy gate with no new issues compared to the reviewed baseline.
+
+A documentation-refresh CI run against commit
+`d466845fe56e6fdad3c36258a1b6d7b6cb652ff7` in workflow run `27735804320`
+also passed the FOSSA `--diff` policy gate.
 
 The FOSSA CLI still reports the reviewed baseline findings in an absolute
 `fossa test` run, so CI uses the FOSSA-supported `--diff` mode against the
