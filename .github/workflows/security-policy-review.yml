@@ -15,7 +15,7 @@ jobs:
       issues: write       # Required to create/update security policy review issues
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Check Snyk policy expiration dates
         run: |
